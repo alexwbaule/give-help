@@ -1,6 +1,6 @@
 build:
-	@cd cmd/give-help-server; \
-	go build -v
+	go mod vendor	
+	go build -o bin/give-help-server -v cmd/give-help-server/main.go
 
 generate:
 	rm -Rf generated
