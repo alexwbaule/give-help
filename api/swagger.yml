@@ -26,54 +26,53 @@ security:
       - user
 
 paths:
-  /customers:
+  '/auth/{provider}':
     post:
-      tags: ["customers"]
-      operationId: create
-      summary: Create a new customer to track
+      tags:
+        - auth
+      summary: authorize user
+      description: Get user authorization from providers
+      operationId: redirectHandler
+      security: []
       parameters:
-        - name: info
-          in: body
-          schema:
-            $ref: "#/definitions/customer"
+        -
+          $ref: '#/parameters/Provider'
       responses:
-        '201':
-          description: created
+        '302':
+          description: User get authorized
           schema:
-            $ref: "#/definitions/customer"
-        default:
-          description: error
-          schema:
-            $ref: "#/definitions/error"
-    get:
-      tags: ["customers"]
-      operationId: getId
-      summary: Get a customerId given an SSN
+            $ref: '#/definitions/LoggedUser'
+
+  '/auth/{provider}/callback':
+    post:
+      tags:
+        - auth
+      summary: authorize user
+      description: Get user authorization from providers
+      operationId: callbackHandler
+      security: []
       parameters:
-        - name: info
-          in: body
-          schema:
-            $ref: "#/definitions/social_id"
+        -
+          $ref: '#/parameters/Provider'
       responses:
-        '200':
-          description: OK
+        '302':
+          description: User get authorized
           schema:
-            $ref: "#/definitions/customer"
-        '401':
-          description: unauthorized
-          schema:
-            $ref: "#/definitions/error"
-        '404':
-          description: resource not found
-          schema:
-            $ref: "#/definitions/error"
-        default:
-          description: error
-          schema:
-            $ref: "#/definitions/error"
+            $ref: '#/definitions/LoggedUser'
+
+parameters:
+  Provider:
+    name: provider
+    in: path
+    description: Provider to be used in Oauth
+    required: true
+    type: string
+    enum:
+      - google
+      - facebook
 
 definitions:
-  logged_user:
+  LoggedUser:
     type: object
     required:
       - name
@@ -81,68 +80,212 @@ definitions:
     properties:
       name:
         type: string
-        format: string
-        minLength: 1
       email:
         type: string
-        format: string
-        minLength: 1      
-  customer:
+ 
+  User:
     type: object
     required:
-      - customerId
-      - name
-      - surname
-      - ssn
-      - fipsCode
     properties:
-      customerId:
-        type: integer
-        format: int64
-        readOnly: true
-        description: internal identifier of a customer
+      user_id:
+        type: string
+      created_at:
+        type: string
+        format: date-time
       name:
         type: string
-        format: string
-        minLength: 1
-      surname:
+      description:
         type: string
-        format: string
-        minLength: 1
-      agentId:
-        type: integer
-        format: int32
-        description: agent associated with this customer
-      ssn:
+      device_id:
         type: string
-        format: string
-        minLength: 11
-        description: Lookup identifier to find a customer in the system
-      fipsCode:
-        type: string
-        format: string
-        minLength: 1
-  social_id:
-    type: object
-    required:
-      - ssn
-    properties:
-      ssn:
-        type: string
-        format: string
-        minLength: 11
-  error:
-    type: object
-    required:
-       - message
-    properties:
-      code:
-        type: integer
-        format: int64
-      message:
-        type: string
-      fields:
-        type: string
-  principal:
-    type: string
+      location:
+        $ref: '#/definitions/Location'
+      contact:
+        $ref: '#/definitions/Contact'
+      allow_share_data:
+        type: boolean
+      images:
+        type: array
+        items:
+          type: string
+      reputation:
+        $ref: '#/definitions/Reputation'
+      tags:
+        $ref: '#/definitions/Tags'
 
+  Contact:
+    type: object
+    required:
+    properties:
+      phones:
+        type: array
+        items:
+          $ref: '#/definitions/Phone'
+      email:
+        type: string
+      instagram:
+        type: string
+      facebook:
+        type: string
+      google:
+        type: string
+      url:
+        type: string
+      additional_data:
+        type: object
+        additionalProperties:
+          type: object      
+
+  Phone:
+    type: object
+    required:
+    properties:
+      region:
+        type: string
+      number:
+        type: string
+      country_code:
+        type: string
+      whatsapp:
+        type: boolean
+      default:
+        type: boolean
+
+  Location:
+    type: object
+    required:
+    properties:
+      zip_code:
+        type: integer
+      address:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      country:
+        type: string
+      lat:
+        type: number
+        format: float64
+      long:
+        type: number
+        format: float64
+
+  Reputation:
+    type: object
+    required:
+    properties:
+      giver:
+        type: number
+        format: float64
+      taker:
+        type: number
+        format: float64
+  
+  Transaction:
+    type: object
+    required:
+    properties:
+      transaction_id:
+        $ref: '#/definitions/ID'
+      created_at:
+        type: string
+        format: date-time
+      side:
+        $ref: '#/definitions/Side'
+      type:
+        $ref: '#/definitions/Type'
+      user_id:
+        type: string
+      tags:
+        $ref: '#/definitions/Tags'
+      description:
+        type: string
+      transaction_validate:
+        type: string
+        format: date-time
+      target_area:
+        $ref: '#/definitions/Area'
+
+  Side:
+    type: string
+    enum:
+      - offer
+      - request
+      - local-business
+
+  Type:
+    type: string
+    enum:
+      - job
+      - service
+      - product
+      - finance
+
+  Area:
+    type: object
+    required:
+    properties:
+      lat:
+        type: number
+        format: float64
+      long:
+        type: number
+        format: float64
+      range:
+        type: number
+        format: float64
+      tags:
+        $ref: '#/definitions/Tags'
+
+  TransactionStatus:
+    type: string
+    enum:
+      - open
+      - in-progress
+      - done
+      - cancel
+
+  TransactionReview:
+    type: object
+    required:
+    properties:
+      transaction_id:
+        $ref: '#/definitions/ID'
+      created_at:
+        type: string
+        format: date-time
+      giver_id:
+        type: string
+      taker_id:
+        type: string
+      description:
+        type: string
+      tags:
+        $ref: '#/definitions/Tags'
+      giver_review:
+        $ref: '#/definitions/UserReview'
+      taker_review:
+        $ref: '#/definitions/UserReview'
+      status:
+        $ref: '#/definitions/TransactionStatus'    
+
+  UserReview:
+    type: object
+    required:
+    properties:
+      rating:
+        type: integer
+      comment:
+        type: string
+
+  Tags:
+    type: array
+    items:
+      type: string
+    x-omitempty: true
+
+  ID:
+    type: string
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
