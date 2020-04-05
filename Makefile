@@ -1,5 +1,4 @@
 build:
-	go mod vendor	
 	go build -o bin/give-help-server -v cmd/give-help-server/main.go
 
 generate:
