@@ -19,7 +19,7 @@ const (
 	Finance      = "finance"
 )
 
-type Transaction struct {
+type Proposal struct {
 	TransactionId string            `json:",omitempty"`
 	CreatedAt     time.time         `json:",omitempty"`
 	Side          Side              `json:",omitempty"`
