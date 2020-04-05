@@ -1,6 +1,5 @@
 ---
-
-swagger: '2.0'
+swagger: "2.0"
 info:
   title: give help
   version: 1.0.0
@@ -18,15 +17,15 @@ securityDefinitions:
     tokenUrl: https://give-help
     flow: accessCode
     scopes:
-      admin: 'Admin scope'
-      user: 'Normal User scope'
+      admin: "Admin scope"
+      user: "Normal User scope"
 
 security:
   - APIKeyHeader:
       - user
 
 paths:
-  '/auth/{provider}':
+  "/auth/{provider}":
     post:
       tags:
         - auth
@@ -35,15 +34,14 @@ paths:
       operationId: redirectHandler
       security: []
       parameters:
-        -
-          $ref: '#/parameters/Provider'
+        - $ref: "#/parameters/Provider"
       responses:
-        '302':
+        "302":
           description: User get authorized
           schema:
-            $ref: '#/definitions/LoggedUser'
+            $ref: "#/definitions/LoggedUser"
 
-  '/auth/{provider}/callback':
+  "/auth/{provider}/callback":
     post:
       tags:
         - auth
@@ -52,13 +50,12 @@ paths:
       operationId: callbackHandler
       security: []
       parameters:
-        -
-          $ref: '#/parameters/Provider'
+        - $ref: "#/parameters/Provider"
       responses:
-        '302':
+        "302":
           description: User get authorized
           schema:
-            $ref: '#/definitions/LoggedUser'
+            $ref: "#/definitions/LoggedUser"
 
 parameters:
   Provider:
@@ -82,7 +79,7 @@ definitions:
         type: string
       email:
         type: string
- 
+
   User:
     type: object
     required:
@@ -99,9 +96,9 @@ definitions:
       device_id:
         type: string
       location:
-        $ref: '#/definitions/Location'
+        $ref: "#/definitions/Location"
       contact:
-        $ref: '#/definitions/Contact'
+        $ref: "#/definitions/Contact"
       allow_share_data:
         type: boolean
       images:
@@ -109,9 +106,9 @@ definitions:
         items:
           type: string
       reputation:
-        $ref: '#/definitions/Reputation'
+        $ref: "#/definitions/Reputation"
       tags:
-        $ref: '#/definitions/Tags'
+        $ref: "#/definitions/Tags"
 
   Contact:
     type: object
@@ -120,7 +117,7 @@ definitions:
       phones:
         type: array
         items:
-          $ref: '#/definitions/Phone'
+          $ref: "#/definitions/Phone"
       email:
         type: string
       instagram:
@@ -134,7 +131,7 @@ definitions:
       additional_data:
         type: object
         additionalProperties:
-          type: object      
+          type: object
 
   Phone:
     type: object
@@ -182,31 +179,51 @@ definitions:
       taker:
         type: number
         format: float64
-  
-  Transaction:
+
+  Proposal:
     type: object
     required:
     properties:
-      transaction_id:
-        $ref: '#/definitions/ID'
+      proposal_id:
+        $ref: "#/definitions/ID"
       created_at:
         type: string
         format: date-time
       side:
-        $ref: '#/definitions/Side'
+        $ref: "#/definitions/Side"
       type:
-        $ref: '#/definitions/Type'
+        $ref: "#/definitions/Type"
       user_id:
-        type: string
+        $ref: "#/definitions/ID"
       tags:
-        $ref: '#/definitions/Tags'
+        $ref: "#/definitions/Tags"
       description:
         type: string
-      transaction_validate:
+      proposal_validate:
         type: string
         format: date-time
       target_area:
-        $ref: '#/definitions/Area'
+        $ref: "#/definitions/Area"
+
+  Transaction:
+    type: object
+    required:
+    properties:
+      proposal_id:
+        $ref: "#/definitions/ID"
+      giver_id:
+        $ref: "#/definitions/ID"
+      taker_id:
+        $ref: "#/definitions/ID"
+      created_at:
+        type: string
+        format: date-time
+      giver_review:
+        $ref: "#/definitions/Review"
+      taker_review:
+        $ref: "#/definitions/Review"
+      status:
+        $ref: "#/definitions/TransactionStatus"
 
   Side:
     type: string
@@ -237,7 +254,7 @@ definitions:
         type: number
         format: float64
       tags:
-        $ref: '#/definitions/Tags'
+        $ref: "#/definitions/Tags"
 
   TransactionStatus:
     type: string
@@ -247,31 +264,7 @@ definitions:
       - done
       - cancel
 
-  TransactionReview:
-    type: object
-    required:
-    properties:
-      transaction_id:
-        $ref: '#/definitions/ID'
-      created_at:
-        type: string
-        format: date-time
-      giver_id:
-        type: string
-      taker_id:
-        type: string
-      description:
-        type: string
-      tags:
-        $ref: '#/definitions/Tags'
-      giver_review:
-        $ref: '#/definitions/UserReview'
-      taker_review:
-        $ref: '#/definitions/UserReview'
-      status:
-        $ref: '#/definitions/TransactionStatus'    
-
-  UserReview:
+  Review:
     type: object
     required:
     properties:
@@ -288,4 +281,4 @@ definitions:
 
   ID:
     type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
+    pattern: "^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$"
