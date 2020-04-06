@@ -201,6 +201,9 @@ definitions:
         format: date-time
       target_area:
         $ref: "#/definitions/Area"
+      is_active:
+        type: boolean
+
 
   Transaction:
     type: object
