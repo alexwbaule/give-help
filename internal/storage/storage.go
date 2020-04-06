@@ -2,10 +2,11 @@ package storage
 
 import (
 	"bytes"
-	"net/http"
-	"github.com/alexwbaule/give-help/v2/generated/models"
-	"io/util"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+
+	"github.com/alexwbaule/give-help/v2/generated/models"
 )
 
 type Storage struct {
@@ -13,11 +14,11 @@ type Storage struct {
 }
 
 func New(postUrl string) (*Storage, error) {
-	return &Storage{postUrl: postUrl}, nil
+	return &Storage{postURL: postUrl}, nil
 }
 
-func (s *Storage) send(url string, payload []byte) ([]byte, error) {
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+func (s *Storage) send(payload []byte) ([]byte, error) {
+	resp, err := http.Post(s.postURL, "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		return []byte{}, nil
 	}
@@ -32,7 +33,6 @@ func (s *Storage) send(url string, payload []byte) ([]byte, error) {
 
 	return body, err
 }
-
 
 func (s *Storage) UpsertUser(user *models.User) error {
 	payload, err := json.Marshal(user)
@@ -71,13 +71,13 @@ func (s *Storage) InsertTransaction(transaction *models.Transaction) error {
 }
 
 func (s *Storage) UpdateTransactionStatus(transactionID string, status models.TransactionStatus) error {
-
+	return nil
 }
 
 func (s *Storage) InsertCategories(categories []string) error {
-
+	return nil
 }
 
-func (s *Storage) GetCategories() []string, error {
-
+func (s *Storage) GetCategories() ([]string, error) {
+	return []string{""}, nil
 }
