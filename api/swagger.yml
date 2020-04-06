@@ -26,7 +26,7 @@ security:
 
 paths:
   "/auth/{provider}":
-    post:
+    get:
       tags:
         - auth
       summary: authorize user
@@ -42,7 +42,7 @@ paths:
             $ref: "#/definitions/LoggedUser"
 
   "/auth/{provider}/callback":
-    post:
+    get:
       tags:
         - auth
       summary: authorize user
