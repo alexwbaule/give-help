@@ -72,20 +72,17 @@ definitions:
   LoggedUser:
     type: object
     required:
-      - name
-      - email
+      - id
     properties:
-      name:
-        type: string
-      email:
-        type: string
+      id:
+        $ref: "#/definitions/ID"
 
   User:
     type: object
     required:
     properties:
       user_id:
-        type: string
+        $ref: "#/definitions/ID"
       created_at:
         type: string
         format: date-time

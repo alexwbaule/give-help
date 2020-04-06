@@ -1,0 +1,21 @@
+auth:
+  Google:
+    ClientID: xxx
+    ClientSecret: yyyy
+    Issuer: https://example.google
+    Scopes:
+      - openid
+      - profile
+      - email
+  Facebook:
+    ClientID: xxxx
+    ClientSecret: yyyy
+    Issuer: https://example.facebook
+    Scopes:
+      - openid
+      - profile
+      - email
+  Token:
+    PrivateKey: etc/key.pem
+    PublicKey:  etc/public.pem
+    ExpiresAt: 90m

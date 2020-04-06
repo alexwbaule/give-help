@@ -24,7 +24,7 @@ type Runtime struct {
 }
 
 // GetULID returns a new ULID
-func GetULID() string {
+func (*Runtime) GetULID() string {
 	t := time.Now()
 	entropy := rand.New(rand.NewSource(t.UnixNano()))
 
