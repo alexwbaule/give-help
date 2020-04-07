@@ -3,3 +3,5 @@ vendor/
 generated/
 bin/
 etc/config.yml
+
+.git-credentials
