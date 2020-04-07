@@ -1,5 +1,7 @@
 package proposals
 
+import "time"
+
 type Proposals struct {
 	conn *storage.Connection
 }
@@ -16,14 +18,14 @@ func (p *Proposals) Load(userID string) (*models.Proposal, error) {
 
 }
 
-func (p *Proposals) Find(lat float64, long float64, range float64, tags []string) ([]*models.Proposal, error) {
+func (p *Proposals) Find(filter *models.Filter) ([]*models.Proposal, error) {
 
 }
 
 func (p *Proposals) ChangeActiveStatus(status bool) error {
-	
+
 }
 
 func (p *Proposals) ChangeValidate(validate time.Time) error {
-	
+
 }

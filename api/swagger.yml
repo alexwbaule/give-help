@@ -204,6 +204,20 @@ definitions:
       is_active:
         type: boolean
 
+  Filter:
+    type: object
+    required:
+    properties:
+      tags:
+        $ref: "#/definitions/Tags"
+      target_area:
+        $ref: "#/definitions/Area"
+      side:
+        $ref: "#/definitions/Side"        
+      proposal_types:
+        $ref: "#/definitions/Types"
+      description:
+        type: string
 
   Transaction:
     type: object
@@ -280,6 +294,12 @@ definitions:
     items:
       type: string
     x-omitempty: true
+
+  Types:
+    type: array
+    items:
+      type: string
+    x-omitempty: true    
 
   ID:
     type: string
