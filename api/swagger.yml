@@ -136,13 +136,13 @@ definitions:
     properties:
       region:
         type: string
-      number:
+      phone_number:
         type: string
       country_code:
         type: string
       whatsapp:
         type: boolean
-      default:
+      is_default:
         type: boolean
 
   Location:
@@ -188,7 +188,7 @@ definitions:
         format: date-time
       side:
         $ref: "#/definitions/Side"
-      type:
+      proposal_type:
         $ref: "#/definitions/Type"
       user_id:
         $ref: "#/definitions/ID"
@@ -201,11 +201,16 @@ definitions:
         format: date-time
       target_area:
         $ref: "#/definitions/Area"
+      is_active:
+        type: boolean
+
 
   Transaction:
     type: object
     required:
     properties:
+      transaction_id:
+        $ref: "#/definitions/ID"    
       proposal_id:
         $ref: "#/definitions/ID"
       giver_id:
