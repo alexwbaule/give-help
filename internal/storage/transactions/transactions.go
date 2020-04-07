@@ -20,6 +20,6 @@ func (t *Transactions) InsertTakerReview(transactionID string, review *models.Re
 
 }
 
-func (t *Transactions) UpdatStatus(transactionID string, status models.TransactionStatus) error {
+func (t *Transactions) UpdateStatus(transactionID string, status models.TransactionStatus) error {
 
 }
