@@ -19,7 +19,7 @@ type Config struct {
 
 type Connection struct {
 	config *Config
-	db      *sql.DB
+	Db      *sql.DB
 }
 
 func New(config *Config) (*Connection, error) {
@@ -39,7 +39,7 @@ func New(config *Config) (*Connection, error) {
 	if err == nil {
 		err = db.Ping()
 		if err = nil {
-			ret.db = db
+			ret.Db = db
 		}		
 	}		
 
@@ -48,8 +48,24 @@ func New(config *Config) (*Connection, error) {
 
 func (c *Connection) Close() {
 	if c != nil {
-		if c.DB != nil {
-			c.DB.Close()
+		if c.Db != nil {
+			c.Db.Close()
 		}
 	}
+}
+
+func (c *Connection) Execute(cmd string, args ...interface{}) (int, error) {
+	stmt, err := c.Db.Prepare(cmd)
+
+	if err != nil {
+		log.Error("fail to try prepare sql command: %s", cmd)
+	}
+
+	res, err = stmt.Exec(args)
+
+	if err != nil {
+		log.Error("fail to try execute sql command: %s", cmd)
+	}
+
+	return res.RowsAffected()
 }
