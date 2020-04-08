@@ -215,7 +215,10 @@ definitions:
       side:
         $ref: "#/definitions/Side"        
       proposal_types:
-        $ref: "#/definitions/Types"
+        type: array
+        items:
+          $ref: "#/definitions/Type"
+        x-omitempty: true
       description:
         type: string
 
@@ -293,13 +296,7 @@ definitions:
     type: array
     items:
       type: string
-    x-omitempty: true
-
-  Types:
-    type: array
-    items:
-      type: string
-    x-omitempty: true    
+    x-omitempty: true 
 
   ID:
     type: string
