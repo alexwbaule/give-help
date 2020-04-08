@@ -126,9 +126,7 @@ definitions:
       url:
         type: string
       additional_data:
-        type: object
-        additionalProperties:
-          type: object
+        type: string
 
   Phone:
     type: object
