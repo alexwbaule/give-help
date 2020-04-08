@@ -1,5 +1,12 @@
 package categories
 
+import (
+	"fmt"
+	"strings"
+
+	"github.com/alexwbaule/give-help/v2/internal/storage"
+)
+
 //Categories Object struct
 type Categories struct {
 	conn *storage.Connection
@@ -10,43 +17,57 @@ func New(conn *storage.Connection) *Categories {
 	return &Categories{conn: conn}
 }
 
-const insert = `INSERT INTO CATEGORIES (Name) VALUES %s;`
+const insertCategories = `INSERT INTO CATEGORIES (Name) VALUES %s;`
 
 //Insert insert categories on database
-func (c *Categories) Insert(categories []string) (int, error) {
-	items := []string{}
+func (c *Categories) Insert(categories []string) (int64, error) {
+	items := make([]string, len(categories))
 	for pos, cat := range categories {
 		if len(cat) > 0 {
-			items = append(items, fmt.Sprintf(`('%s')`, cat))
-		}		
+			items[pos] = fmt.Sprintf(`('%s')`, cat)
+		}
 	}
 
 	if len(items) == 0 {
 		return 0, nil
 	}
 
-	cmd := fmt.Sprintf(insert, strings.Join(items, ","))
+	cmd := fmt.Sprintf(insertCategories, strings.Join(items, ","))
 
-	return c.conn.Execute(cmd)
+	db := c.conn.Get()
+	defer db.Close()
+
+	aff, err := db.Exec(cmd)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return aff.RowsAffected()
 }
 
-const select = `
+const selectCategories = `
 SELECT 
-	DISTINCT Name 
+	DISTINCT Name
 FROM 
 	CATEGORIES
 WHERE
 	Name IS NOT NULL
-	AND (LENGTH) > 0
+	AND LENGTH(Name) > 0
 ORDER BY NAME`
 
 //Load load categories from database
 func (c *Categories) Load() ([]string, error) {
 	ret := []string{}
 
-	rows, err := c.conn.Db.Query(select)
-	
+	db := c.conn.Get()
+	defer db.Close()
+
+	rows, err := db.Query(selectCategories)
+
 	if err == nil {
+		defer rows.Close()
+
 		for rows.Next() {
 			var name string
 			if err = rows.Scan(&name); err == nil {
