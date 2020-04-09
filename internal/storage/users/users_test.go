@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestUser(t *testing.T) {
+func createConn() *Users {
 	dbConfig := &storage.Config{
 		Host:   "localhost",
 		User:   "postgres",
@@ -18,11 +18,17 @@ func TestUser(t *testing.T) {
 
 	conn := storage.New(dbConfig)
 
-	userStorage := New(conn)
+	return New(conn)
+}
 
-	userID := "01E5DEKKFZRKEYCRN6PDXJ8GYZ"
+func getUserID() string {
+	return "01E5DEKKFZRKEYCRN6PDXJ8GYZ"
+}
 
-	userData := &models.User{
+func createUser() *models.User {
+	userID := getUserID()
+
+	return &models.User{
 		UserID:         models.ID(userID),
 		AllowShareData: true,
 		Contact: &models.Contact{
@@ -66,6 +72,13 @@ func TestUser(t *testing.T) {
 			Long:    -46.63611,
 		},
 	}
+}
+
+func TestUser(t *testing.T) {
+	userStorage := createConn()
+
+	userData := createUser()
+	userID := string(userData.UserID)
 
 	err := userStorage.Upsert(userData)
 
@@ -73,22 +86,35 @@ func TestUser(t *testing.T) {
 		t.Errorf("fail to try insert user data from %v - error: %s", userData, err)
 	}
 
-	u, err := userStorage.Load(userID)
+	_, err = userStorage.Load(userID)
+
+	if err != nil {
+		t.Errorf("fail to load user, error=%s", err)
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	userStorage := createConn()
+
+	userData := createUser()
+	userID := getUserID()
+
+	userLoaded, err := userStorage.Load(userID)
 
 	if err != nil {
 		t.Errorf("fail to load user, error=%s", err)
 	}
 
-	u.Description = "Nosso querido usuário de testes unitários, agora atualizado"
-	u.Contact.Phones[0].PhoneNumber = "88888-8888"
+	userLoaded.Description = "Nosso querido usuário de testes unitários, agora atualizado"
+	userLoaded.Contact.Phones[0].PhoneNumber = "88888-8888"
 
-	err = userStorage.Upsert(u)
+	err = userStorage.Upsert(userLoaded)
 
 	if err != nil {
 		t.Errorf("fail to try update user data from %v - error: %s", userData, err)
 	}
 
-	updated, err := userStorage.Load(userID)
+	updated, err := userStorage.Load(string(userLoaded.UserID))
 
 	if err != nil {
 		t.Errorf("fail to load user, error=%s", err)

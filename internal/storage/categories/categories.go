@@ -29,7 +29,7 @@ func (c *Categories) Insert(categories []string) (int64, error) {
 	}
 
 	if len(items) == 0 {
-		return 0, nil
+		return 0, c.conn.CheckError(err)
 	}
 
 	cmd := fmt.Sprintf(insertCategories, strings.Join(items, ","))
@@ -40,7 +40,7 @@ func (c *Categories) Insert(categories []string) (int64, error) {
 	aff, err := db.Exec(cmd)
 
 	if err != nil {
-		return 0, err
+		return 0, c.conn.CheckError(err)
 	}
 
 	return aff.RowsAffected()
@@ -76,5 +76,5 @@ func (c *Categories) Load() ([]string, error) {
 		}
 	}
 
-	return ret, err
+	return ret, c.conn.CheckError(err)
 }
