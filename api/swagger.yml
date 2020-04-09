@@ -126,9 +126,7 @@ definitions:
       url:
         type: string
       additional_data:
-        type: object
-        additionalProperties:
-          type: object
+        type: string
 
   Phone:
     type: object
@@ -186,6 +184,9 @@ definitions:
       created_at:
         type: string
         format: date-time
+      last_update:
+        type: string
+        format: date-time        
       side:
         $ref: "#/definitions/Side"
       proposal_type:
@@ -204,6 +205,23 @@ definitions:
       is_active:
         type: boolean
 
+  Filter:
+    type: object
+    required:
+    properties:
+      tags:
+        $ref: "#/definitions/Tags"
+      target_area:
+        $ref: "#/definitions/Area"
+      side:
+        $ref: "#/definitions/Side"        
+      proposal_types:
+        type: array
+        items:
+          $ref: "#/definitions/Type"
+        x-omitempty: true
+      description:
+        type: string
 
   Transaction:
     type: object
@@ -220,6 +238,9 @@ definitions:
       created_at:
         type: string
         format: date-time
+      last_update:
+        type: string
+        format: date-time         
       giver_review:
         $ref: "#/definitions/Review"
       taker_review:
@@ -255,7 +276,7 @@ definitions:
       range:
         type: number
         format: float64
-      tags:
+      area_tags:
         $ref: "#/definitions/Tags"
 
   TransactionStatus:
@@ -279,7 +300,7 @@ definitions:
     type: array
     items:
       type: string
-    x-omitempty: true
+    x-omitempty: true 
 
   ID:
     type: string
