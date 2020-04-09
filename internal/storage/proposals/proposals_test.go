@@ -46,8 +46,8 @@ func createProposal() *models.Proposal {
 		TargetArea: &models.Area{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
 			Lat:      -23.5475,
-			Long:     -46.63611,
-			Range:    25,
+			Long:     -46.6361,
+			Range:    5,
 		},
 		Description: "Estou morrendo de fome, adoraria qualquer coisa para comer",
 		Tags:        models.Tags([]string{"Alimentação"}),
@@ -114,5 +114,133 @@ func TestUpsert(t *testing.T) {
 
 	if len(loaded.TargetArea.AreaTags) != len(data.TargetArea.AreaTags) {
 		t.Errorf("fail to load proposal, [TargetArea.AreaTags] expected: %s received: %s", data.TargetArea.AreaTags, loaded.TargetArea.AreaTags)
+	}
+}
+
+func createFilterDescription() *models.Filter {
+	return &models.Filter{
+		Description: "fome",
+	}
+}
+
+func createFilterSide() *models.Filter {
+	return &models.Filter{
+		Side: models.SideRequest,
+	}
+}
+
+func createFilterType() *models.Filter {
+	return &models.Filter{
+		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
+	}
+}
+
+func createFilterArea() *models.Filter {
+	return &models.Filter{
+		TargetArea: &models.Area{
+			Lat:   -23.5475,
+			Long:  -46.6361,
+			Range: 15,
+		},
+	}
+}
+
+func createFilterAreaTags() *models.Filter {
+	return &models.Filter{
+		TargetArea: &models.Area{
+			AreaTags: models.Tags{"ZL"},
+			Lat:      -23.5475,
+			Long:     -46.6361,
+			Range:    15,
+		},
+	}
+}
+
+func createFilterInvalidArea() *models.Filter {
+	return &models.Filter{
+		TargetArea: &models.Area{
+			Lat:   -20.5475,
+			Long:  -40.6361,
+			Range: 5,
+		},
+	}
+}
+
+func createFilterAll() *models.Filter {
+	return &models.Filter{
+		Description:   "fome",
+		Side:          models.SideRequest,
+		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
+		TargetArea: &models.Area{
+			Lat:   -23.5475,
+			Long:  -46.6361,
+			Range: 10,
+		},
+	}
+}
+
+func TestFilter(t *testing.T) {
+	storage := createConn()
+
+	//match
+	proposals, err := storage.Find(createFilterAll())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) == 0 {
+		t.Error("proposals all filter didn't work!")
+	}
+
+	proposals, err = storage.Find(createFilterDescription())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) == 0 {
+		t.Error("proposals description filter didn't work!")
+	}
+
+	proposals, err = storage.Find(createFilterArea())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) == 0 {
+		t.Error("proposals area filter didn't work!")
+	}
+
+	proposals, err = storage.Find(createFilterSide())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) == 0 {
+		t.Error("proposals side filter didn't work!")
+	}
+
+	proposals, err = storage.Find(createFilterType())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) == 0 {
+		t.Error("proposals type filter didn't work!")
+	}
+
+	//not match
+	proposals, err = storage.Find(createFilterInvalidArea())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) > 0 {
+		t.Error("proposals area filter didn't work! (found an invalid area)")
 	}
 }
