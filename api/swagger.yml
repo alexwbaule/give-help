@@ -238,6 +238,9 @@ definitions:
       created_at:
         type: string
         format: date-time
+      last_update:
+        type: string
+        format: date-time         
       giver_review:
         $ref: "#/definitions/Review"
       taker_review:
