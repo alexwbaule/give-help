@@ -63,7 +63,7 @@ func TestUpsert(t *testing.T) {
 	err := storage.Upsert(data)
 
 	if err != nil {
-		t.Errorf("fail to try insert prposal data from %v - error: %s", data, err)
+		t.Errorf("fail to try insert proposal data from %v - error: %s", data, err)
 	}
 
 	loaded, err := storage.LoadFromProposal(proposalID)

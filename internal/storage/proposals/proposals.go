@@ -64,6 +64,7 @@ DO UPDATE SET
     IsActive = $12;
 `
 
+//Upsert insert or update on database
 func (p *Proposals) Upsert(proposal *models.Proposal) error {
 	if proposal == nil {
 		return fmt.Errorf("cannot insert an empty proposal struct")
