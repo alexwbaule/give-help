@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"github.com/prometheus/common/log"
 )
 
+//Config base connection config struct
 type Config struct {
 	Host   string
 	User   string
@@ -15,11 +17,13 @@ type Config struct {
 	DBName string
 }
 
+//Connection base connection struct
 type Connection struct {
 	config  *Config
 	connStr string
 }
 
+//New creates a connection helper
 func New(config *Config) *Connection {
 	ret := &Connection{
 		config: config,
@@ -35,6 +39,7 @@ func New(config *Config) *Connection {
 	return ret
 }
 
+//Get returns an open sql.DB object (this must be closed after use!)
 func (c *Connection) Get() *sql.DB {
 	db, err := sql.Open("postgres", c.connStr)
 
@@ -45,4 +50,13 @@ func (c *Connection) Get() *sql.DB {
 	}
 
 	return db
+}
+
+//GetMessage try get better error message
+func (c *Connection) CheckError(err error) error {
+	if perr, ok := err.(*pq.Error); ok {
+		return fmt.Errorf("%s - pq-error: %v", perr.Error(), perr)
+	}
+
+	return err
 }

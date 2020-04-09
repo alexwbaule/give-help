@@ -22,11 +22,3 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 type Runtime struct {
 	app app.Application
 }
-
-// GetULID returns a new ULID
-func (*Runtime) GetULID() string {
-	t := time.Now()
-	entropy := rand.New(rand.NewSource(t.UnixNano()))
-
-	return ulid.MustNew(ulid.Timestamp(t), entropy).String()
-}

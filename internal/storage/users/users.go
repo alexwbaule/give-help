@@ -6,6 +6,7 @@ import (
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/storage"
 	"github.com/lib/pq"
+	"github.com/prometheus/common/log"
 )
 
 //Users Object struct
@@ -177,16 +178,6 @@ func (u *Users) Upsert(user *models.User) error {
 	db := u.conn.Get()
 	defer db.Close()
 
-	tags := make([]string, len(user.Tags))
-	for i, tag := range user.Tags {
-		tags[i] = tag
-	}
-
-	images := make([]string, len(user.Images))
-	for i, img := range user.Images {
-		images[i] = img
-	}
-
 	_, err := db.Exec(
 		upsertUser,
 		user.UserID,
@@ -194,8 +185,8 @@ func (u *Users) Upsert(user *models.User) error {
 		user.Description,
 		user.DeviceID,
 		user.AllowShareData,
-		pq.Array(tags),
-		pq.Array(images),
+		pq.Array(user.Tags),
+		pq.Array(user.Images),
 		repGiver,
 		repTaker,
 		url,
@@ -214,16 +205,13 @@ func (u *Users) Upsert(user *models.User) error {
 	)
 
 	if err != nil {
-		if perr, ok := err.(*pq.Error); ok {
-			return fmt.Errorf("fail to try execute upsert user data: user=%v pq-error=%s", user, perr)
-		}
-
-		return fmt.Errorf("fail to try execute upsert user data: user=%v error=%s", user, err)
+		log.Errorf("fail to try insert or update user on database: error = %s", err.Error())
+		return u.conn.CheckError(err)
 	}
 
 	err = u.insertPhones(user)
 
-	return err
+	return u.conn.CheckError(err)
 }
 
 const selectUser string = `
@@ -306,16 +294,13 @@ func (u *Users) Load(userID string) (*models.User, error) {
 	user.Tags = models.Tags(tags)
 
 	if err != nil {
-		if perr, ok := err.(*pq.Error); ok {
-			return &user, fmt.Errorf("fail to try read user data: userID=%s pq-error=%s", userID, perr)
-		}
-
-		return &user, fmt.Errorf("fail to try read user data: userID=%s error=%s", userID, err)
+		log.Errorf("fail to try load user from database: error = %s", err.Error())
+		return &user, u.conn.CheckError(err)
 	}
 
 	user.Contact.Phones, err = u.loadPhones(userID)
 
-	return &user, err
+	return &user, u.conn.CheckError(err)
 }
 
 const insertPhones string = `
@@ -359,7 +344,7 @@ func (u *Users) insertPhones(user *models.User) error {
 				_, err = db.Exec(cleanPhones, user.UserID)
 
 				if err != nil {
-					return err
+					return u.conn.CheckError(err)
 				}
 
 				for _, p := range user.Contact.Phones {
@@ -374,14 +359,14 @@ func (u *Users) insertPhones(user *models.User) error {
 					)
 
 					if err != nil {
-						return err
+						return u.conn.CheckError(err)
 					}
 				}
 			}
 		}
 	}
 
-	return err
+	return u.conn.CheckError(err)
 }
 
 const selectPhones = `
@@ -410,7 +395,7 @@ func (u *Users) loadPhones(userID string) ([]*models.Phone, error) {
 	rows, err := db.Query(selectPhones, userID)
 
 	if err != nil {
-		return ret, err
+		return ret, u.conn.CheckError(err)
 	}
 
 	defer rows.Close()
@@ -427,11 +412,11 @@ func (u *Users) loadPhones(userID string) ([]*models.Phone, error) {
 		)
 
 		if err != nil {
-			return ret, err
+			return ret, u.conn.CheckError(err)
 		}
 
 		ret = append(ret, &p)
 	}
 
-	return ret, err
+	return ret, u.conn.CheckError(err)
 }

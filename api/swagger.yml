@@ -184,6 +184,9 @@ definitions:
       created_at:
         type: string
         format: date-time
+      last_update:
+        type: string
+        format: date-time        
       side:
         $ref: "#/definitions/Side"
       proposal_type:
@@ -270,7 +273,7 @@ definitions:
       range:
         type: number
         format: float64
-      tags:
+      area_tags:
         $ref: "#/definitions/Tags"
 
   TransactionStatus:
