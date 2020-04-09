@@ -406,7 +406,7 @@ func (u *Users) loadPhones(userID string) ([]*models.Phone, error) {
 		err = rows.Scan(
 			&p.CountryCode,
 			&p.IsDefault,
-			&p.PhoneNumber,
+			&p.PhoneNumber,	
 			&p.Region,
 			&p.Whatsapp,
 		)

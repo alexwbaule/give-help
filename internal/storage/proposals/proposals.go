@@ -15,6 +15,7 @@ type Proposals struct {
 	conn *storage.Connection
 }
 
+//New creates a new instance
 func New(conn *storage.Connection) *Proposals {
 	return &Proposals{conn: conn}
 }

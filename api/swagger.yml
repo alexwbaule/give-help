@@ -55,7 +55,7 @@ paths:
         "302":
           description: User get authorized
           schema:
-            $ref: "#/definitions/LoggedUser"
+            $ref: "#/definitions/LoggedUser"    
 
 parameters:
   Provider:

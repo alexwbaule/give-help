@@ -74,7 +74,7 @@ func createUser() *models.User {
 	}
 }
 
-func TestUser(t *testing.T) {
+func TestInsert(t *testing.T) {
 	userStorage := createConn()
 
 	userData := createUser()
