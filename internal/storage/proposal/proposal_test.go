@@ -1,25 +1,26 @@
-package proposals
+package proposal
 
 import (
 	"fmt"
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
-	"github.com/alexwbaule/give-help/v2/internal/storage"
+	"github.com/alexwbaule/give-help/v2/internal/common"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
 
 	"testing"
 )
 
-func createConn() *Proposals {
-	dbConfig := &storage.Config{
+func createConn() *Proposal {
+	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
 	}
 
-	conn := storage.New(dbConfig)
+	conn := connection.New(dbConfig)
 
 	return New(conn)
 }
