@@ -50,8 +50,13 @@ func createProposal() *models.Proposal {
 			Long:     -46.6361,
 			Range:    5,
 		},
-		Description: "Estou morrendo de fome, adoraria qualquer coisa para comer",
-		Tags:        models.Tags([]string{"Alimentação"}),
+		Title:          "Quero comer",
+		Description:    "Estou morrendo de fome, adoraria qualquer coisa para comer",
+		Tags:           models.Tags([]string{"Alimentação"}),
+		Images:         []string{`http://my-domain.com/image1.jpg`, `http://my-domain.com/image2.jpg`, `http://my-domain.com/image3.jpg`},
+		EstimatedValue: float64(50),
+		ExposeUserData: true,
+		DataToShare:    []models.DataToShare{models.DataToSharePhone, models.DataToShareEmail, models.DataToShareFacebook, models.DataToShareInstagram, models.DataToShareURL},
 	}
 }
 
