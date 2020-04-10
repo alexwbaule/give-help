@@ -109,6 +109,8 @@ definitions:
         $ref: "#/definitions/Reputation"
       tags:
         $ref: "#/definitions/Tags"
+      register_from:
+        type: string
 
   Contact:
     type: object
@@ -198,6 +200,8 @@ definitions:
         $ref: "#/definitions/ID"
       tags:
         $ref: "#/definitions/Tags"
+      title:
+        type: string        
       description:
         type: string
       proposal_validate:
@@ -207,6 +211,19 @@ definitions:
         $ref: "#/definitions/Area"
       is_active:
         type: boolean
+      images:
+        type: array
+        items:
+          type: string
+      expose_user_data:
+        type: boolean
+      data_to_share:
+        type: array
+        items:
+          $ref: "#/definitions/DataToShare"
+      estimated_value:
+        type: number
+        format: float64
 
   Filter:
     type: object
@@ -225,6 +242,12 @@ definitions:
         x-omitempty: true
       description:
         type: string
+      max_value:
+        type: number
+        format: float64        
+      min_value:
+        type: number
+        format: float64                
 
   Transaction:
     type: object
@@ -286,7 +309,7 @@ definitions:
     type: string
     enum:
       - open
-      - in-progress
+      - in-progress      
       - done
       - cancel
 
@@ -304,6 +327,15 @@ definitions:
     items:
       type: string
     x-omitempty: true 
+
+  DataToShare:
+    type: string
+    enum:      
+      - Phone
+      - Email
+      - Facebook
+      - Instagram
+      - URL
 
   ID:
     type: string

@@ -52,7 +52,10 @@ INSERT INTO USERS
 
 	--point
 	Lat,
-	Long
+	Long,
+
+	--from
+	RegisterFrom
 )
 VALUES
 (
@@ -85,7 +88,8 @@ VALUES
 	
 	--point
 	$21,
-	$22	
+	$22,
+	#23
 )
 ON CONFLICT (UserID) 
 DO
@@ -120,7 +124,8 @@ DO
 
 		--point
 		Lat = $21,
-		Long = $22;
+		Long = $22,
+		RegisterFrom = #23;
 `
 
 //Upsert insert or update on database
@@ -249,7 +254,10 @@ SELECT
 
 	--point
 	Lat,
-	Long
+	Long,
+
+	--from
+	RegisterFrom
 FROM
 	USERS
 WHERE
