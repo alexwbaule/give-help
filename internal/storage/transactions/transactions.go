@@ -50,7 +50,7 @@ ON CONFLICT (TransactionID)
 DO
 	UPDATE
 	SET 
-		LastUpdate = CURRENT_DATE,
+		LastUpdate = CURRENT_TIMESTAMP,
 		GiverRating = $5,
 		GiverReviewComment = $6,
 		TakerRating = $7,
