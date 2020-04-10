@@ -90,6 +90,7 @@ ON CONFLICT (UserID)
 DO
 	UPDATE
 	SET 
+		LastUpdate = CURRENT_TIMESTAMP,
 		Name = $2,
 		Description = $3,
 		DeviceID = $4,
@@ -223,6 +224,9 @@ SELECT
 	Tags,
 	Images,
 
+	CreatedAt,
+	LastUpdate,
+
 	--Reputation
 	Giver,
 	Taker,
@@ -274,6 +278,8 @@ func (u *Users) Load(userID string) (*models.User, error) {
 		&user.AllowShareData,
 		pq.Array(&tags),
 		pq.Array(&user.Images),
+		&user.CreatedAt,
+		&user.LastUpdate,
 		&user.Reputation.Giver,
 		&user.Reputation.Taker,
 		&user.Contact.URL,
