@@ -1,26 +1,26 @@
-package categories
+package category
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/alexwbaule/give-help/v2/internal/storage"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 )
 
-//Categories Object struct
-type Categories struct {
-	conn *storage.Connection
+//Category Object struct
+type Category struct {
+	conn *connection.Connection
 }
 
 //New creates a new instance
-func New(conn *storage.Connection) *Categories {
-	return &Categories{conn: conn}
+func New(conn *connection.Connection) *Category {
+	return &Category{conn: conn}
 }
 
 const insertCategories = `INSERT INTO CATEGORIES (Name) VALUES %s;`
 
 //Insert insert categories on database
-func (c *Categories) Insert(categories []string) (int64, error) {
+func (c *Category) Insert(categories []string) (int64, error) {
 	items := make([]string, len(categories))
 	for pos, cat := range categories {
 		if len(cat) > 0 {
@@ -29,7 +29,7 @@ func (c *Categories) Insert(categories []string) (int64, error) {
 	}
 
 	if len(items) == 0 {
-		return 0, c.conn.CheckError(err)
+		return 0, nil
 	}
 
 	cmd := fmt.Sprintf(insertCategories, strings.Join(items, ","))
@@ -57,7 +57,7 @@ WHERE
 ORDER BY NAME`
 
 //Load load categories from database
-func (c *Categories) Load() ([]string, error) {
+func (c *Category) Load() ([]string, error) {
 	ret := []string{}
 
 	db := c.conn.Get()

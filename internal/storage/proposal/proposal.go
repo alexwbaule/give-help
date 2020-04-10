@@ -1,4 +1,4 @@
-package proposals
+package proposal
 
 import (
 	"fmt"
@@ -6,18 +6,19 @@ import (
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/lib/pq"
-	"github.com/prometheus/common/log"
+	"log"
 )
 
-type Proposals struct {
-	conn *storage.Connection
+//Proposal Object struct
+type Proposal struct {
+	conn *connection.Connection
 }
 
 //New creates a new instance
-func New(conn *storage.Connection) *Proposals {
-	return &Proposals{conn: conn}
+func New(conn *connection.Connection) *Proposal {
+	return &Proposal{conn: conn}
 }
 
 const upsertProposal string = `
@@ -66,7 +67,7 @@ DO UPDATE SET
 `
 
 //Upsert insert or update on database
-func (p *Proposals) Upsert(proposal *models.Proposal) error {
+func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	if proposal == nil {
 		return fmt.Errorf("cannot insert an empty proposal struct")
 	}
@@ -150,7 +151,7 @@ ORDER BY
 `
 
 //LoadFromProposal load an unique proposal from a proposalID
-func (p *Proposals) LoadFromProposal(prposalID string) (*models.Proposal, error) {
+func (p *Proposal) LoadFromProposal(prposalID string) (*models.Proposal, error) {
 	ret := models.Proposal{TargetArea: &models.Area{}}
 
 	cmd := fmt.Sprintf(selectProposal, "ProposalID = $1")
@@ -185,16 +186,16 @@ func (p *Proposals) LoadFromProposal(prposalID string) (*models.Proposal, error)
 }
 
 //LoadFromUser load all proposals from an userID
-func (p *Proposals) LoadFromUser(userID string) ([]*models.Proposal, error) {
+func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 	cmd := fmt.Sprintf(selectProposal, "UserID = $1")
 
 	return p.load(cmd, userID)
 }
 
 //Find find all proposals that match with filter
-func (p *Proposals) Find(filter *models.Filter) ([]*models.Proposal, error) {
+func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter == nil {
-		log.Warnf("cannot execute a query with null filter")
+		log.Printf("cannot execute a query with null filter")
 		return nil, nil
 	}
 
@@ -250,7 +251,7 @@ func (p *Proposals) Find(filter *models.Filter) ([]*models.Proposal, error) {
 				)
 			}
 		} else {
-			log.Warnf("cannot calculate target area range filter")
+			log.Printf("cannot calculate target area range filter")
 		}
 	}
 
@@ -259,7 +260,7 @@ func (p *Proposals) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	return p.load(cmd, args...)
 }
 
-func (p *Proposals) load(cmd string, args ...interface{}) ([]*models.Proposal, error) {
+func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, error) {
 	ret := []*models.Proposal{}
 
 	db := p.conn.Get()

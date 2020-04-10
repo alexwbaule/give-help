@@ -1,20 +1,21 @@
-package categories
+package category
 
 import (
 	"testing"
 
-	"github.com/alexwbaule/give-help/v2/internal/storage"
+	"github.com/alexwbaule/give-help/v2/internal/common"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 )
 
 func TestCategories(t *testing.T) {
-	dbConfig := &storage.Config{
+	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
 	}
 
-	conn := storage.New(dbConfig)
+	conn := connection.New(dbConfig)
 
 	catStorage := New(conn)
 

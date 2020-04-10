@@ -45,3 +45,15 @@ func CalculeRange(area *models.Area) (float64, float64, float64, float64, error)
 func round(x float64) float64 {
 	return math.Round(x*10000) / 10000
 }
+
+type Config struct {
+	Db *DbConfig
+}
+
+//Config base connection config struct
+type DbConfig struct {
+	Host   string
+	User   string
+	Pass   string
+	DBName string
+}
