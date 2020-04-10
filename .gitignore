@@ -5,3 +5,4 @@ bin/
 etc/config.yml
 
 .git-credentials
+.vscode/

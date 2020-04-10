@@ -27,5 +27,7 @@ require (
 	github.com/rs/cors v1.7.0
 	github.com/spf13/cast v1.3.1 // indirect
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
+	golang.org/x/tools v0.0.0-20200409210453-700752c24408 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )

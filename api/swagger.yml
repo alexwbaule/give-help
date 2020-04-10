@@ -86,6 +86,9 @@ definitions:
       created_at:
         type: string
         format: date-time
+      last_update:
+        type: string
+        format: date-time          
       name:
         type: string
       description:

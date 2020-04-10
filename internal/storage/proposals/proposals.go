@@ -52,7 +52,7 @@ VALUES
 )
 ON CONFLICT (ProposalID) 
 DO UPDATE SET
-	LastUpdate = CURRENT_DATE,
+	LastUpdate = CURRENT_TIMESTAMP,
     Side = $3,
     ProposalType = $4,
     Tags = $5,
