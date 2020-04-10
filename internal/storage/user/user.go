@@ -1,22 +1,23 @@
-package users
+package user
 
 import (
 	"fmt"
 
+	"log"
+
 	"github.com/alexwbaule/give-help/v2/generated/models"
-	"github.com/alexwbaule/give-help/v2/internal/storage"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/lib/pq"
-	"github.com/prometheus/common/log"
 )
 
-//Users Object struct
-type Users struct {
-	conn *storage.Connection
+//User Object struct
+type User struct {
+	conn *connection.Connection
 }
 
 //New creates a new instance
-func New(conn *storage.Connection) *Users {
-	return &Users{conn: conn}
+func New(conn *connection.Connection) *User {
+	return &User{conn: conn}
 }
 
 const upsertUser string = `
@@ -90,7 +91,7 @@ ON CONFLICT (UserID)
 DO
 	UPDATE
 	SET 
-		LastUpdate = CURRENT_TIMESTAMP,
+	LastUpdate = CURRENT_TIMESTAMP,
 		Name = $2,
 		Description = $3,
 		DeviceID = $4,
@@ -123,7 +124,7 @@ DO
 `
 
 //Upsert insert or update on database
-func (u *Users) Upsert(user *models.User) error {
+func (u *User) Upsert(user *models.User) error {
 	if user == nil {
 		return fmt.Errorf("cannot insert an empty user struct")
 	}
@@ -206,7 +207,7 @@ func (u *Users) Upsert(user *models.User) error {
 	)
 
 	if err != nil {
-		log.Errorf("fail to try insert or update user on database: error = %s", err.Error())
+		log.Printf("fail to try insert or update user on database: error = %s", err.Error())
 		return u.conn.CheckError(err)
 	}
 
@@ -256,7 +257,7 @@ WHERE
 `
 
 //Load load from database
-func (u *Users) Load(userID string) (*models.User, error) {
+func (u *User) Load(userID string) (*models.User, error) {
 	user := models.User{
 		UserID:     models.ID(userID),
 		Contact:    &models.Contact{},
@@ -300,7 +301,7 @@ func (u *Users) Load(userID string) (*models.User, error) {
 	user.Tags = models.Tags(tags)
 
 	if err != nil {
-		log.Errorf("fail to try load user from database: error = %s", err.Error())
+		log.Printf("fail to try load user from database: error = %s", err.Error())
 		return &user, u.conn.CheckError(err)
 	}
 
@@ -338,7 +339,7 @@ WHERE
 	UserID = $1
 `
 
-func (u *Users) insertPhones(user *models.User) error {
+func (u *User) insertPhones(user *models.User) error {
 	var err error
 
 	if user != nil {
@@ -392,7 +393,7 @@ ORDER BY
 ;
 `
 
-func (u *Users) loadPhones(userID string) ([]*models.Phone, error) {
+func (u *User) loadPhones(userID string) ([]*models.Phone, error) {
 	ret := []*models.Phone{}
 
 	db := u.conn.Get()
@@ -412,7 +413,7 @@ func (u *Users) loadPhones(userID string) ([]*models.Phone, error) {
 		err = rows.Scan(
 			&p.CountryCode,
 			&p.IsDefault,
-			&p.PhoneNumber,	
+			&p.PhoneNumber,
 			&p.Region,
 			&p.Whatsapp,
 		)

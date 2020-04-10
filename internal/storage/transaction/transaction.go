@@ -1,21 +1,21 @@
-package transactions
+package transaction
 
 import (
 	"fmt"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
-	"github.com/alexwbaule/give-help/v2/internal/storage"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/lib/pq"
 )
 
-//Transactions Object struct
-type Transactions struct {
-	conn *storage.Connection
+//Transaction Object struct
+type Transaction struct {
+	conn *connection.Connection
 }
 
 //New creates a new instance
-func New(conn *storage.Connection) *Transactions {
-	return &Transactions{conn: conn}
+func New(conn *connection.Connection) *Transaction {
+	return &Transaction{conn: conn}
 }
 
 const upsertTransaction string = `
@@ -60,7 +60,7 @@ DO
 ;`
 
 //Upsert insert or update on database
-func (t *Transactions) Upsert(transaction *models.Transaction) error {
+func (t *Transaction) Upsert(transaction *models.Transaction) error {
 	if transaction == nil {
 		return fmt.Errorf("cannot insert an empty transaction struct")
 	}
@@ -138,15 +138,15 @@ ORDER BY
 	CreatedAt ASC
 `
 
-func (t *Transactions) LoadByProposalID(proposalID string) (*models.Transaction, error) {
+func (t *Transaction) LoadByProposalID(proposalID string) (*models.Transaction, error) {
 	return t.load(fmt.Sprintf(selectTransaction, "ProposalID = $1"), proposalID)
 }
 
-func (t *Transactions) LoadByUserID(userID string) (*models.Transaction, error) {
+func (t *Transaction) LoadByUserID(userID string) (*models.Transaction, error) {
 	return t.load(fmt.Sprintf(selectTransaction, "GiverID = $1 OR TakerID = $1"), userID)
 }
 
-func (t *Transactions) load(cmd string, args ...interface{}) (*models.Transaction, error) {
+func (t *Transaction) load(cmd string, args ...interface{}) (*models.Transaction, error) {
 	ret := models.Transaction{
 		GiverReview: &models.Review{},
 		TakerReview: &models.Review{},

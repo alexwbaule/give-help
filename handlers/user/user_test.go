@@ -1,28 +1,30 @@
-package users
+package user
 
 import (
+	"fmt"
+	"testing"
+
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage"
-
-	"testing"
 )
 
-func createConn() *Users {
-	dbConfig := &storage.Config{
+func createHandler() *User {
+	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
 	}
 
-	conn := storage.New(dbConfig)
+	config := &common.Config{
+		Db: dbConfig,
+	}
 
-	return New(conn)
+	return New(config)
 }
 
 func getUserID() string {
-	return "01E5DEKKFZRKEYCRN6PDXJ8GYZ"
+	return "01E5DEKKFZRKEYCRN6PDXJ8UUU"
 }
 
 func createUser() *models.User {
@@ -56,7 +58,7 @@ func createUser() *models.User {
 		},
 		Description: "Nosso querido usuário de testes unitários",
 		DeviceID:    common.GetULID(),
-		Name:        "Usuario Da Silva",
+		Name:        "José Insertido Pelo Serviço",
 		Reputation: &models.Reputation{
 			Giver: 2.5,
 			Taker: 2.5,
@@ -74,57 +76,46 @@ func createUser() *models.User {
 	}
 }
 
-func TestInsert(t *testing.T) {
-	userStorage := createConn()
+func TestUserInsert(t *testing.T) {
+	user := createUser()
 
-	userData := createUser()
-	userID := string(userData.UserID)
+	service := createHandler()
 
-	err := userStorage.Upsert(userData)
+	id, err := service.Insert(user)
 
 	if err != nil {
-		t.Errorf("fail to try insert user data from %v - error: %s", userData, err)
+		t.Errorf("fail to insert user data from %v - error: %s", user, err.Error())
 	}
 
-	_, err = userStorage.Load(userID)
-
-	if err != nil {
-		t.Errorf("fail to load user, error=%s", err)
+	if len(id) == 0 {
+		t.Errorf("fail to try insert user data from %v - error: %s", user, fmt.Errorf("empty user id on return"))
 	}
 }
 
-func TestUpdate(t *testing.T) {
-	userStorage := createConn()
+func TestUserUpdate(t *testing.T) {
+	user := createUser()
 
-	userData := createUser()
-	userID := getUserID()
+	service := createHandler()
 
-	userLoaded, err := userStorage.Load(userID)
+	user.Name = "Jose Alterado Pelo Serviço"
 
-	if err != nil {
-		t.Errorf("fail to load user, error=%s", err)
-	}
-
-	userLoaded.Description = "Nosso querido usuário de testes unitários, agora atualizado"
-	userLoaded.Contact.Phones[0].PhoneNumber = "88888-8888"
-
-	err = userStorage.Upsert(userLoaded)
+	err := service.Update(user)
 
 	if err != nil {
-		t.Errorf("fail to try update user data from %v - error: %s", userData, err)
+		t.Errorf("fail to update user data from %v - error: %s", user, err.Error())
 	}
+}
 
-	updated, err := userStorage.Load(string(userLoaded.UserID))
+func TestUserLoad(t *testing.T) {
+	service := createHandler()
+
+	user, err := service.Load(getUserID())
 
 	if err != nil {
-		t.Errorf("fail to load user, error=%s", err)
+		t.Errorf("fail to insert user data from %v - error: %s", user, err.Error())
 	}
 
-	if updated.Description == userData.Description {
-		t.Errorf("fail to update user (description), error=%s", err)
-	}
-
-	if updated.Contact.Phones[0].PhoneNumber == userData.Contact.Phones[0].PhoneNumber {
-		t.Errorf("fail to update user (phone number), error=%s", err)
+	if user.UserID != models.ID(getUserID()) {
+		t.Errorf("fail to try load user data from %v", getUserID())
 	}
 }

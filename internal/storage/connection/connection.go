@@ -1,4 +1,4 @@
-package storage
+package connection
 
 import (
 	"database/sql"
@@ -7,24 +7,17 @@ import (
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"github.com/prometheus/common/log"
+	"github.com/alexwbaule/give-help/v2/internal/common"
 )
-
-//Config base connection config struct
-type Config struct {
-	Host   string
-	User   string
-	Pass   string
-	DBName string
-}
 
 //Connection base connection struct
 type Connection struct {
-	config  *Config
+	config  *common.DbConfig
 	connStr string
 }
 
 //New creates a connection helper
-func New(config *Config) *Connection {
+func New(config *common.DbConfig) *Connection {
 	ret := &Connection{
 		config: config,
 	}
