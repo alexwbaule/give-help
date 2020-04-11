@@ -30,7 +30,6 @@ import (
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/generated/restapi"
 	"github.com/alexwbaule/give-help/v2/generated/restapi/operations"
-	"github.com/alexwbaule/give-help/v2/handlers"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 
 	app "github.com/alexwbaule/go-app"

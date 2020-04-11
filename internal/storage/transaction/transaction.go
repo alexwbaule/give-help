@@ -90,7 +90,6 @@ func (t *Transaction) Upsert(transaction *models.Transaction) error {
 	}
 
 	db := t.conn.Get()
-	defer db.Close()
 
 	_, err := db.Exec(
 		upsertTransaction,
@@ -138,40 +137,67 @@ ORDER BY
 	CreatedAt ASC
 `
 
-func (t *Transaction) LoadByProposalID(proposalID string) (*models.Transaction, error) {
+func (t *Transaction) Load(transactionID string) (*models.Transaction, error) {
+	ret, err := t.load(fmt.Sprintf(selectTransaction, "TransactionID = $1"), transactionID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ret) > 0 {
+		return ret[0], err
+	}
+
+	return nil, fmt.Errorf("transaction not found with ID: %s", transactionID)
+}
+
+func (t *Transaction) LoadByProposalID(proposalID string) ([]*models.Transaction, error) {
 	return t.load(fmt.Sprintf(selectTransaction, "ProposalID = $1"), proposalID)
 }
 
-func (t *Transaction) LoadByUserID(userID string) (*models.Transaction, error) {
+func (t *Transaction) LoadByUserID(userID string) ([]*models.Transaction, error) {
 	return t.load(fmt.Sprintf(selectTransaction, "GiverID = $1 OR TakerID = $1"), userID)
 }
 
-func (t *Transaction) load(cmd string, args ...interface{}) (*models.Transaction, error) {
-	ret := models.Transaction{
-		GiverReview: &models.Review{},
-		TakerReview: &models.Review{},
-	}
+func (t *Transaction) load(cmd string, args ...interface{}) ([]*models.Transaction, error) {
+	ret := []*models.Transaction{}
 
 	db := t.conn.Get()
-	defer db.Close()
 
-	row := db.QueryRow(cmd, args...)
+	rows, err := db.Query(cmd, args...)
 
-	err := row.Scan(
-		&ret.TransactionID,
-		&ret.ProposalID,
-		&ret.GiverID,
-		&ret.TakerID,
+	if err != nil {
+		return ret, t.conn.CheckError(err)
+	}
 
-		&ret.CreatedAt,
-		&ret.LastUpdate,
+	defer rows.Close()
 
-		&ret.GiverReview.Rating,
-		&ret.GiverReview.Comment,
-		&ret.TakerReview.Rating,
-		&ret.TakerReview.Comment,
-		&ret.Status,
-	)
+	for rows.Next() {
+		i := models.Transaction{
+			GiverReview: &models.Review{},
+			TakerReview: &models.Review{},
+		}
 
-	return &ret, t.conn.CheckError(err)
+		err := rows.Scan(
+			&i.TransactionID,
+			&i.ProposalID,
+			&i.GiverID,
+			&i.TakerID,
+			&i.CreatedAt,
+			&i.LastUpdate,
+			&i.GiverReview.Rating,
+			&i.GiverReview.Comment,
+			&i.TakerReview.Rating,
+			&i.TakerReview.Comment,
+			&i.Status,
+		)
+
+		if err != nil {
+			return ret, t.conn.CheckError(err)
+		}
+
+		ret = append(ret, &i)
+	}
+
+	return ret, t.conn.CheckError(err)
 }

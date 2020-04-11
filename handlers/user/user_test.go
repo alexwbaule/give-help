@@ -84,7 +84,7 @@ func TestUserInsert(t *testing.T) {
 	id, err := service.Insert(user)
 
 	if err != nil {
-		t.Errorf("fail to insert user data from %v - error: %s", user, err.Error())
+		t.Errorf("fail to try insert user data from %v - error: %s", user, err.Error())
 	}
 
 	if len(id) == 0 {
@@ -102,7 +102,7 @@ func TestUserUpdate(t *testing.T) {
 	err := service.Update(user)
 
 	if err != nil {
-		t.Errorf("fail to update user data from %v - error: %s", user, err.Error())
+		t.Errorf("fail to try update user data from %v - error: %s", user, err.Error())
 	}
 }
 
@@ -112,7 +112,7 @@ func TestUserLoad(t *testing.T) {
 	user, err := service.Load(getUserID())
 
 	if err != nil {
-		t.Errorf("fail to insert user data from %v - error: %s", user, err.Error())
+		t.Errorf("fail to try load user data from %v - error: %s", user, err.Error())
 	}
 
 	if user.UserID != models.ID(getUserID()) {

@@ -98,7 +98,6 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	}
 
 	db := p.conn.Get()
-	defer db.Close()
 
 	lat := float64(0)
 	long := float64(0)
@@ -195,7 +194,6 @@ func (p *Proposal) LoadFromProposal(prposalID string) (*models.Proposal, error) 
 	cmd := fmt.Sprintf(selectProposal, "ProposalID = $1")
 
 	db := p.conn.Get()
-	defer db.Close()
 
 	var tags []string
 	var areaTags []string
@@ -331,7 +329,6 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 	ret := []*models.Proposal{}
 
 	db := p.conn.Get()
-	defer db.Close()
 
 	rows, err := db.Query(cmd, args...)
 
