@@ -183,7 +183,6 @@ func (u *User) Upsert(user *models.User) error {
 	}
 
 	db := u.conn.Get()
-	defer db.Close()
 
 	_, err := db.Exec(
 		upsertUser,
@@ -274,7 +273,6 @@ func (u *User) Load(userID string) (*models.User, error) {
 	}
 
 	db := u.conn.Get()
-	defer db.Close()
 
 	row := db.QueryRow(selectUser, userID)
 
@@ -354,7 +352,6 @@ func (u *User) insertPhones(user *models.User) error {
 		if user.Contact != nil {
 			if len(user.Contact.Phones) > 0 {
 				db := u.conn.Get()
-				defer db.Close()
 
 				_, err = db.Exec(cleanPhones, user.UserID)
 
@@ -405,7 +402,6 @@ func (u *User) loadPhones(userID string) ([]*models.Phone, error) {
 	ret := []*models.Phone{}
 
 	db := u.conn.Get()
-	defer db.Close()
 
 	rows, err := db.Query(selectPhones, userID)
 
