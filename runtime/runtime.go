@@ -37,3 +37,11 @@ type Runtime struct {
 func (rt *Runtime) GetFirebase() *firebase.App {
 	return rt.fbase
 }
+
+func (rt *Runtime) GetDatabase() *connection.Connection {
+	return rt.database
+}
+
+func (rt *Runtime) CloseDatabase() {
+	rt.database.Close()
+}
