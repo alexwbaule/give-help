@@ -4,16 +4,17 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"github.com/prometheus/common/log"
-	"github.com/alexwbaule/give-help/v2/internal/common"
 )
 
 //Connection base connection struct
 type Connection struct {
 	config  *common.DbConfig
 	connStr string
+	db      *sql.DB
 }
 
 //New creates a connection helper
@@ -29,12 +30,7 @@ func New(config *common.DbConfig) *Connection {
 		config.Host,
 	)
 
-	return ret
-}
-
-//Get returns an open sql.DB object (this must be closed after use!)
-func (c *Connection) Get() *sql.DB {
-	db, err := sql.Open("postgres", c.connStr)
+	db, err := sql.Open("postgres", ret.connStr)
 
 	if err == nil {
 		if err = db.Ping(); err != nil {
@@ -42,7 +38,20 @@ func (c *Connection) Get() *sql.DB {
 		}
 	}
 
-	return db
+	ret.db = db
+
+	return ret
+}
+
+//Get returns an open sql.DB object (this must be closed after use!)
+func (c *Connection) Get() *sql.DB {
+	return c.db
+}
+
+func (c *Connection) Close() {
+	if c.db != nil {
+		c.db.Close()
+	}
 }
 
 //GetMessage try get better error message

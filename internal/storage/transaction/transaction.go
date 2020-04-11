@@ -90,7 +90,6 @@ func (t *Transaction) Upsert(transaction *models.Transaction) error {
 	}
 
 	db := t.conn.Get()
-	defer db.Close()
 
 	_, err := db.Exec(
 		upsertTransaction,
@@ -138,6 +137,20 @@ ORDER BY
 	CreatedAt ASC
 `
 
+func (t *Transaction) Load(transactionID string) (*models.Transaction, error) {
+	ret, err := t.load(fmt.Sprintf(selectTransaction, "TransactionID = $1"), transactionID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ret) > 0 {
+		return ret[0], err
+	}
+
+	return nil, fmt.Errorf("transaction not found with ID: %s", transactionID)
+}
+
 func (t *Transaction) LoadByProposalID(proposalID string) ([]*models.Transaction, error) {
 	return t.load(fmt.Sprintf(selectTransaction, "ProposalID = $1"), proposalID)
 }
@@ -150,7 +163,6 @@ func (t *Transaction) load(cmd string, args ...interface{}) ([]*models.Transacti
 	ret := []*models.Transaction{}
 
 	db := t.conn.Get()
-	defer db.Close()
 
 	rows, err := db.Query(cmd, args...)
 

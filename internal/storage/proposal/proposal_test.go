@@ -29,12 +29,12 @@ func getUserID() string {
 	return "01E5DEKKFZRKEYCRN6PDXJ8GYZ"
 }
 
-func getPrposalID() string {
+func getProposalID() string {
 	return "01E5DEKKFZRKEYCRN6PDXJ8GXX"
 }
 
 func createProposal() *models.Proposal {
-	proposalID := getPrposalID()
+	proposalID := getProposalID()
 	userID := getUserID()
 
 	return &models.Proposal{
@@ -63,7 +63,7 @@ func createProposal() *models.Proposal {
 func TestUpsert(t *testing.T) {
 	storage := createConn()
 
-	proposalID := getPrposalID()
+	proposalID := getProposalID()
 	data := createProposal()
 
 	err := storage.Upsert(data)
