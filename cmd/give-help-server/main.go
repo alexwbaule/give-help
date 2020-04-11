@@ -65,6 +65,7 @@ func main() {
 	api := operations.NewGiveHelpAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
+	defer rt.CloseDatabase()
 
 	server.EnabledListeners = app.Config().GetStringSlice("service.EnabledListeners")
 	server.Host = app.Config().GetString("service.Host")
