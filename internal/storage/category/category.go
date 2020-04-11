@@ -42,7 +42,6 @@ func (c *Category) Insert(categories []string) (int64, error) {
 	cmd := fmt.Sprintf(insertCategories, strings.Join(items, ","))
 
 	db := c.conn.Get()
-	defer db.Close()
 
 	aff, err := db.Exec(cmd)
 
@@ -68,7 +67,6 @@ func (c *Category) Load() ([]string, error) {
 	ret := []string{}
 
 	db := c.conn.Get()
-	defer db.Close()
 
 	rows, err := db.Query(selectCategories)
 
