@@ -20,37 +20,631 @@ securityDefinitions:
       admin: "Admin scope"
       user: "Normal User scope"
 
+tags:
+  - name: user
+  - name: transaction
+  - name: proposal
+  - name: category
+
 security:
   - APIKeyHeader:
       - user
 
 paths:
-  /test:
+  /user:
+    post:
+      tags:
+        - user
+      summary: Add User
+      description: Add a new User
+      operationId: AddUserHandler
+      parameters:
+        -
+          in: body
+          name: body
+          description: User Object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: User ID
+          schema:
+            $ref: "#/definitions/ID"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /user/{user_id}:
     get:
       tags:
-        - auth
-      summary: authorize user
-      description: Get user authorization from providers
-      operationId: redirectHandler
+        - user
+      summary: Get User
+      description: Get User by ID
+      operationId: GetUserByIDHandler
+      parameters:
+        -
+          $ref: '#/parameters/UserID'
+      responses:
+        200:
+          description: User
+          schema:
+            $ref: "#/definitions/User"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+    put:
+      tags:
+        - user
+      summary: Update User
+      description: Update User By ID
+      operationId: UpdateUserByIDHandler
+      parameters:
+        -
+          $ref: '#/parameters/UserID'
+      responses:
+        200:
+          description: User Updated
+          schema:
+            $ref: "#/definitions/User"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /transaction:
+    post:
+      tags:
+        - transaction
+      summary: Add a Transaction
+      description: Add a New Transaction
+      operationId: AddTransactionHanlder
+      parameters:
+        -
+          in: body
+          name: body
+          description: Transaction Object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Transaction'
+      responses:
+        200:
+          description: Transaction ID
+          schema:
+            $ref: "#/definitions/ID"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /transaction/{transaction_id}:
+    get:
+      tags:
+        - transaction
+      summary: Get Transaction
+      description: Get Transaction By ID
+      operationId: GetTransactionByIDHandler
+      parameters:
+        -
+          $ref: '#/parameters/TransactionID'
+      responses:
+        200:
+          description: Transaction
+          schema:
+            $ref: "#/definitions/Transaction"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /transaction/proposal/{proposal_id}:
+    get:
+      tags:
+        - transaction
+      summary: Get Transaction By Proposal
+      description: Get Transaction By Proposal ID
+      operationId: GetTransactionByProposalIDHandler
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+      responses:
+        200:
+          description: Transaction List
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Transaction'
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+  
+  /transaction/user/{user_id}:
+    get:
+      tags:
+        - transaction
+      summary: Get Transaction By User
+      description: Get Transaction By User ID
+      operationId: GetTransactionByUserIDHandler
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+      responses:
+        200:
+          description: Transaction List
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Transaction'
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /transaction/{transaction_id}/giver_review:
+    put:
+      tags:
+        - transaction
+      summary: Update Transaction with Giver Review
+      description: Update Transaction with Giver Review
+      operationId: TransactionGiverReviewHandler
+      parameters:
+        -
+          $ref: '#/parameters/TransactionID'
+        -
+          in: body
+          name: body
+          description: Review
+          required: true
+          schema:
+            $ref: '#/definitions/Review'
+      responses:
+        200:
+          description: Giver Review Created
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /transaction/{transaction_id}/taker_review:
+    put:
+      tags:
+        - transaction
+      summary: Update Transaction with Taker Review
+      description: Update Transaction with Taker Review
+      operationId: TransactionTakerReviewHandler
+      parameters:
+        -
+          $ref: '#/parameters/TransactionID'
+        -
+          in: body
+          name: body
+          description: Review
+          required: true
+          schema:
+            $ref: '#/definitions/Review'
+      responses:
+        200:
+          description: Taker Review Created
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+  
+  /transaction/{transaction_id}/change_status:
+    put:
+      tags:
+        - transaction
+      summary: Change Transaction Status
+      description: Change Transaction Status
+      operationId: ChangeTransactionStatusHandler
+      parameters:
+        -
+          $ref: '#/parameters/TransactionID'
+        -
+          in: body
+          name: body
+          description: Review
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionStatus'
+      responses:
+        200:
+          description: Transaction Status Changed
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+    
+  /proposal:
+    post:
+      tags:
+        - proposal
+      summary: Add a Proposal
+      description: Add a New Proposal
+      operationId: AddProposalHanlder
+      parameters:
+        -
+          in: body
+          name: body
+          description: Proposal Object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Proposal'
+      responses:
+        200:
+          description: Proposal ID
+          schema:
+            $ref: "#/definitions/ID"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /proposal/{proposal_id}:
+    get:
+      tags:
+        - proposal
+      summary: Get a Proposal
+      description: Get a Proposal By ID
+      operationId: GetProposalByIDHanlder
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+      responses:
+        200:
+          description: Proposal
+          schema:
+            $ref: "#/definitions/Proposal"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+  
+  /proposal/user/{user_id}:
+    get:
+      tags:
+        - proposal
+      summary: Get Proposal By User
+      description: Get Proposal By User ID
+      operationId: GetProposalByUserIDHandler
+      parameters:
+        -
+          $ref: '#/parameters/UserID'
+      responses:
+        200:
+          description: Proposal List
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Proposal'
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /proposal/{proposal_id}/share:
+    get:
+      tags:
+        - proposal
+      summary: Get a Proposal
+      description: Get a Proposal Data to Share
+      operationId: GetProposalShareDataIDHanlder
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+      responses:
+        200:
+          description: Proposal List
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DataToShare'
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /proposal/find:
+    post:
+      tags:
+        - proposal
+      summary: Find a Proposal
+      description: Find a Proposal
+      operationId: FindProposalHanlder
+      parameters:
+        -
+          in: body
+          name: body
+          description: Proposal Filter
+          required: true
+          schema:
+            $ref: '#/definitions/Filter'
+      responses:
+        200:
+          description: Proposal List
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Proposal'
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /proposal/{proposal_id}/change_state/{proposal_state}:
+    put:
+      tags:
+        - proposal
+      summary: Change Proposal State
+      description: Change Proposal State
+      operationId: ChangeProposalStateHandler
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+        -
+          $ref: '#/parameters/ProposalState'
+      responses:
+        200:
+          description: Proposal State Changed
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /proposal/{proposal_id}/add_tags:
+    put:
+      tags:
+        - proposal
+      summary: Add Proposal Tags
+      description: Add Proposal Tags
+      operationId: AddProposalTagsHanlder
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+        -
+          in: body
+          name: body
+          description: Proposal Tags
+          required: true
+          schema:
+            $ref: '#/definitions/Tags'
+      responses:
+        200:
+          description: Proposal Tags Added
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+  
+  /proposal/{proposal_id}/add_images:
+    put:
+      tags:
+        - proposal
+      summary: Add Proposal Images
+      description: Add Proposal Images
+      operationId: AddProposalImagesHanlder
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+        -
+          in: body
+          name: body
+          description: Proposal Images
+          required: true
+          schema:
+            $ref: '#/definitions/Tags'
+      responses:
+        200:
+          description: Proposal Images Added
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+  
+  /proposal/{proposal_id}/change_validate:
+    put:
+      tags:
+        - proposal
+      summary: Change Proposal Validate
+      description: Change Proposal Validate
+      operationId: ChangeProposalValidateHanlder
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+        -
+          in: body
+          name: proposal_validate
+          description: Proposal Images
+          required: true
+          type: string
+          format: date-time
+      responses:
+        200:
+          description: Proposal Validate Added
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /proposal/{proposal_id}/change_text:
+    put:
+      tags:
+        - proposal
+      summary: Change Proposal Text
+      description: Change Proposal Text
+      operationId: ChangeProposalTextHanlder
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+        -
+          in: body
+          name: description
+          description: Proposal Images
+          required: true
+          type: string
+      responses:
+        200:
+          description: Proposal Text Added
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /category:
+    get:
+      tags:
+        - category
+      summary: Get Category
+      description: Get Category
+      operationId: GetCategoryHandler
       responses:
         "200":
-          description: User get authorized
+          description: Get Category
           schema:
-            $ref: "#/definitions/LoggedUser"
-
+            $ref: "#/definitions/Tags"
+        '401':
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
 
 parameters:
-  Provider:
-    name: provider
+  UserID:
+    name: user_id
     in: path
-    description: Provider to be used in Oauth
+    description: 'User ID'
     required: true
     type: string
-    enum:
-      - google
-      - facebook
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
+
+  ProposalState:
+    name: proposal_state
+    in: path
+    description: 'Proposal State'
+    required: true
+    type: boolean
+
+  ProposalID:
+    name: proposal_id
+    in: path
+    description: 'Proposal ID'
+    required: true
+    type: string
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$' 
+
+  TransactionID:
+    name: transaction_id
+    in: path
+    description: 'Transaction ID'
+    required: true
+    type: string
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
+
+  GiverID:
+    name: giver_id
+    in: path
+    description: 'Giver ID'
+    required: true
+    type: string
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$' 
+
+  TakerID:
+    name: taker_id
+    in: path
+    description: 'Taker ID'
+    required: true
+    type: string
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$' 
 
 definitions:
+  ApiError:
+    type: object
+    properties:
+      message:
+        type: string
+
   LoggedUser:
     type: object
     required:
