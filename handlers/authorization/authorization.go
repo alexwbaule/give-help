@@ -10,8 +10,6 @@ import (
 func CheckAPIKeyAuth(rt *runtimeApp.Runtime, token string, roles []string) (*models.LoggedUser, error) {
 	var user *models.LoggedUser
 
-	//jwttoken, err := authentication.VerifyJWT(token)
-
 	user = &models.LoggedUser{
 		ID: models.ID(common.GetULID()),
 	}
