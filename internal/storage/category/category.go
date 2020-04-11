@@ -17,7 +17,14 @@ func New(conn *connection.Connection) *Category {
 	return &Category{conn: conn}
 }
 
-const insertCategories = `INSERT INTO CATEGORIES (Name) VALUES %s;`
+const insertCategories = `INSERT INTO CATEGORIES 
+(
+	Name
+) 
+VALUES 
+%s
+ON CONFLICT (Name) 
+DO NOTHING;`
 
 //Insert insert categories on database
 func (c *Category) Insert(categories []string) (int64, error) {
