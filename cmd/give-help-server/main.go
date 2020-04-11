@@ -26,11 +26,10 @@ package main
 import (
 	"log"
 
-	"github.com/alexwbaule/give-help/v2/authentication"
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/generated/restapi"
 	"github.com/alexwbaule/give-help/v2/generated/restapi/operations"
-	"github.com/alexwbaule/give-help/v2/handlers"
+	"github.com/alexwbaule/give-help/v2/handlers/authorization"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 
 	app "github.com/alexwbaule/go-app"
@@ -52,9 +51,6 @@ func main() {
 	cfg.SetDefault("service.Port", "8081")
 	cfg.SetDefault("service.TLSWriteTimeout", "15m")
 	cfg.SetDefault("service.WriteTimeout", "15m")
-
-	//INIT JWT Auth Itens
-	authentication.InitToken(app)
 
 	rt, err := runtimeApp.NewRuntime(app)
 	if err != nil {
@@ -102,7 +98,7 @@ func main() {
 
 	// Applies when the "x-api-token" header is set
 	api.APIKeyHeaderAuth = func(token string, roles []string) (*models.LoggedUser, error) {
-		return handlers.CheckAPIKeyAuth(rt, token, roles)
+		return authorization.CheckAPIKeyAuth(rt, token, roles)
 	}
 
 	c := cors.New(cors.Options{
