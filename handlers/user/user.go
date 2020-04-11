@@ -25,7 +25,7 @@ func New(config *common.Config) *User {
 	}
 }
 
-//Insert insert new user
+//Insert insert new data
 func (u *User) Insert(user *models.User) (models.ID, error) {
 	if len(user.UserID) == 0 {
 		user.UserID = models.ID(common.GetULID())
@@ -34,13 +34,13 @@ func (u *User) Insert(user *models.User) (models.ID, error) {
 	err := u.storage.Upsert(user)
 
 	if err != nil {
-		log.Printf("fail to insert User [%s]: %s", user.UserID, err)
+		log.Printf("fail to insert new user [%s]: %s", user.UserID, err)
 	}
 
 	return user.UserID, err
 }
 
-//Update update user data
+//Update update data
 func (u *User) Update(user *models.User) error {
 	if len(user.UserID) == 0 {
 		return fmt.Errorf("userId is empty")
@@ -49,13 +49,13 @@ func (u *User) Update(user *models.User) error {
 	err := u.storage.Upsert(user)
 
 	if err != nil {
-		log.Printf("fail to update User [%s]: %s", user.UserID, err)
+		log.Printf("fail to update user [%s]: %s", user.UserID, err)
 	}
 
 	return err
 }
 
-//Load load user data
+//Load load data
 func (u *User) Load(userID string) (*models.User, error) {
 	if len(userID) == 0 {
 		return nil, fmt.Errorf("userId is empty")
@@ -64,7 +64,7 @@ func (u *User) Load(userID string) (*models.User, error) {
 	ret, err := u.storage.Load(userID)
 
 	if err != nil {
-		log.Printf("fail to load User [%s]: %s", userID, err)
+		log.Printf("fail to load user [%s]: %s", userID, err)
 	}
 
 	return ret, err
