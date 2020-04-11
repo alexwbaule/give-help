@@ -122,19 +122,19 @@ func (t *Transaction) InsertTakerReview(transactionID string, review *models.Rev
 }
 
 //ChangeTransactionStatus change transaction status
-func (t *Transaction) ChangeTransactionStatus(transactionID string, newStatus *models.TransactionStatus) error {
-	if newStatus == nil {
-		return fmt.Errorf("newStatus is null")
+func (t *Transaction) ChangeTransactionStatus(transactionID string, newStatus models.TransactionStatus) error {
+	if len(newStatus) == 0 {
+		return fmt.Errorf("newStatus is empty")
 	}
 
 	trs, err := t.Load(transactionID)
 
 	if err != nil {
-		log.Printf("fail to try update transaction status [%s] ID [%s]: %s", *newStatus, transactionID, err)
+		log.Printf("fail to try update transaction status [%s] ID [%s]: %s", newStatus, transactionID, err)
 		return err
 	}
 
-	trs.Status = *newStatus
+	trs.Status = newStatus
 
 	return t.update(trs)
 }
