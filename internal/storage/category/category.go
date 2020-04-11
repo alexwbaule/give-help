@@ -17,7 +17,14 @@ func New(conn *connection.Connection) *Category {
 	return &Category{conn: conn}
 }
 
-const insertCategories = `INSERT INTO CATEGORIES (Name) VALUES %s;`
+const insertCategories = `INSERT INTO CATEGORIES 
+(
+	Name
+) 
+VALUES 
+%s
+ON CONFLICT (Name) 
+DO NOTHING;`
 
 //Insert insert categories on database
 func (c *Category) Insert(categories []string) (int64, error) {
@@ -35,7 +42,6 @@ func (c *Category) Insert(categories []string) (int64, error) {
 	cmd := fmt.Sprintf(insertCategories, strings.Join(items, ","))
 
 	db := c.conn.Get()
-	defer db.Close()
 
 	aff, err := db.Exec(cmd)
 
@@ -61,7 +67,6 @@ func (c *Category) Load() ([]string, error) {
 	ret := []string{}
 
 	db := c.conn.Get()
-	defer db.Close()
 
 	rows, err := db.Query(selectCategories)
 
