@@ -19,24 +19,11 @@ service:
   TLSReadTimeout: 1m
   TLSWriteTimeout: 30m
 
-auth:
-  Google:
-    ClientID: xxx
-    ClientSecret: yyyy
-    Issuer: https://example.google
-    Scopes:
-      - openid
-      - profile
-      - email
-  Facebook:
-    ClientID: xxxx
-    ClientSecret: yyyy
-    Issuer: https://example.facebook
-    Scopes:
-      - openid
-      - profile
-      - email
-  Token:
-    PrivateKey: etc/key.pem
-    PublicKey:  etc/public.pem
-    ExpiresAt: 90m
+database:
+  Host: localhost
+  User: user
+  Pass: password
+  DBName: dbname
+
+metrics:
+  splunk: 52da7db5-50b4-48f0-bce0-317fee5b2e8a
