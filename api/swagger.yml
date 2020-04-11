@@ -25,37 +25,19 @@ security:
       - user
 
 paths:
-  "/auth/{provider}":
+  /test:
     get:
       tags:
         - auth
       summary: authorize user
       description: Get user authorization from providers
       operationId: redirectHandler
-      security: []
-      parameters:
-        - $ref: "#/parameters/Provider"
       responses:
-        "302":
+        "200":
           description: User get authorized
           schema:
             $ref: "#/definitions/LoggedUser"
 
-  "/auth/{provider}/callback":
-    get:
-      tags:
-        - auth
-      summary: authorize user
-      description: Get user authorization from providers
-      operationId: callbackHandler
-      security: []
-      parameters:
-        - $ref: "#/parameters/Provider"
-      responses:
-        "302":
-          description: User get authorized
-          schema:
-            $ref: "#/definitions/LoggedUser"    
 
 parameters:
   Provider:
@@ -72,10 +54,22 @@ definitions:
   LoggedUser:
     type: object
     required:
-      - id
+      - provider
+      - email
+      - name
+      - picture
+      - user_id
     properties:
-      id:
-        $ref: "#/definitions/ID"
+      provider:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      picture:
+        type: string
+      user_id:
+        type: string
 
   User:
     type: object
