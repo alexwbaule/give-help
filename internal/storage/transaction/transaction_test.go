@@ -71,13 +71,13 @@ func TestInsert(t *testing.T) {
 		t.Errorf("fail to try load transaction data from proposalID: %s - error: %s", data.ProposalID, err)
 	}
 
-	loaded, err = storage.LoadByUserID(string(loaded.GiverID))
+	loaded, err = storage.LoadByUserID(string(loaded[0].GiverID))
 
 	if err != nil {
 		t.Errorf("fail to try load transaction data from giverID: %s - error: %s", data.ProposalID, err)
 	}
 
-	loaded, err = storage.LoadByUserID(string(loaded.TakerID))
+	loaded, err = storage.LoadByUserID(string(loaded[0].TakerID))
 
 	if err != nil {
 		t.Errorf("fail to try load transaction data from takerID: %s - error: %s", data.ProposalID, err)
@@ -86,67 +86,75 @@ func TestInsert(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	storage := createConn()
-	data := createTransaction()
+	initial := createTransaction()
 
-	data, err := storage.LoadByProposalID(string(getProposalID()))
+	err := storage.Upsert(initial)
 
-	if err != nil {
-		t.Errorf("fail to try load transaction data from proposalID: %s - error: %s", data.ProposalID, err)
-	}
-
-	data.Status = models.TransactionStatusInProgress
-	data.GiverReview.Rating = 4
-	data.GiverReview.Comment = "Cara gente fina, deu tudo certo!"
-
-	err = storage.Upsert(data)
+	data, err := storage.LoadByProposalID(string(initial.ProposalID))
 
 	if err != nil {
-		t.Errorf("fail to try update transaction data from giverID: %s - error: %s", data.ProposalID, err)
+		t.Errorf("fail to try load transaction data from proposalID: %s - error: %s", initial.ProposalID, err)
 	}
 
-	updated, err := storage.LoadByProposalID(string(data.ProposalID))
+	trs := data[0]
+
+	trs.Status = models.TransactionStatusInProgress
+	trs.GiverReview.Rating = 4
+	trs.GiverReview.Comment = "Cara gente fina, deu tudo certo!"
+
+	err = storage.Upsert(trs)
 
 	if err != nil {
-		t.Errorf("fail to try load transaction data from giverID: %s - error: %s", data.ProposalID, err)
+		t.Errorf("fail to try update transaction data from giverID: %s - error: %s", trs.ProposalID, err)
 	}
 
-	if updated.Status != data.Status {
-		t.Errorf("fail to try update transaction status to inProgress - error: %s expected: %s received: %s", err, data.Status, updated.Status)
-	}
+	data, err = storage.LoadByProposalID(string(trs.ProposalID))
 
-	if data.GiverReview.Rating != data.GiverReview.Rating {
-		t.Errorf("fail to try update transaction giver review rating - error: %s expected: %s received: %s", err, data.Status, updated.Status)
-	}
-
-	if data.GiverReview.Comment != data.GiverReview.Comment {
-		t.Errorf("fail to try update transaction giver review comment - error: %s expected: %s received: %s", err, data.Status, updated.Status)
-	}
-
-	data.Status = models.TransactionStatusDone
-	data.TakerReview.Rating = 5
-	data.TakerReview.Comment = "Foi muito legal, recomendo!"
-
-	err = storage.Upsert(data)
+	updated := data[0]
 
 	if err != nil {
-		t.Errorf("fail to try update transaction data from giverID: %s - error: %s", data.ProposalID, err)
+		t.Errorf("fail to try load transaction data from giverID: %s - error: %s", trs.ProposalID, err)
 	}
 
-	updated, err = storage.LoadByProposalID(string(data.ProposalID))
+	if updated.Status != trs.Status {
+		t.Errorf("fail to try update transaction status to inProgress - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
+	}
+
+	if updated.GiverReview.Rating != trs.GiverReview.Rating {
+		t.Errorf("fail to try update transaction giver review rating - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
+	}
+
+	if updated.GiverReview.Comment != trs.GiverReview.Comment {
+		t.Errorf("fail to try update transaction giver review comment - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
+	}
+
+	trs.Status = models.TransactionStatusDone
+	trs.TakerReview.Rating = 5
+	trs.TakerReview.Comment = "Foi muito legal, recomendo!"
+
+	err = storage.Upsert(trs)
 
 	if err != nil {
-		t.Errorf("fail to try load transaction data from giverID: %s - error: %s", data.ProposalID, err)
+		t.Errorf("fail to try update transaction data from giverID: %s - error: %s", trs.ProposalID, err)
 	}
 
-	if updated.Status != data.Status {
-		t.Errorf("fail to try update transaction status to done - error: %s expected: %s received: %s", err, data.Status, updated.Status)
+	data, err = storage.LoadByProposalID(string(trs.ProposalID))
+
+	updated = data[0]
+
+	if err != nil {
+		t.Errorf("fail to try load transaction data from giverID: %s - error: %s", trs.ProposalID, err)
 	}
 
-	if data.TakerReview.Rating != data.TakerReview.Rating {
-		t.Errorf("fail to try update transaction taker review rating - error: %s expected: %s received: %s", err, data.Status, updated.Status)
+	if updated.Status != trs.Status {
+		t.Errorf("fail to try update transaction status to done - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
 	}
 
-	if data.TakerReview.Comment != data.TakerReview.Comment {
-		t.Errorf("fail to try update transaction taker review comment - error: %s expected: %s received: %s", err, data.Status, updated.Status)
+	if updated.TakerReview.Rating != trs.TakerReview.Rating {
+		t.Errorf("fail to try update transaction taker review rating - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
+	}
+
+	if updated.TakerReview.Comment != trs.TakerReview.Comment {
+		t.Errorf("fail to try update transaction taker review comment - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
 	}
 }
