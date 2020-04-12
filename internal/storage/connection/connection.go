@@ -38,9 +38,6 @@ func New(config *common.DbConfig) *Connection {
 
 //Get returns an open sql.DB object (this must be closed after use!)
 func (c *Connection) Get() *sql.DB {
-	if c.db == nil {
-		c.createConnection()
-	}
 
 	if err := c.db.Ping(); err != nil {
 		log.Fatal("ping to database fail: %s", err.Error())
