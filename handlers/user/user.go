@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
-	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/user"
 )
@@ -23,10 +22,9 @@ func New(conn *connection.Connection) *User {
 }
 
 //Insert insert new data
-func (u *User) Insert(user *models.User) (models.ID, error) {
-	if len(user.UserID) == 0 {
-		user.UserID = models.ID(common.GetULID())
-	}
+func (u *User) Insert(user *models.User, uid string) (models.UserID, error) {
+
+	user.UserID = models.UserID(uid)
 
 	err := u.storage.Upsert(user)
 

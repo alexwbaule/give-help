@@ -112,7 +112,7 @@ func main() {
 	api.ProposalGetProposalShareDataIDHandler = nil
 
 	/* API User */
-	api.UserAddUserHandler = nil
+	api.UserAddUserHandler = apihandler.AddUserHandler(rt)
 	api.UserUpdateUserByIDHandler = nil
 	api.UserGetUserByIDHandler = nil
 

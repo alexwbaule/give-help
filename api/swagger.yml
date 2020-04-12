@@ -50,7 +50,7 @@ paths:
         200:
           description: User ID
           schema:
-            $ref: "#/definitions/ID"
+            $ref: "#/definitions/UserID"
         401:
           description: Authorization Error
           schema:
@@ -59,17 +59,12 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
-
-  /user/{user_id}:
     get:
       tags:
         - user
       summary: Get User
       description: Get User by ID
       operationId: GetUserByID
-      parameters:
-        -
-          $ref: '#/parameters/UserID'
       responses:
         200:
           description: User
@@ -89,9 +84,6 @@ paths:
       summary: Update User
       description: Update User By ID
       operationId: UpdateUserByID
-      parameters:
-        -
-          $ref: '#/parameters/UserID'
       responses:
         200:
           description: User Updated
@@ -185,7 +177,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
   
-  /transaction/user/{user_id}:
+  /transaction/user:
     get:
       tags:
         - transaction
@@ -351,16 +343,13 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
   
-  /proposal/user/{user_id}:
+  /proposal/user:
     get:
       tags:
         - proposal
       summary: Get Proposal By User
       description: Get Proposal By User ID
       operationId: GetProposalByUserID
-      parameters:
-        -
-          $ref: '#/parameters/UserID'
       responses:
         200:
           description: Proposal List
@@ -601,14 +590,6 @@ paths:
             $ref: "#/definitions/ApiError"
 
 parameters:
-  UserID:
-    name: user_id
-    in: path
-    description: 'User ID'
-    required: true
-    type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
-
   ProposalState:
     name: proposal_state
     in: path
@@ -680,7 +661,7 @@ definitions:
     required:
     properties:
       user_id:
-        $ref: "#/definitions/ID"
+        $ref: "#/definitions/UserID"
       created_at:
         type: string
         format: date-time
@@ -795,7 +776,7 @@ definitions:
       proposal_type:
         $ref: "#/definitions/Type"
       user_id:
-        $ref: "#/definitions/ID"
+        $ref: "#/definitions/UserID"
       tags:
         $ref: "#/definitions/Tags"
       title:
@@ -934,6 +915,10 @@ definitions:
       - Facebook
       - Instagram
       - URL
+
+  UserID:
+    type: string
+    pattern: "^[0-9a-zA-Z]{1,128}$"
 
   ID:
     type: string
