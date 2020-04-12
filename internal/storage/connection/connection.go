@@ -3,6 +3,7 @@ package connection
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/internal/common"
@@ -44,7 +45,9 @@ func (c *Connection) Get() *sql.DB {
 	}
 
 	if time.Since(c.lastPing) > time.Minute {
+		log.Print("sending ping to database")
 		if err := c.db.Ping(); err != nil {
+			log.Print("ping to database fail, trying to reconnect")
 			c.createConnection()
 		}
 		c.lastPing = time.Now()
@@ -81,5 +84,6 @@ func (c *Connection) createConnection() {
 
 	c.lastPing = time.Now()
 
+	log.Print("db connection created")
 	c.db = db
 }
