@@ -7,7 +7,7 @@ import (
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	conn "github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/proposal"
 	"github.com/go-openapi/strfmt"
 )
@@ -15,15 +15,12 @@ import (
 //Proposal Object struct
 type Proposal struct {
 	storage *storage.Proposal
-	config  *common.Config
 }
 
 //New creates a new instance
-func New(config *common.Config) *Proposal {
-	conn := conn.New(config.Db)
+func New(conn *connection.Connection) *Proposal {
 	return &Proposal{
 		storage: storage.New(conn),
-		config:  config,
 	}
 }
 

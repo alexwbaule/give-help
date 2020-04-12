@@ -3,23 +3,19 @@ package category
 import (
 	"log"
 
-	"github.com/alexwbaule/give-help/v2/internal/common"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/category"
-	conn "github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 )
 
 //Category Object struct
 type Category struct {
 	storage *storage.Category
-	config  *common.Config
 }
 
 //New creates a new instance
-func New(config *common.Config) *Category {
-	conn := conn.New(config.Db)
+func New(conn *connection.Connection) *Category {
 	return &Category{
 		storage: storage.New(conn),
-		config:  config,
 	}
 }
 

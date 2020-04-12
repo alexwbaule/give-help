@@ -4,21 +4,18 @@ import (
 	"testing"
 
 	"github.com/alexwbaule/give-help/v2/internal/common"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 )
 
 func createHandler() *Category {
-	dbConfig := &common.DbConfig{
+	c := connection.New(&common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
-	}
+	})
 
-	config := &common.Config{
-		Db: dbConfig,
-	}
-
-	return New(config)
+	return New(c)
 }
 
 func getServiceCategory() string {
