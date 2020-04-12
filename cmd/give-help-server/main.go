@@ -100,16 +100,16 @@ func main() {
 	}
 
 	/* API Proposal */
-	api.ProposalAddProposalHandler = nil
-	api.ProposalAddProposalImagesHandler = nil
-	api.ProposalAddProposalTagsHandler = nil
-	api.ProposalChangeProposalStateHandler = nil
-	api.ProposalChangeProposalTextHandler = nil
-	api.ProposalChangeProposalValidateHandler = nil
-	api.ProposalFindProposalHandler = nil
-	api.ProposalGetProposalByIDHandler = nil
-	api.ProposalGetProposalByUserIDHandler = nil
-	api.ProposalGetProposalShareDataIDHandler = nil
+	api.ProposalAddProposalHandler = apihandler.AddProposalHandler(rt)
+	api.ProposalAddProposalImagesHandler = apihandler.AddProposalImagesHandler(rt)
+	api.ProposalAddProposalTagsHandler = apihandler.AddProposalTagsHandler(rt)
+	api.ProposalChangeProposalStateHandler = apihandler.ChangeProposalStateHandler(rt)
+	api.ProposalChangeProposalTextHandler = apihandler.ChangeProposalTextHandler(rt)
+	api.ProposalChangeProposalValidateHandler = apihandler.ChangeProposalValidateHandler(rt)
+	api.ProposalFindProposalHandler = apihandler.FindProposalHandler(rt)
+	api.ProposalGetProposalByIDHandler = apihandler.GetProposalByIDHandler(rt)
+	api.ProposalGetProposalByUserIDHandler = apihandler.GetProposalByUserIDHandler(rt)
+	api.ProposalGetProposalShareDataIDHandler = apihandler.GetProposalShareDataIDHandler(rt)
 
 	/* API User */
 	api.UserAddUserHandler = apihandler.AddUserHandler(rt)
@@ -117,13 +117,13 @@ func main() {
 	api.UserGetUserByIDHandler = apihandler.GetUserByIDHandler(rt)
 
 	/* API Transaction */
-	api.TransactionAddTransactionHandler = nil
-	api.TransactionChangeTransactionStatusHandler = nil
-	api.TransactionGetTransactionByIDHandler = nil
-	api.TransactionGetTransactionByProposalIDHandler = nil
-	api.TransactionGetTransactionByUserIDHandler = nil
-	api.TransactionTransactionGiverReviewHandler = nil
-	api.TransactionTransactionTakerReviewHandler = nil
+	api.TransactionAddTransactionHandler = apihandler.AddTransactionHandler(rt)
+	api.TransactionChangeTransactionStatusHandler = apihandler.ChangeTransactionStatusHandler(rt)
+	api.TransactionGetTransactionByIDHandler = apihandler.GetTransactionByIDHandler(rt)
+	api.TransactionGetTransactionByProposalIDHandler = apihandler.GetTransactionByProposalIDHandler(rt)
+	api.TransactionGetTransactionByUserIDHandler = apihandler.GetTransactionByUserIDHandler(rt)
+	api.TransactionTransactionGiverReviewHandler = apihandler.TransactionGiverReviewHandler(rt)
+	api.TransactionTransactionTakerReviewHandler = apihandler.TransactionTakerReviewHandler(rt)
 
 	/* API Category */
 	api.CategoryGetCategoryHandler = apihandler.GetCategoryHandler(rt)
