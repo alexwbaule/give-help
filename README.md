@@ -5,6 +5,15 @@
 
 ## Version: 1.0.0
 
+## Cloud infrastructure model
+![Alt text](doc/infra.jpg "DB ER")
+
+
+## Database ER
+![Alt text](doc/db-models.jpg "DB ER")
+
+## API
+
 ### Security
 **APIKeyHeader**  
 
@@ -724,9 +733,3 @@ Get Category
 | ---- | ------ | ----------- | -------- |
 | ID   | string |             |          |
 
-## Cloud infrastructure model
-![Alt text](doc/infra.jpg "DB ER")
-
-
-## Database ER
-![Alt text](doc/db-models.jpg "DB ER")
