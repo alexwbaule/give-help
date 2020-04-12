@@ -6,22 +6,19 @@ import (
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	conn "github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/transaction"
 )
 
 //User Object struct
 type Transaction struct {
 	storage *storage.Transaction
-	config  *common.Config
 }
 
 //New creates a new instance
-func New(config *common.Config) *Transaction {
-	conn := conn.New(config.Db)
+func New(conn *connection.Connection) *Transaction {
 	return &Transaction{
 		storage: storage.New(conn),
-		config:  config,
 	}
 }
 

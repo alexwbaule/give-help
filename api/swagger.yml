@@ -37,7 +37,7 @@ paths:
         - user
       summary: Add User
       description: Add a new User
-      operationId: AddUserHandler
+      operationId: AddUser
       parameters:
         -
           in: body
@@ -66,7 +66,7 @@ paths:
         - user
       summary: Get User
       description: Get User by ID
-      operationId: GetUserByIDHandler
+      operationId: GetUserByID
       parameters:
         -
           $ref: '#/parameters/UserID'
@@ -88,7 +88,7 @@ paths:
         - user
       summary: Update User
       description: Update User By ID
-      operationId: UpdateUserByIDHandler
+      operationId: UpdateUserByID
       parameters:
         -
           $ref: '#/parameters/UserID'
@@ -112,7 +112,7 @@ paths:
         - transaction
       summary: Add a Transaction
       description: Add a New Transaction
-      operationId: AddTransactionHanlder
+      operationId: AddTransaction
       parameters:
         -
           in: body
@@ -141,7 +141,7 @@ paths:
         - transaction
       summary: Get Transaction
       description: Get Transaction By ID
-      operationId: GetTransactionByIDHandler
+      operationId: GetTransactionByID
       parameters:
         -
           $ref: '#/parameters/TransactionID'
@@ -165,7 +165,7 @@ paths:
         - transaction
       summary: Get Transaction By Proposal
       description: Get Transaction By Proposal ID
-      operationId: GetTransactionByProposalIDHandler
+      operationId: GetTransactionByProposalID
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -191,7 +191,7 @@ paths:
         - transaction
       summary: Get Transaction By User
       description: Get Transaction By User ID
-      operationId: GetTransactionByUserIDHandler
+      operationId: GetTransactionByUserID
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -217,7 +217,7 @@ paths:
         - transaction
       summary: Update Transaction with Giver Review
       description: Update Transaction with Giver Review
-      operationId: TransactionGiverReviewHandler
+      operationId: TransactionGiverReview
       parameters:
         -
           $ref: '#/parameters/TransactionID'
@@ -246,7 +246,7 @@ paths:
         - transaction
       summary: Update Transaction with Taker Review
       description: Update Transaction with Taker Review
-      operationId: TransactionTakerReviewHandler
+      operationId: TransactionTakerReview
       parameters:
         -
           $ref: '#/parameters/TransactionID'
@@ -275,7 +275,7 @@ paths:
         - transaction
       summary: Change Transaction Status
       description: Change Transaction Status
-      operationId: ChangeTransactionStatusHandler
+      operationId: ChangeTransactionStatus
       parameters:
         -
           $ref: '#/parameters/TransactionID'
@@ -304,7 +304,7 @@ paths:
         - proposal
       summary: Add a Proposal
       description: Add a New Proposal
-      operationId: AddProposalHanlder
+      operationId: AddProposal
       parameters:
         -
           in: body
@@ -333,7 +333,7 @@ paths:
         - proposal
       summary: Get a Proposal
       description: Get a Proposal By ID
-      operationId: GetProposalByIDHanlder
+      operationId: GetProposalByID
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -357,7 +357,7 @@ paths:
         - proposal
       summary: Get Proposal By User
       description: Get Proposal By User ID
-      operationId: GetProposalByUserIDHandler
+      operationId: GetProposalByUserID
       parameters:
         -
           $ref: '#/parameters/UserID'
@@ -383,7 +383,7 @@ paths:
         - proposal
       summary: Get a Proposal
       description: Get a Proposal Data to Share
-      operationId: GetProposalShareDataIDHanlder
+      operationId: GetProposalShareDataID
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -409,7 +409,7 @@ paths:
         - proposal
       summary: Find a Proposal
       description: Find a Proposal
-      operationId: FindProposalHanlder
+      operationId: FindProposal
       parameters:
         -
           in: body
@@ -440,7 +440,7 @@ paths:
         - proposal
       summary: Change Proposal State
       description: Change Proposal State
-      operationId: ChangeProposalStateHandler
+      operationId: ChangeProposalState
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -464,7 +464,7 @@ paths:
         - proposal
       summary: Add Proposal Tags
       description: Add Proposal Tags
-      operationId: AddProposalTagsHanlder
+      operationId: AddProposalTags
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -493,7 +493,7 @@ paths:
         - proposal
       summary: Add Proposal Images
       description: Add Proposal Images
-      operationId: AddProposalImagesHanlder
+      operationId: AddProposalImages
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -522,7 +522,7 @@ paths:
         - proposal
       summary: Change Proposal Validate
       description: Change Proposal Validate
-      operationId: ChangeProposalValidateHanlder
+      operationId: ChangeProposalValidate
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -551,7 +551,7 @@ paths:
         - proposal
       summary: Change Proposal Text
       description: Change Proposal Text
-      operationId: ChangeProposalTextHanlder
+      operationId: ChangeProposalText
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -585,14 +585,18 @@ paths:
         - category
       summary: Get Category
       description: Get Category
-      operationId: GetCategoryHandler
+      operationId: GetCategory
       responses:
-        "200":
+        200:
           description: Get Category
           schema:
             $ref: "#/definitions/Tags"
-        '401':
+        401:
           description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
 

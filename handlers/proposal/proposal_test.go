@@ -7,22 +7,19 @@ import (
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/common"
+	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
 )
 
 func createHandler() *Proposal {
-	dbConfig := &common.DbConfig{
+	c := connection.New(&common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
-	}
+	})
 
-	config := &common.Config{
-		Db: dbConfig,
-	}
-
-	return New(config)
+	return New(c)
 }
 
 func getUserID() string {
