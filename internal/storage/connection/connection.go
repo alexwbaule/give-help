@@ -63,7 +63,7 @@ func (c *Connection) CheckError(err error) error {
 func (c *Connection) createConnection() {
 	db, err := sql.Open("postgres", c.connStr)
 
-	if err == nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 
