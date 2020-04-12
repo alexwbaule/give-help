@@ -113,8 +113,8 @@ func main() {
 
 	/* API User */
 	api.UserAddUserHandler = apihandler.AddUserHandler(rt)
-	api.UserUpdateUserByIDHandler = nil
-	api.UserGetUserByIDHandler = nil
+	api.UserUpdateUserByIDHandler = apihandler.UpdateUserByIDHandler(rt)
+	api.UserGetUserByIDHandler = apihandler.GetUserByIDHandler(rt)
 
 	/* API Transaction */
 	api.TransactionAddTransactionHandler = nil

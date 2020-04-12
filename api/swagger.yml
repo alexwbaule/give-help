@@ -84,11 +84,17 @@ paths:
       summary: Update User
       description: Update User By ID
       operationId: UpdateUserByID
+      parameters:
+        -
+          in: body
+          name: body
+          description: User Object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         200:
           description: User Updated
-          schema:
-            $ref: "#/definitions/User"
         401:
           description: Authorization Error
           schema:
