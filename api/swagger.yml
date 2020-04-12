@@ -523,11 +523,11 @@ paths:
           $ref: '#/parameters/ProposalID'
         -
           in: body
-          name: proposal_validate
-          description: Proposal Images
+          name: body
+          description: Proposal Object to be added
           required: true
-          type: string
-          format: date-time
+          schema:
+            $ref: '#/definitions/ChangeProposalDate'
       responses:
         200:
           description: Proposal Validate Added
@@ -552,16 +552,11 @@ paths:
           $ref: '#/parameters/ProposalID'
         -
           in: body
-          name: description
-          description: Proposal Description
+          name: body
+          description: Proposal Object to be added
           required: true
-          type: string
-        -
-          in: body
-          name: title
-          description: Proposal Title
-          required: true
-          type: string
+          schema:
+            $ref: '#/definitions/ChangeProposalText'
       responses:
         200:
           description: Proposal Text Added
@@ -661,6 +656,27 @@ definitions:
         type: string
       user_id:
         type: string
+
+
+  ChangeProposalText:
+    type: object
+    required:
+      - title
+      - description
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+
+  ChangeProposalDate:
+    type: object
+    required:
+      - date
+    properties:
+      date:
+        type: string
+        format: date-time
 
   User:
     type: object
