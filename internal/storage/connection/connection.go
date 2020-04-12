@@ -4,19 +4,18 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"time"
 
-  "github.com/alexwbaule/give-help/v2/internal/common"
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
+	"github.com/prometheus/common/log"
 )
 
 //Connection base connection struct
 type Connection struct {
-	config   *common.DbConfig
-	connStr  string
-	db       *sql.DB
-	lastPing time.Time
+	config  *common.DbConfig
+	connStr string
+	db      *sql.DB
 }
 
 //New creates a connection helper
@@ -43,13 +42,8 @@ func (c *Connection) Get() *sql.DB {
 		c.createConnection()
 	}
 
-	if time.Since(c.lastPing) > time.Minute {
-		log.Print("sending ping to database")
-		if err := c.db.Ping(); err != nil {
-			log.Print("ping to database fail, trying to reconnect")
-			c.createConnection()
-		}
-		c.lastPing = time.Now()
+	if err := c.db.Ping(); err != nil {
+		log.Fatal("ping to database fail: %s", err.Error())
 	}
 
 	return c.db
@@ -80,8 +74,6 @@ func (c *Connection) createConnection() {
 	if err = db.Ping(); err != nil {
 		log.Fatal(err)
 	}
-
-	c.lastPing = time.Now()
 
 	log.Print("db connection created")
 	c.db = db
