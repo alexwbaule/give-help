@@ -50,7 +50,7 @@ paths:
         200:
           description: User ID
           schema:
-            $ref: "#/definitions/ID"
+            $ref: "#/definitions/UserID"
         401:
           description: Authorization Error
           schema:
@@ -59,17 +59,12 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
-
-  /user/{user_id}:
     get:
       tags:
         - user
       summary: Get User
       description: Get User by ID
       operationId: GetUserByID
-      parameters:
-        -
-          $ref: '#/parameters/UserID'
       responses:
         200:
           description: User
@@ -91,12 +86,15 @@ paths:
       operationId: UpdateUserByID
       parameters:
         -
-          $ref: '#/parameters/UserID'
+          in: body
+          name: body
+          description: User Object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
         200:
           description: User Updated
-          schema:
-            $ref: "#/definitions/User"
         401:
           description: Authorization Error
           schema:
@@ -185,7 +183,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
   
-  /transaction/user/{user_id}:
+  /transaction/user:
     get:
       tags:
         - transaction
@@ -351,16 +349,13 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
   
-  /proposal/user/{user_id}:
+  /proposal/user:
     get:
       tags:
         - proposal
       summary: Get Proposal By User
       description: Get Proposal By User ID
       operationId: GetProposalByUserID
-      parameters:
-        -
-          $ref: '#/parameters/UserID'
       responses:
         200:
           description: Proposal List
@@ -528,11 +523,11 @@ paths:
           $ref: '#/parameters/ProposalID'
         -
           in: body
-          name: proposal_validate
-          description: Proposal Images
+          name: body
+          description: Proposal Object to be added
           required: true
-          type: string
-          format: date-time
+          schema:
+            $ref: '#/definitions/ChangeProposalDate'
       responses:
         200:
           description: Proposal Validate Added
@@ -557,16 +552,11 @@ paths:
           $ref: '#/parameters/ProposalID'
         -
           in: body
-          name: description
-          description: Proposal Description
+          name: body
+          description: Proposal Object to be added
           required: true
-          type: string
-        -
-          in: body
-          name: title
-          description: Proposal Title
-          required: true
-          type: string
+          schema:
+            $ref: '#/definitions/ChangeProposalText'
       responses:
         200:
           description: Proposal Text Added
@@ -601,14 +591,6 @@ paths:
             $ref: "#/definitions/ApiError"
 
 parameters:
-  UserID:
-    name: user_id
-    in: path
-    description: 'User ID'
-    required: true
-    type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
-
   ProposalState:
     name: proposal_state
     in: path
@@ -675,12 +657,33 @@ definitions:
       user_id:
         type: string
 
+
+  ChangeProposalText:
+    type: object
+    required:
+      - title
+      - description
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+
+  ChangeProposalDate:
+    type: object
+    required:
+      - date
+    properties:
+      date:
+        type: string
+        format: date-time
+
   User:
     type: object
     required:
     properties:
       user_id:
-        $ref: "#/definitions/ID"
+        $ref: "#/definitions/UserID"
       created_at:
         type: string
         format: date-time
@@ -795,7 +798,7 @@ definitions:
       proposal_type:
         $ref: "#/definitions/Type"
       user_id:
-        $ref: "#/definitions/ID"
+        $ref: "#/definitions/UserID"
       tags:
         $ref: "#/definitions/Tags"
       title:
@@ -934,6 +937,10 @@ definitions:
       - Facebook
       - Instagram
       - URL
+
+  UserID:
+    type: string
+    pattern: "^[0-9a-zA-Z]{1,128}$"
 
   ID:
     type: string

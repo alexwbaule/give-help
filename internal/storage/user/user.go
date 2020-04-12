@@ -89,7 +89,7 @@ VALUES
 	--point
 	$21,
 	$22,
-	#23
+	$23
 )
 ON CONFLICT (UserID) 
 DO
@@ -125,7 +125,7 @@ DO
 		--point
 		Lat = $21,
 		Long = $22,
-		RegisterFrom = #23;
+		RegisterFrom = $23;
 `
 
 //Upsert insert or update on database
@@ -208,12 +208,15 @@ func (u *User) Upsert(user *models.User) error {
 		country,
 		lat,
 		long,
+		user.RegisterFrom,
 	)
 
 	if err != nil {
 		log.Printf("fail to try insert or update user on database: error = %s", err.Error())
 		return u.conn.CheckError(err)
 	}
+
+	log.Printf("Phones....")
 
 	err = u.insertPhones(user)
 
@@ -266,7 +269,7 @@ WHERE
 //Load load from database
 func (u *User) Load(userID string) (*models.User, error) {
 	user := models.User{
-		UserID:     models.ID(userID),
+		UserID:     models.UserID(userID),
 		Contact:    &models.Contact{},
 		Reputation: &models.Reputation{},
 		Location:   &models.Location{},

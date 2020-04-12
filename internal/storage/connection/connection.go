@@ -6,10 +6,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/alexwbaule/give-help/v2/internal/common"
+  "github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
-	"github.com/prometheus/common/log"
 )
 
 //Connection base connection struct
