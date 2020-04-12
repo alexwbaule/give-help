@@ -3,6 +3,7 @@ package connection
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/lib/pq"
@@ -12,9 +13,10 @@ import (
 
 //Connection base connection struct
 type Connection struct {
-	config  *common.DbConfig
-	connStr string
-	db      *sql.DB
+	config   *common.DbConfig
+	connStr  string
+	db       *sql.DB
+	lastPing time.Time
 }
 
 //New creates a connection helper
@@ -30,21 +32,24 @@ func New(config *common.DbConfig) *Connection {
 		config.Host,
 	)
 
-	db, err := sql.Open("postgres", ret.connStr)
-
-	if err == nil {
-		if err = db.Ping(); err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	ret.db = db
+	ret.createConnection()
 
 	return ret
 }
 
 //Get returns an open sql.DB object (this must be closed after use!)
 func (c *Connection) Get() *sql.DB {
+	if c.db == nil {
+		c.createConnection()
+	}
+
+	if time.Since(c.lastPing) > time.Minute {
+		if err := c.db.Ping(); err != nil {
+			c.createConnection()
+		}
+		c.lastPing = time.Now()
+	}
+
 	return c.db
 }
 
@@ -61,4 +66,20 @@ func (c *Connection) CheckError(err error) error {
 	}
 
 	return err
+}
+
+func (c *Connection) createConnection() {
+	db, err := sql.Open("postgres", c.connStr)
+
+	if err == nil {
+		log.Fatal(err)
+	}
+
+	if err = db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+
+	c.lastPing = time.Now()
+
+	c.db = db
 }
