@@ -305,6 +305,7 @@ func (u *User) Load(userID string) (*models.User, error) {
 		&user.Location.Country,
 		&user.Location.Lat,
 		&user.Location.Long,
+		&user.RegisterFrom,
 	)
 
 	user.Tags = models.Tags(tags)
