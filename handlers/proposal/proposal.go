@@ -167,6 +167,24 @@ func (p *Proposal) AddImages(proposalID string, images []string) error {
 	return p.update(prop)
 }
 
+//ChangeImages change proposal images
+func (p *Proposal) ChangeImages(proposalID string, images []string) error {
+	if len(proposalID) == 0 {
+		return fmt.Errorf("proposalID is empty")
+	}
+
+	prop, err := p.Load(proposalID)
+
+	if err != nil {
+		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
+		return err
+	}
+
+	prop.Images = images
+
+	return p.update(prop)
+}
+
 //ChangeValidate change proposal validate
 func (p *Proposal) ChangeValidate(proposalID string, validate time.Time) error {
 	if len(proposalID) == 0 {
