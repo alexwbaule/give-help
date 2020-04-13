@@ -510,6 +510,35 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
+
+  /proposal/{proposal_id}/change_images:
+    put:
+      tags:
+        - proposal
+      summary: Cahnge Proposal Images
+      description: Change Proposal Images
+      operationId: ChangeProposalImages
+      parameters:
+        -
+          $ref: '#/parameters/ProposalID'
+        -
+          in: body
+          name: body
+          description: Proposal Images
+          required: true
+          schema:
+            $ref: '#/definitions/Tags'
+      responses:
+        200:
+          description: Proposal Images Changed
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"            
   
   /proposal/{proposal_id}/change_validate:
     put:

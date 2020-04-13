@@ -22,7 +22,6 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lib/pq v1.3.0
 	github.com/oklog/ulid v1.3.1
-	github.com/prometheus/common v0.4.0
 	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/spf13/cast v1.3.1 // indirect
