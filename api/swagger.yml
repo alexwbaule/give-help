@@ -280,7 +280,7 @@ paths:
         -
           in: body
           name: body
-          description: Review
+          description: Status
           required: true
           schema:
             $ref: '#/definitions/TransactionStatus'
@@ -295,6 +295,74 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
+
+  /transaction/{transaction_id}/accept:
+    put:
+      tags:
+        - transaction
+      summary: Accept Transaction
+      description: Accept Transaction
+      operationId: AcceptTransaction
+      parameters:
+        -
+          $ref: '#/parameters/TransactionID'        
+      responses:
+        200:
+          description: Transaction accepted
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"   
+
+  /transaction/{transaction_id}/finish:
+    put:
+      tags:
+        - transaction
+      summary: Finish Finish
+      description: Accept Transaction
+      operationId: FinishTransaction
+      parameters:
+        -
+          $ref: '#/parameters/TransactionID'        
+      responses:
+        200:
+          description: Transaction finished
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"  
+
+  /transaction/{transaction_id}/cancel/{user_id}:
+    put:
+      tags:
+        - transaction
+      summary: Cancel Finish
+      description: Cancel Transaction
+      operationId: CancelTransaction
+      parameters:
+        -        
+          $ref: '#/parameters/TransactionID'        
+        -
+          $ref: '#/parameters/UserID'          
+      responses:
+        200:
+          description: Transaction finished
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"                                    
     
   /proposal:
     post:
@@ -649,7 +717,7 @@ parameters:
     description: 'Giver ID'
     required: true
     type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$' 
+    pattern: "^[0-9a-zA-Z]{1,128}$"
 
   TakerID:
     name: taker_id
@@ -657,7 +725,15 @@ parameters:
     description: 'Taker ID'
     required: true
     type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$' 
+    pattern: "^[0-9a-zA-Z]{1,128}$"
+
+  UserID:
+    name: user_id
+    in: path
+    description: 'User ID'
+    required: true
+    type: string
+    pattern: "^[0-9a-zA-Z]{1,128}$"
 
 definitions:
   ApiError:
@@ -685,7 +761,6 @@ definitions:
         type: string
       user_id:
         type: string
-
 
   ChangeProposalText:
     type: object
@@ -888,9 +963,9 @@ definitions:
       proposal_id:
         $ref: "#/definitions/ID"
       giver_id:
-        $ref: "#/definitions/ID"
+        $ref: "#/definitions/UserID"
       taker_id:
-        $ref: "#/definitions/ID"
+        $ref: "#/definitions/UserID"
       created_at:
         type: string
         format: date-time
