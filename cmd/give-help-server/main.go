@@ -102,6 +102,7 @@ func main() {
 	/* API Proposal */
 	api.ProposalAddProposalHandler = apihandler.AddProposalHandler(rt)
 	api.ProposalAddProposalImagesHandler = apihandler.AddProposalImagesHandler(rt)
+	api.ProposalChangeProposalImagesHandler = apihandler.ChangeProposalImagesHandler(rt)
 	api.ProposalAddProposalTagsHandler = apihandler.AddProposalTagsHandler(rt)
 	api.ProposalChangeProposalStateHandler = apihandler.ChangeProposalStateHandler(rt)
 	api.ProposalChangeProposalTextHandler = apihandler.ChangeProposalTextHandler(rt)
@@ -124,6 +125,10 @@ func main() {
 	api.TransactionGetTransactionByUserIDHandler = apihandler.GetTransactionByUserIDHandler(rt)
 	api.TransactionTransactionGiverReviewHandler = apihandler.TransactionGiverReviewHandler(rt)
 	api.TransactionTransactionTakerReviewHandler = apihandler.TransactionTakerReviewHandler(rt)
+
+	api.TransactionAcceptTransactionHandler = apihandler.TransactionAcceptTransactionHandler(rt)
+	api.TransactionFinishTransactionHandler = apihandler.TransactionFinishTransactionHandler(rt)
+	api.TransactionCancelTransactionHandler = apihandler.TransactionCancelTransactionHandler(rt)
 
 	/* API Category */
 	api.CategoryGetCategoryHandler = apihandler.GetCategoryHandler(rt)
