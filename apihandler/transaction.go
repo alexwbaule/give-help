@@ -140,3 +140,60 @@ func (ctx *transactionReviewTaker) Handle(params transaction.TransactionTakerRev
 
 	return transaction.NewTransactionTakerReviewOK()
 }
+
+func TransactionAcceptTransactionHandler(rt *runtimeApp.Runtime) transaction.AcceptTransactionHandler {
+	return &transactionAccept{rt: rt}
+}
+
+type transactionAccept struct {
+	rt *runtimeApp.Runtime
+}
+
+func (ctx *transactionAccept) Handle(params transaction.AcceptTransactionParams, principal *models.LoggedUser) middleware.Responder {
+
+	t := handler.New(ctx.rt.GetDatabase())
+	err := t.Accept(params.TransactionID)
+	if err != nil {
+		return transaction.NewAcceptTransactionInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+	}
+
+	return transaction.NewAcceptTransactionOK()
+}
+
+func TransactionFinishTransactionHandler(rt *runtimeApp.Runtime) transaction.FinishTransactionHandler {
+	return &transactionFinish{rt: rt}
+}
+
+type transactionFinish struct {
+	rt *runtimeApp.Runtime
+}
+
+func (ctx *transactionFinish) Handle(params transaction.FinishTransactionParams, principal *models.LoggedUser) middleware.Responder {
+
+	t := handler.New(ctx.rt.GetDatabase())
+	err := t.Finish(params.TransactionID)
+	if err != nil {
+		return transaction.NewFinishTransactionInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+	}
+
+	return transaction.NewFinishTransactionOK()
+}
+
+func TransactionCancelTransactionHandler(rt *runtimeApp.Runtime) transaction.CancelTransactionHandler {
+	return &transactionCancel{rt: rt}
+}
+
+type transactionCancel struct {
+	rt *runtimeApp.Runtime
+}
+
+func (ctx *transactionCancel) Handle(params transaction.CancelTransactionParams, principal *models.LoggedUser) middleware.Responder {
+
+	t := handler.New(ctx.rt.GetDatabase())
+	err := t.Cancel(params.TransactionID, params.UserID)
+	if err != nil {
+		return transaction.NewChangeTransactionStatusInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+	}
+
+	return transaction.NewCancelTransactionOK()
+}
