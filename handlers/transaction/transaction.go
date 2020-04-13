@@ -28,11 +28,21 @@ func (t *Transaction) Insert(transaction *models.Transaction) (models.ID, error)
 		transaction.TransactionID = models.ID(common.GetULID())
 	}
 
+	transaction.Status = models.TransactionStatusOpen
+
 	err := t.storage.Upsert(transaction)
 
 	if err != nil {
 		log.Printf("fail to insert new transaction [%s]: %s", transaction.TransactionID, err)
 	}
+
+	/*TODO
+	Check proposal.ExposeUserData (giver data):
+		if true
+			send giver dataToShare to taker
+		else
+			send taker data to giver (Should we consider takers data in that case as well?)
+	*/
 
 	return transaction.TransactionID, err
 }
@@ -134,6 +144,24 @@ func (t *Transaction) ChangeTransactionStatus(transactionID string, newStatus mo
 	trs.Status = newStatus
 
 	return t.update(trs)
+}
+
+func (t *Transaction) Accept(transactionID string) error {
+	//TODO
+	// -send push notification to Giver and Taker
+	return t.ChangeTransactionStatus(transactionID, models.TransactionStatusInProgress)
+}
+
+func (t *Transaction) Finish(transactionID string) error {
+	//TODO
+	// -send push notification to Giver and Taker, requesting review
+	return t.ChangeTransactionStatus(transactionID, models.TransactionStatusDone)
+}
+
+func (t *Transaction) Cancel(transactionID string, cancelByUserId string) error {
+	//TODO
+	// -send push notification to Giver and Taker, requesting review
+	return t.ChangeTransactionStatus(transactionID, models.TransactionStatusCancel)
 }
 
 func (t *Transaction) update(transaction *models.Transaction) error {

@@ -48,6 +48,25 @@ func (ctx *addProposalImages) Handle(params proposal.AddProposalImagesParams, pr
 	return proposal.NewAddProposalImagesOK()
 }
 
+func ChangeProposalImagesHandler(rt *runtimeApp.Runtime) proposal.ChangeProposalImagesHandler {
+	return &changeProposalImages{rt: rt}
+}
+
+type changeProposalImages struct {
+	rt *runtimeApp.Runtime
+}
+
+func (ctx *changeProposalImages) Handle(params proposal.ChangeProposalImagesParams, principal *models.LoggedUser) middleware.Responder {
+
+	p := handler.New(ctx.rt.GetDatabase())
+	err := p.ChangeImages(params.ProposalID, params.Body)
+	if err != nil {
+		return proposal.NewChangeProposalImagesInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+	}
+
+	return proposal.NewChangeProposalImagesOK()
+}
+
 func AddProposalTagsHandler(rt *runtimeApp.Runtime) proposal.AddProposalTagsHandler {
 	return &addProposalTag{rt: rt}
 }
