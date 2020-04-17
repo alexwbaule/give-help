@@ -400,6 +400,7 @@ paths:
       summary: Get a Proposal
       description: Get a Proposal By ID
       operationId: GetProposalByID
+      security: []
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -447,6 +448,7 @@ paths:
       summary: Get a Proposal
       description: Get a Proposal Data to Share
       operationId: GetProposalShareDataID
+      security: []
       parameters:
         -
           $ref: '#/parameters/ProposalID'
@@ -473,6 +475,7 @@ paths:
       summary: Find a Proposal
       description: Find a Proposal
       operationId: FindProposal
+      security: []
       parameters:
         -
           in: body
