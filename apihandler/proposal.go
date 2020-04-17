@@ -151,7 +151,7 @@ type findProposal struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *findProposal) Handle(params proposal.FindProposalParams, principal *models.LoggedUser) middleware.Responder {
+func (ctx *findProposal) Handle(params proposal.FindProposalParams) middleware.Responder {
 
 	p := handler.New(ctx.rt.GetDatabase())
 	proposals, err := p.Find(params.Body)
@@ -170,7 +170,7 @@ type getProposalByID struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *getProposalByID) Handle(params proposal.GetProposalByIDParams, principal *models.LoggedUser) middleware.Responder {
+func (ctx *getProposalByID) Handle(params proposal.GetProposalByIDParams) middleware.Responder {
 
 	p := handler.New(ctx.rt.GetDatabase())
 	oneProposal, err := p.Load(params.ProposalID)
@@ -208,7 +208,7 @@ type getProposalShareData struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *getProposalShareData) Handle(params proposal.GetProposalShareDataIDParams, principal *models.LoggedUser) middleware.Responder {
+func (ctx *getProposalShareData) Handle(params proposal.GetProposalShareDataIDParams) middleware.Responder {
 
 	p := handler.New(ctx.rt.GetDatabase())
 	shareData, err := p.GetUserDataToShare(params.ProposalID)
