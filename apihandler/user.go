@@ -36,7 +36,13 @@ func (ctx *addUser) Handle(params user.AddUserParams, principal *models.LoggedUs
 		return user.NewAddUserInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
 	}
 
-	return user.NewAddUserOK().WithPayload(ruser)
+	retUser, err := c.Load(string(ruser))
+
+	if err != nil {
+		return user.NewGetUserByIDInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+	}
+
+	return user.NewAddUserOK().WithPayload(retUser)
 }
 
 func UpdateUserByIDHandler(rt *runtimeApp.Runtime) user.UpdateUserByIDHandler {

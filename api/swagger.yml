@@ -50,7 +50,7 @@ paths:
         200:
           description: User ID
           schema:
-            $ref: "#/definitions/UserID"
+            $ref: "#/definitions/User"
         401:
           description: Authorization Error
           schema:
