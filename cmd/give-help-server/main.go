@@ -131,7 +131,7 @@ func main() {
 	api.TransactionCancelTransactionHandler = apihandler.TransactionCancelTransactionHandler(rt)
 
 	/* API Category */
-	api.CategoryGetCategoryHandler = apihandler.GetCategoryHandler(rt)
+	api.TagsGetTagsHandler = apihandler.GetTagsHandler(rt)
 
 	c := cors.New(cors.Options{
 		Debug:              true,

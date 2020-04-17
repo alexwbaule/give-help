@@ -24,7 +24,7 @@ tags:
   - name: user
   - name: transaction
   - name: proposal
-  - name: category
+  - name: tags
 
 security:
   - APIKeyHeader:
@@ -669,16 +669,16 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
 
-  /category:
+  /tags:
     get:
       tags:
-        - category
-      summary: Get Category
-      description: Get Category
-      operationId: GetCategory
+        - tags
+      summary: Get Tags
+      description: Get Tags
+      operationId: GetTags
       responses:
         200:
-          description: Get Category
+          description: Get Tags
           schema:
             $ref: "#/definitions/Tags"
         401:
