@@ -1,4 +1,4 @@
-package category
+package tags
 
 import (
 	"fmt"
@@ -7,17 +7,17 @@ import (
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 )
 
-//Category Object struct
-type Category struct {
+//Tags Object struct
+type Tags struct {
 	conn *connection.Connection
 }
 
 //New creates a new instance
-func New(conn *connection.Connection) *Category {
-	return &Category{conn: conn}
+func New(conn *connection.Connection) *Tags {
+	return &Tags{conn: conn}
 }
 
-const insertCategories = `INSERT INTO CATEGORIES 
+const insertCategories = `INSERT INTO TAGS 
 (
 	Name
 ) 
@@ -27,7 +27,7 @@ ON CONFLICT (Name)
 DO NOTHING;`
 
 //Insert insert categories on database
-func (c *Category) Insert(categories []string) (int64, error) {
+func (t *Tags) Insert(categories []string) (int64, error) {
 	items := make([]string, len(categories))
 	for pos, cat := range categories {
 		if len(cat) > 0 {
@@ -41,12 +41,12 @@ func (c *Category) Insert(categories []string) (int64, error) {
 
 	cmd := fmt.Sprintf(insertCategories, strings.Join(items, ","))
 
-	db := c.conn.Get()
+	db := t.conn.Get()
 
 	aff, err := db.Exec(cmd)
 
 	if err != nil {
-		return 0, c.conn.CheckError(err)
+		return 0, t.conn.CheckError(err)
 	}
 
 	return aff.RowsAffected()
@@ -56,17 +56,17 @@ const selectCategories = `
 SELECT 
 	DISTINCT Name
 FROM 
-	CATEGORIES
+	TAGS
 WHERE
 	Name IS NOT NULL
 	AND LENGTH(Name) > 0
 ORDER BY NAME`
 
 //Load load categories from database
-func (c *Category) Load() ([]string, error) {
+func (t *Tags) Load() ([]string, error) {
 	ret := []string{}
 
-	db := c.conn.Get()
+	db := t.conn.Get()
 
 	rows, err := db.Query(selectCategories)
 
@@ -81,5 +81,5 @@ func (c *Category) Load() ([]string, error) {
 		}
 	}
 
-	return ret, c.conn.CheckError(err)
+	return ret, t.conn.CheckError(err)
 }
