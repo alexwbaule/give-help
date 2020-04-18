@@ -87,18 +87,27 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 }
 
 //Find find all proposals that match with filter
-func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
+func (p *Proposal) Find(filter *models.Filter) (*models.FindResponse, error) {
 	if filter == nil {
 		return nil, fmt.Errorf("filter is null")
 	}
 
-	ret, err := p.storage.Find(filter)
+	ret := models.FindResponse{
+		Filter: filter,
+	}
+
+	result, err := p.storage.Find(filter)
 
 	if err != nil {
 		log.Printf("fail to load data from filter: %s", err)
+		return &ret, err
 	}
 
-	return ret, err
+	ret.Result = result
+	ret.CurrentPage = filter.PageNumber
+	ret.CurrentPageSize = int64(len(result))
+
+	return &ret, err
 }
 
 //GetUserDataToShare load user data to share on proposal

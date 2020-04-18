@@ -3,6 +3,7 @@ package proposal
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"log"
 
@@ -181,7 +182,7 @@ WHERE
 	%s
 ORDER BY
 	CreatedAt ASC
-
+%s
 `
 
 //LoadFromProposal load an unique proposal from a proposalID
@@ -191,7 +192,7 @@ func (p *Proposal) LoadFromProposal(prposalID string) (*models.Proposal, error) 
 		DataToShare: []models.DataToShare{},
 	}
 
-	cmd := fmt.Sprintf(selectProposal, "ProposalID = $1")
+	cmd := fmt.Sprintf(selectProposal, "ProposalID = $1", "")
 
 	db := p.conn.Get()
 
@@ -236,7 +237,7 @@ func (p *Proposal) LoadFromProposal(prposalID string) (*models.Proposal, error) 
 
 //LoadFromUser load all proposals from an userID
 func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
-	cmd := fmt.Sprintf(selectProposal, "UserID = $1")
+	cmd := fmt.Sprintf(selectProposal, "UserID = $1", "")
 
 	return p.load(cmd, userID)
 }
@@ -290,6 +291,16 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		wheres = append(wheres, fmt.Sprintf("EstimatedValue >= $%d", len(args)))
 	}
 
+	if filter.IsActive != nil {
+		args = append(args, filter.IsActive)
+		wheres = append(wheres, fmt.Sprintf("IsActive = $%d", len(args)))
+	}
+
+	if filter.OnValidate != nil && *filter.OnValidate {
+		args = append(args, time.Now())
+		wheres = append(wheres, fmt.Sprintf("ProposalValidate >= $%d", len(args)))
+	}
+
 	if filter.TargetArea != nil {
 		for _, t := range filter.TargetArea.AreaTags {
 			args = append(args, strings.ToUpper(t))
@@ -320,7 +331,17 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		}
 	}
 
-	cmd := fmt.Sprintf(selectProposal, strings.Join(wheres, " OR \n\t")+"\n")
+	if filter.PageSize == 0 {
+		filter.PageSize = 200
+	}
+
+	if filter.PageNumber < 0 {
+		filter.PageNumber = 0
+	}
+
+	limit := fmt.Sprintf(" LIMIT %d OFFSET %d ", filter.PageSize, filter.PageNumber*filter.PageSize)
+
+	cmd := fmt.Sprintf(selectProposal, strings.Join(wheres, " OR \n\t")+"\n", limit)
 
 	return p.load(cmd, args...)
 }
