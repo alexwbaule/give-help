@@ -458,7 +458,8 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/DataToShare'
+                $ref: '#/definitions/DataToShareResponse'
+
         401:
           description: Authorization Error
           schema:
@@ -1044,6 +1045,15 @@ definitions:
       - Facebook
       - Instagram
       - URL
+
+  DataToShareResponse:
+    type: object
+    required: [ contact_type, value ]
+    properties:
+      contact_type:
+        $ref: "#/definitions/DataToShare"
+      contact:
+        type: object
 
   UserID:
     type: string
