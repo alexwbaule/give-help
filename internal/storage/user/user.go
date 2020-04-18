@@ -259,7 +259,7 @@ SELECT
 	Long,
 
 	--from
-	RegisterFrom
+	coalesce(RegisterFrom, '-')
 FROM
 	USERS
 WHERE

@@ -36,7 +36,7 @@ func createProposal() *models.Proposal {
 
 	return &models.Proposal{
 		ProposalID:       models.ID(proposalID),
-		UserID:           models.ID(userID),
+		UserID:           models.UserID(userID),
 		IsActive:         true,
 		ProposalType:     models.TypeProduct,
 		Side:             models.SideRequest,

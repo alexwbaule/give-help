@@ -29,7 +29,7 @@ func createUser() *models.User {
 	userID := getUserID()
 
 	return &models.User{
-		UserID:         models.ID(userID),
+		UserID:         models.UserID(userID),
 		AllowShareData: true,
 		Contact: &models.Contact{
 			Email:     "usuario@email.com",
