@@ -1,8 +1,9 @@
-2020/04/17
-    -paginação para get de proposal (mudar o objeto de retorno com os dados do filtro e da paginação)
-    -método para retonar contatos da proposal (fazendo match dts)    
+To Do:
+    -paginação para get de proposal (mudar o objeto de retorno com os dados do filtro e da paginação)    
     -incluir service para aceitar termos de uso
     -enviar push do backend para o firebase
 
-Done
-    -mudar o endpoint de categories para Tags    
+Done:
+    2020/04/17  
+        -mudar o endpoint de categories para Tags    
+        -método para retonar contatos da proposal (fazendo match dts)    
