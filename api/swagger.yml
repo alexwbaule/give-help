@@ -25,6 +25,7 @@ tags:
   - name: transaction
   - name: proposal
   - name: tags
+  - name: terms
 
 security:
   - APIKeyHeader:
@@ -689,6 +690,74 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
 
+  /terms:
+    get:
+      tags:
+        - terms
+      summary: Get Terms
+      description: Get Terms
+      operationId: GetTerms
+      responses:
+        200:
+          description: Get Terms
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Term"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /terms/user:
+    get:
+      tags:
+        - terms
+      summary: Get User Accepted
+      description: Get Accepted
+      operationId: GetUserAccepted
+      responses:
+        200:
+          description: Get Terms
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserTerm"
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /terms/{term_id}:
+    put:
+      tags:
+        - terms
+      summary: Put user accept
+      description: Put user accept
+      operationId: PutUserAccept
+      parameters:
+        -
+          $ref: '#/parameters/TermID'      
+      responses:
+        200:
+          description: User Accepted Term
+        401:
+          description: Authorization Error
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
 parameters:
   ProposalState:
     name: proposal_state
@@ -712,6 +781,14 @@ parameters:
     required: true
     type: string
     pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
+
+  TermID:
+    name: term_id
+    in: path
+    description: 'Term ID'
+    required: true
+    type: string
+    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'    
 
   GiverID:
     name: giver_id
@@ -1084,6 +1161,37 @@ definitions:
         $ref: "#/definitions/DataToShare"
       contact:
         type: object
+
+  Term:
+    type: object
+    required:
+    properties:
+      term_id:
+        $ref: "#/definitions/ID"
+      created_at:
+        type: string
+        format: date-time
+      last_update:
+        type: string
+        format: date-time
+      title:
+        type: string
+      description:
+        type: string
+      is_active:
+        type: boolean
+
+  UserTerm:
+    type: object
+    required:
+    properties:
+      term:
+        $ref: "#/definitions/Term"
+      accepted_at:
+        type: string
+        format: date-time
+      is_accepted:
+        type: boolean      
 
   UserID:
     type: string

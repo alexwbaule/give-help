@@ -133,6 +133,11 @@ func main() {
 	/* API Category */
 	api.TagsGetTagsHandler = apihandler.GetTagsHandler(rt)
 
+	/* API Terms */
+	api.TermsPutUserAcceptHandler = apihandler.TermsPutUserAcceptHandler(rt)
+	api.TermsGetTermsHandler = apihandler.TermsGetTermsHandler(rt)
+	api.TermsGetUserAcceptedHandler = apihandler.TermsGetUserAcceptedHandler(rt)
+
 	c := cors.New(cors.Options{
 		Debug:              true,
 		AllowedHeaders:     []string{"*"},
