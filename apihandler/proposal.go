@@ -154,12 +154,12 @@ type findProposal struct {
 func (ctx *findProposal) Handle(params proposal.FindProposalParams) middleware.Responder {
 
 	p := handler.New(ctx.rt.GetDatabase())
-	proposals, err := p.Find(params.Body)
+	result, err := p.Find(params.Body)
 	if err != nil {
 		return proposal.NewFindProposalInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
 	}
 
-	return proposal.NewFindProposalOK().WithPayload(proposals)
+	return proposal.NewFindProposalOK().WithPayload(result)
 }
 
 func GetProposalByIDHandler(rt *runtimeApp.Runtime) proposal.GetProposalByIDHandler {

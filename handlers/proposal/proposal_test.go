@@ -255,13 +255,13 @@ func TestFind(t *testing.T) {
 
 	service, prop := prepare(t)
 
-	loaded, err := service.Find(filter)
+	result, err := service.Find(filter)
 
 	if err != nil {
 		t.Errorf("fail to try load proposal data from %v - error: %s", prop, err.Error())
 	}
 
-	if len(loaded) == 0 {
+	if len(result.Result) == 0 {
 		t.Errorf("fail to try find data with filters - error: %s", err.Error())
 	}
 }

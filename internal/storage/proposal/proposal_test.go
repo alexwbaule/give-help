@@ -39,7 +39,7 @@ func createProposal() *models.Proposal {
 
 	return &models.Proposal{
 		ProposalID:       models.ID(proposalID),
-		UserID:           models.ID(userID),
+		UserID:           models.UserID(userID),
 		IsActive:         true,
 		ProposalType:     models.TypeProduct,
 		Side:             models.SideRequest,
@@ -185,6 +185,20 @@ func createFilterAll() *models.Filter {
 	}
 }
 
+func createFilterActive() *models.Filter {
+	v := true
+	return &models.Filter{
+		IsActive: &v,
+	}
+}
+
+func createFilterNotActive() *models.Filter {
+	v := false
+	return &models.Filter{
+		IsActive: &v,
+	}
+}
+
 func TestFilter(t *testing.T) {
 	storage := createConn()
 
@@ -239,6 +253,17 @@ func TestFilter(t *testing.T) {
 		t.Error("proposals type filter didn't work!")
 	}
 
+	//active
+	proposals, err = storage.Find(createFilterActive())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) == 0 {
+		t.Error("proposals active status filter didn't work!")
+	}
+
 	//not match
 	proposals, err = storage.Find(createFilterInvalidArea())
 
@@ -248,5 +273,16 @@ func TestFilter(t *testing.T) {
 
 	if len(proposals) > 0 {
 		t.Error("proposals area filter didn't work! (found an invalid area)")
+	}
+
+	//active
+	proposals, err = storage.Find(createFilterNotActive())
+
+	if err != nil {
+		t.Errorf("fail to find proposals, error=%s", err)
+	}
+
+	if len(proposals) > 0 {
+		t.Error("proposals active status filter didn't work! (found an invalid active status)")
 	}
 }
