@@ -394,7 +394,7 @@ paths:
         200:
           description: Proposals List
           schema:
-            $ref: "#/definitions/FindResponse"
+            $ref: "#/definitions/ProposalsResponse"
         500:
           description: Internal Error
           schema:
@@ -1011,7 +1011,7 @@ definitions:
         maximum: 500
         default: 50
 
-  FindResponse:
+  ProposalsResponse:
     type: object
     required: [result, current_page, current_page_size]
     properties:

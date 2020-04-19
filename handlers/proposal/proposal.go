@@ -87,23 +87,21 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 }
 
 //LoadFromFilter Load all proposals that match with filter
-func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.FindResponse, error) {
-	if filter == nil {
-		return nil, fmt.Errorf("filter is null")
-	}
-
-	ret := models.FindResponse{
-		Filter: filter,
-	}
-
+func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsResponse, error) {
 	result, err := p.storage.Find(filter)
 
 	if err != nil {
 		log.Printf("fail to load data from filter: %s", err)
-		return &ret, err
+		return &models.ProposalsResponse{
+			Filter: filter,
+		}, err
 	}
 
-	ret.Result = result
+	ret := models.ProposalsResponse{
+		Filter: filter,
+		Result: result,
+	}
+
 	*ret.CurrentPage = filter.PageNumber
 	*ret.CurrentPageSize = int64(len(result))
 
