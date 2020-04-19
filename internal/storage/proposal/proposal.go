@@ -3,7 +3,6 @@ package proposal
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"log"
 
@@ -266,7 +265,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 				wheres = append(wheres, fmt.Sprintf(" AreaTags && ARRAY[ $%d ]", len(args)))
 			}
 		}
-
 	}
 
 	if len(filter.UserID) > 0 {
@@ -292,7 +290,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter.MaxValue > 0 {
 		args = append(args, filter.MinValue, filter.MaxValue)
 		wheres = append(wheres, fmt.Sprintf("(EstimatedValue >= $%d AND EstimatedValue <= $%d )", len(args)-1, len(args)))
-
 	}
 
 	if filter.MinValue > 0 {
@@ -303,11 +300,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter.IncludeInactive {
 		args = append(args, false)
 		wheres = append(wheres, fmt.Sprintf("IsActive = $%d", len(args)))
-	}
-
-	if !filter.IncludeExpired {
-		args = append(args, time.Now())
-		wheres = append(wheres, fmt.Sprintf("ProposalValidate >= $%d", len(args)))
 	}
 
 	if filter.TargetArea != nil {
@@ -340,6 +332,12 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		}
 	}
 
+	expired := " ProposalValidate >= CURRENT_TIMESTAMP "
+
+	if filter.IncludeExpired {
+		expired = ""
+	}
+
 	if filter.PageSize <= 0 {
 		filter.PageSize = 50
 	}
@@ -349,8 +347,24 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	}
 
 	limit := fmt.Sprintf(" LIMIT %d OFFSET %d ", filter.PageSize, filter.PageNumber*filter.PageSize)
-
-	cmd := fmt.Sprintf(selectProposal, strings.Join(wheres, " OR \n\t")+"\n", limit)
+	var cmd string
+	if len(wheres) > 0 {
+		cmd = fmt.Sprintf(
+			selectProposal,
+			fmt.Sprintf(
+				"( %s ) \n\tAND %s",
+				strings.Join(wheres, " OR \n\t"),
+				expired,
+			),
+			limit,
+		)
+	} else {
+		cmd = fmt.Sprintf(
+			selectProposal,
+			expired,
+			limit,
+		)
+	}
 
 	return p.load(cmd, args...)
 }

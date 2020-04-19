@@ -16,7 +16,7 @@ type getTags struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *getTags) Handle(params tags.GetTagsParams, principal *models.LoggedUser) middleware.Responder {
+func (ctx *getTags) Handle(params tags.GetTagsParams) middleware.Responder {
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.Load()
 

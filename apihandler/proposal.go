@@ -133,7 +133,6 @@ type changeProposalValidDate struct {
 }
 
 func (ctx *changeProposalValidDate) Handle(params proposal.ChangeProposalValidateParams, principal *models.LoggedUser) middleware.Responder {
-
 	p := handler.New(ctx.rt.GetDatabase())
 	err := p.ChangeValidate(params.ProposalID, time.Time(*params.Body.Date))
 	if err != nil {
@@ -152,7 +151,6 @@ type getProposalsHandler struct {
 }
 
 func (ctx *getProposalsHandler) Handle(params proposal.GetProposalsParams) middleware.Responder {
-
 	p := handler.New(ctx.rt.GetDatabase())
 	result, err := p.LoadFromFilter(params.Body)
 	if err != nil {
@@ -171,7 +169,6 @@ type getProposalByID struct {
 }
 
 func (ctx *getProposalByID) Handle(params proposal.GetProposalByIDParams) middleware.Responder {
-
 	p := handler.New(ctx.rt.GetDatabase())
 	oneProposal, err := p.LoadFromID(params.ProposalID)
 	if err != nil {
