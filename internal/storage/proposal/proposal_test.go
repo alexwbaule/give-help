@@ -72,7 +72,7 @@ func TestUpsert(t *testing.T) {
 		t.Errorf("fail to try insert proposal data from %v - error: %s", data, err)
 	}
 
-	loaded, err := storage.LoadFromProposal(proposalID)
+	loaded, err := storage.LoadFromID(proposalID)
 
 	if err != nil {
 		t.Errorf("fail to load proposal, error=%s", err)
@@ -186,16 +186,14 @@ func createFilterAll() *models.Filter {
 }
 
 func createFilterActive() *models.Filter {
-	v := false
 	return &models.Filter{
-		IncludeInactive: &v,
+		IncludeInactive: false,
 	}
 }
 
 func createFilterNotActive() *models.Filter {
-	v := true
 	return &models.Filter{
-		IncludeInactive: &v,
+		IncludeInactive: true,
 	}
 }
 

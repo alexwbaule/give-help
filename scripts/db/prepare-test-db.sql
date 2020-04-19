@@ -1,4 +1,4 @@
-INSERT INTO "categories" ("createdat", "name")
+INSERT INTO "tags" ("createdat", "name")
 VALUES
   ('2020-04-08 00:00:00', 'Construção Cívil'),
   ('2020-04-08 00:00:00', 'Pets'),
@@ -121,7 +121,7 @@ VALUES
   (
     129,
     '2020-04-10 00:00:00',
-    '01E5DEKKFZRKEYCRN6PDXJ8UUU',
+    '01E5DEKKFZRKEYCRN6PDXJ8GYZ',
     '+55',
     '1',
     '9999-9999',
@@ -131,7 +131,7 @@ VALUES
   (
     130,
     '2020-04-10 00:00:00',
-    '01E5DEKKFZRKEYCRN6PDXJ8UUU',
+    '01E5DEKKFZRKEYCRN6PDXJ8GYZ',
     '+55',
     '0',
     '1111-1111',
@@ -163,7 +163,7 @@ VALUES
   (
     '01E5DEKKFZRKEYCRN6PDXJ8PPP',
     '2020-04-11 00:00:00',
-    '01E5DEKKFZRKEYCRN6PDXJ8UUU',
+    '01E5DEKKFZRKEYCRN6PDXJ8GYZ',
     'request',
     'product',
     '{Alimentação}',
@@ -292,4 +292,37 @@ It has survived not only five centuries, but also the leap into electronic types
 remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset 
 sheets containing Lorem Ipsum passages, and more recently with desktop publishing software 
 like Aldus PageMaker including versions of Lorem Ipsum.'
+);
+
+INSERT INTO TERMS_ACCEPTED 
+(
+  UserID,
+  TermID
+) 
+VALUES
+(
+  '01E5DEKKFZRKEYCRN6PDXJ8GYZ',
+  '01E5DEKKFZRKEYCRN6PDXJ8T11'
+);
+
+INSERT INTO TERMS_ACCEPTED 
+(
+  UserID,
+  TermID
+) 
+VALUES
+(
+  '01E5DEKKFZRKEYCRN6PDXJ8GYZ',
+  '01E5DEKKFZRKEYCRN6PDXJ8T22'
+);
+
+INSERT INTO TERMS_ACCEPTED 
+(
+  UserID,
+  TermID
+) 
+VALUES
+(
+  '01E5DEKKFZRKEYCRN6PDXJ8GYZ',
+  '01E5DEKKFZRKEYCRN6PDXJ8T33'
 );

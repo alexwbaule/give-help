@@ -638,6 +638,7 @@ paths:
       summary: Get Tags
       description: Get Tags
       operationId: GetTags
+      security: []
       responses:
         200:
           description: Get Tags
