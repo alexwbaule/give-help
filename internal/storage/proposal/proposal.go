@@ -413,6 +413,11 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 		)
 
 		if err != nil {
+			fmtArgs := make([]string, len(args))
+			for p, a := range args {
+				fmtArgs[p] = fmt.Sprintf("$%d=%v", p, a)
+			}
+			log.Printf("query error. \nquery: %s \nargs: %s\nerror: %s", cmd, strings.Join(fmtArgs, ";"), err)
 			return ret, p.conn.CheckError(err)
 		}
 
@@ -426,6 +431,14 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 		}
 
 		ret = append(ret, &i)
+	}
+
+	if err != nil {
+		fmtArgs := make([]string, len(args))
+		for p, a := range args {
+			fmtArgs[p] = fmt.Sprintf("$%d=%v", p, a)
+		}
+		log.Printf("query error. \nquery: %s \nargs: %s\nerror: %s", cmd, strings.Join(fmtArgs, ";"), err)
 	}
 
 	return ret, p.conn.CheckError(err)

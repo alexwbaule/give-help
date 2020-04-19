@@ -102,8 +102,10 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		Result: result,
 	}
 
-	*ret.CurrentPage = filter.PageNumber
-	*ret.CurrentPageSize = int64(len(result))
+	ret.CurrentPage = &filter.PageNumber
+
+	pgSize := int64(len(result))
+	ret.CurrentPageSize = &pgSize
 
 	return &ret, err
 }
