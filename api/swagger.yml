@@ -446,8 +446,8 @@ paths:
     get:
       tags:
         - proposal
-      summary: Get a Proposal
-      description: Get a Proposal Data to Share
+      summary: Get a data to share from proposal owner
+      description: Get a data to share from proposal owner
       operationId: GetProposalShareDataID
       security: []
       parameters:
