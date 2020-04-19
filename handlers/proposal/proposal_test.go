@@ -264,4 +264,8 @@ func TestFind(t *testing.T) {
 	if len(result.Result) == 0 {
 		t.Errorf("fail to try find data with filters - error: %s", err.Error())
 	}
+
+	if *result.CurrentPageSize < 1 {
+		t.Errorf("no proposals return")
+	}
 }
