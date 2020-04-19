@@ -586,7 +586,7 @@ paths:
     put:
       tags:
         - proposal
-      summary: Cahnge Proposal Images
+      summary: Change Proposal Images
       description: Change Proposal Images
       operationId: ChangeProposalImages
       parameters:
