@@ -107,7 +107,7 @@ func main() {
 	api.ProposalChangeProposalStateHandler = apihandler.ChangeProposalStateHandler(rt)
 	api.ProposalChangeProposalTextHandler = apihandler.ChangeProposalTextHandler(rt)
 	api.ProposalChangeProposalValidateHandler = apihandler.ChangeProposalValidateHandler(rt)
-	api.ProposalFindProposalHandler = apihandler.FindProposalHandler(rt)
+	api.ProposalGetProposalsHandler = apihandler.GetProposalsHandler(rt)
 	api.ProposalGetProposalByIDHandler = apihandler.GetProposalByIDHandler(rt)
 	api.ProposalGetProposalByUserIDHandler = apihandler.GetProposalByUserIDHandler(rt)
 	api.ProposalGetProposalShareDataIDHandler = apihandler.GetProposalShareDataIDHandler(rt)
