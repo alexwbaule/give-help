@@ -186,7 +186,7 @@ ORDER BY
 `
 
 //LoadFromProposal load an unique proposal from a proposalID
-func (p *Proposal) LoadFromProposal(prposalID string) (*models.Proposal, error) {
+func (p *Proposal) LoadFromID(prposalID string) (*models.Proposal, error) {
 	ret := models.Proposal{
 		TargetArea:  &models.Area{},
 		DataToShare: []models.DataToShare{},
@@ -245,8 +245,12 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 //Find find all proposals that match with filter
 func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter == nil {
-		log.Printf("cannot execute a query with null filter")
-		return nil, nil
+		filter = &models.Filter{
+			PageSize:        50,
+			PageNumber:      0,
+			IncludeExpired:  false,
+			IncludeInactive: false,
+		}
 	}
 
 	args := []interface{}{}
@@ -254,7 +258,7 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 
 	if len(filter.Description) > 0 {
 		args = append(args, "%"+strings.ToUpper(filter.Description)+"%")
-		wheres = append(wheres, fmt.Sprintf("( UPPER(Description) LIKE $%d OR UPPER(Title) LIKE $%d )", len(args), len(args)))
+		wheres = append(wheres, fmt.Sprintf("( UPPER(Description) LIKE $%d OR UPPER(Title) LIKE $%d ) ", len(args), len(args)))
 
 		for _, s := range strings.Split(filter.Description, " ") {
 			if len(s) > 0 {
@@ -263,6 +267,11 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 			}
 		}
 
+	}
+
+	if len(filter.UserID) > 0 {
+		args = append(args, filter.UserID)
+		wheres = append(wheres, fmt.Sprintf("UserID = $%d", len(args)))
 	}
 
 	if len(filter.Side) > 0 {
@@ -291,12 +300,12 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		wheres = append(wheres, fmt.Sprintf("EstimatedValue >= $%d", len(args)))
 	}
 
-	if filter.IsActive != nil {
-		args = append(args, filter.IsActive)
+	if filter.IncludeInactive {
+		args = append(args, false)
 		wheres = append(wheres, fmt.Sprintf("IsActive = $%d", len(args)))
 	}
 
-	if filter.OnValidate != nil && *filter.OnValidate {
+	if !filter.IncludeExpired {
 		args = append(args, time.Now())
 		wheres = append(wheres, fmt.Sprintf("ProposalValidate >= $%d", len(args)))
 	}
@@ -331,8 +340,8 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		}
 	}
 
-	if filter.PageSize == 0 {
-		filter.PageSize = 200
+	if filter.PageSize <= 0 {
+		filter.PageSize = 50
 	}
 
 	if filter.PageNumber < 0 {

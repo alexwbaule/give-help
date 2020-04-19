@@ -56,13 +56,13 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 	return err
 }
 
-//LoadFromProposal load data
-func (p *Proposal) Load(proposalID string) (*models.Proposal, error) {
+//LoadFromID load data
+func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 	if len(proposalID) == 0 {
 		return nil, fmt.Errorf("proposalID is empty")
 	}
 
-	ret, err := p.storage.LoadFromProposal(proposalID)
+	ret, err := p.storage.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -86,8 +86,8 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 	return ret, err
 }
 
-//Find find all proposals that match with filter
-func (p *Proposal) Find(filter *models.Filter) (*models.FindResponse, error) {
+//LoadFromFilter Load all proposals that match with filter
+func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.FindResponse, error) {
 	if filter == nil {
 		return nil, fmt.Errorf("filter is null")
 	}
@@ -104,8 +104,8 @@ func (p *Proposal) Find(filter *models.Filter) (*models.FindResponse, error) {
 	}
 
 	ret.Result = result
-	ret.CurrentPage = filter.PageNumber
-	ret.CurrentPageSize = int64(len(result))
+	*ret.CurrentPage = filter.PageNumber
+	*ret.CurrentPageSize = int64(len(result))
 
 	return &ret, err
 }
@@ -118,7 +118,7 @@ func (p *Proposal) GetUserDataToShare(proposalID string) ([]*models.DataToShareR
 
 	ret := []*models.DataToShareResponse{}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -173,7 +173,7 @@ func (p *Proposal) ChangeValidStatus(proposalID string, status bool) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -191,7 +191,7 @@ func (p *Proposal) AddTags(proposalID string, tags []string) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -209,7 +209,7 @@ func (p *Proposal) AddImages(proposalID string, images []string) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -227,7 +227,7 @@ func (p *Proposal) ChangeImages(proposalID string, images []string) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -245,7 +245,7 @@ func (p *Proposal) ChangeValidate(proposalID string, validate time.Time) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
@@ -263,7 +263,7 @@ func (p *Proposal) ChangeText(proposalID string, title string, description strin
 		return fmt.Errorf("proposalID is empty")
 	}
 
-	prop, err := p.Load(proposalID)
+	prop, err := p.LoadFromID(proposalID)
 
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
