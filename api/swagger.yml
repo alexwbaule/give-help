@@ -40,13 +40,12 @@ paths:
       description: Add a new User
       operationId: AddUser
       parameters:
-        -
-          in: body
+        - in: body
           name: body
           description: User Object to be added
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: "#/definitions/User"
       responses:
         200:
           description: User ID
@@ -86,13 +85,12 @@ paths:
       description: Update User By ID
       operationId: UpdateUserByID
       parameters:
-        -
-          in: body
+        - in: body
           name: body
           description: User Object to be added
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: "#/definitions/User"
       responses:
         200:
           description: User Updated
@@ -113,13 +111,12 @@ paths:
       description: Add a New Transaction
       operationId: AddTransaction
       parameters:
-        -
-          in: body
+        - in: body
           name: body
           description: Transaction Object to be added
           required: true
           schema:
-            $ref: '#/definitions/Transaction'
+            $ref: "#/definitions/Transaction"
       responses:
         200:
           description: Transaction ID
@@ -142,8 +139,7 @@ paths:
       description: Get Transaction By ID
       operationId: GetTransactionByID
       parameters:
-        -
-          $ref: '#/parameters/TransactionID'
+        - $ref: "#/parameters/TransactionID"
       responses:
         200:
           description: Transaction
@@ -166,15 +162,14 @@ paths:
       description: Get Transaction By Proposal ID
       operationId: GetTransactionByProposalID
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
+        - $ref: "#/parameters/ProposalID"
       responses:
         200:
           description: Transaction List
           schema:
             type: array
             items:
-              $ref: '#/definitions/Transaction'
+              $ref: "#/definitions/Transaction"
         401:
           description: Authorization Error
           schema:
@@ -183,7 +178,7 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
-  
+
   /transaction/user:
     get:
       tags:
@@ -192,15 +187,14 @@ paths:
       description: Get Transaction By User ID
       operationId: GetTransactionByUserID
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
+        - $ref: "#/parameters/ProposalID"
       responses:
         200:
           description: Transaction List
           schema:
             type: array
             items:
-              $ref: '#/definitions/Transaction'
+              $ref: "#/definitions/Transaction"
         401:
           description: Authorization Error
           schema:
@@ -218,15 +212,13 @@ paths:
       description: Update Transaction with Giver Review
       operationId: TransactionGiverReview
       parameters:
-        -
-          $ref: '#/parameters/TransactionID'
-        -
-          in: body
+        - $ref: "#/parameters/TransactionID"
+        - in: body
           name: body
           description: Review
           required: true
           schema:
-            $ref: '#/definitions/Review'
+            $ref: "#/definitions/Review"
       responses:
         200:
           description: Giver Review Created
@@ -247,15 +239,13 @@ paths:
       description: Update Transaction with Taker Review
       operationId: TransactionTakerReview
       parameters:
-        -
-          $ref: '#/parameters/TransactionID'
-        -
-          in: body
+        - $ref: "#/parameters/TransactionID"
+        - in: body
           name: body
           description: Review
           required: true
           schema:
-            $ref: '#/definitions/Review'
+            $ref: "#/definitions/Review"
       responses:
         200:
           description: Taker Review Created
@@ -267,7 +257,7 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
-  
+
   /transaction/{transaction_id}/change_status:
     put:
       tags:
@@ -276,15 +266,13 @@ paths:
       description: Change Transaction Status
       operationId: ChangeTransactionStatus
       parameters:
-        -
-          $ref: '#/parameters/TransactionID'
-        -
-          in: body
+        - $ref: "#/parameters/TransactionID"
+        - in: body
           name: body
           description: Status
           required: true
           schema:
-            $ref: '#/definitions/TransactionStatus'
+            $ref: "#/definitions/TransactionStatus"
       responses:
         200:
           description: Transaction Status Changed
@@ -305,8 +293,7 @@ paths:
       description: Accept Transaction
       operationId: AcceptTransaction
       parameters:
-        -
-          $ref: '#/parameters/TransactionID'        
+        - $ref: "#/parameters/TransactionID"
       responses:
         200:
           description: Transaction accepted
@@ -317,7 +304,7 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"   
+            $ref: "#/definitions/ApiError"
 
   /transaction/{transaction_id}/finish:
     put:
@@ -327,8 +314,7 @@ paths:
       description: Accept Transaction
       operationId: FinishTransaction
       parameters:
-        -
-          $ref: '#/parameters/TransactionID'        
+        - $ref: "#/parameters/TransactionID"
       responses:
         200:
           description: Transaction finished
@@ -339,7 +325,7 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"  
+            $ref: "#/definitions/ApiError"
 
   /transaction/{transaction_id}/cancel/{user_id}:
     put:
@@ -349,10 +335,8 @@ paths:
       description: Cancel Transaction
       operationId: CancelTransaction
       parameters:
-        -        
-          $ref: '#/parameters/TransactionID'        
-        -
-          $ref: '#/parameters/UserID'          
+        - $ref: "#/parameters/TransactionID"
+        - $ref: "#/parameters/UserID"
       responses:
         200:
           description: Transaction finished
@@ -363,8 +347,8 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"                                    
-    
+            $ref: "#/definitions/ApiError"
+
   /proposal:
     post:
       tags:
@@ -373,13 +357,12 @@ paths:
       description: Add a New Proposal
       operationId: AddProposal
       parameters:
-        -
-          in: body
+        - in: body
           name: body
           description: Proposal Object to be added
           required: true
           schema:
-            $ref: '#/definitions/Proposal'
+            $ref: "#/definitions/Proposal"
       responses:
         200:
           description: Proposal ID
@@ -394,6 +377,29 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
 
+    get:
+      tags:
+        - proposal
+      summary: Get proposals
+      description: Get Proposals
+      operationId: GetProposals
+      security: []
+      parameters:
+        - in: body
+          name: body
+          description: Proposal Filter
+          schema:
+            $ref: "#/definitions/Filter"
+      responses:
+        200:
+          description: Proposals List
+          schema:
+            $ref: "#/definitions/FindResponse"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
   /proposal/{proposal_id}:
     get:
       tags:
@@ -403,8 +409,7 @@ paths:
       operationId: GetProposalByID
       security: []
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
+        - $ref: "#/parameters/ProposalID"
       responses:
         200:
           description: Proposal
@@ -418,7 +423,7 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
-  
+
   /proposal/user:
     get:
       tags:
@@ -432,7 +437,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Proposal'
+              $ref: "#/definitions/Proposal"
         401:
           description: Authorization Error
           schema:
@@ -451,46 +456,15 @@ paths:
       operationId: GetProposalShareDataID
       security: []
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
+        - $ref: "#/parameters/ProposalID"
       responses:
         200:
           description: Proposal List
           schema:
             type: array
             items:
-                $ref: '#/definitions/DataToShareResponse'
+              $ref: "#/definitions/DataToShareResponse"
 
-        401:
-          description: Authorization Error
-          schema:
-            $ref: "#/definitions/ApiError"
-        500:
-          description: Internal Error
-          schema:
-            $ref: "#/definitions/ApiError"
-
-  /proposal/find:
-    post:
-      tags:
-        - proposal
-      summary: Find a Proposal
-      description: Find a Proposal
-      operationId: FindProposal
-      security: []
-      parameters:
-        -
-          in: body
-          name: body
-          description: Proposal Filter
-          required: true
-          schema:
-            $ref: '#/definitions/Filter'
-      responses:
-        200:
-          description: Proposal List
-          schema:
-            $ref: '#/definitions/FindResponse'
         401:
           description: Authorization Error
           schema:
@@ -508,10 +482,8 @@ paths:
       description: Change Proposal State
       operationId: ChangeProposalState
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
-        -
-          $ref: '#/parameters/ProposalState'
+        - $ref: "#/parameters/ProposalID"
+        - $ref: "#/parameters/ProposalState"
       responses:
         200:
           description: Proposal State Changed
@@ -532,15 +504,13 @@ paths:
       description: Add Proposal Tags
       operationId: AddProposalTags
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
-        -
-          in: body
+        - $ref: "#/parameters/ProposalID"
+        - in: body
           name: body
           description: Proposal Tags
           required: true
           schema:
-            $ref: '#/definitions/Tags'
+            $ref: "#/definitions/Tags"
       responses:
         200:
           description: Proposal Tags Added
@@ -552,7 +522,7 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
-  
+
   /proposal/{proposal_id}/add_images:
     put:
       tags:
@@ -561,15 +531,13 @@ paths:
       description: Add Proposal Images
       operationId: AddProposalImages
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
-        -
-          in: body
+        - $ref: "#/parameters/ProposalID"
+        - in: body
           name: body
           description: Proposal Images
           required: true
           schema:
-            $ref: '#/definitions/Tags'
+            $ref: "#/definitions/Tags"
       responses:
         200:
           description: Proposal Images Added
@@ -590,15 +558,13 @@ paths:
       description: Change Proposal Images
       operationId: ChangeProposalImages
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
-        -
-          in: body
+        - $ref: "#/parameters/ProposalID"
+        - in: body
           name: body
           description: Proposal Images
           required: true
           schema:
-            $ref: '#/definitions/Tags'
+            $ref: "#/definitions/Tags"
       responses:
         200:
           description: Proposal Images Changed
@@ -609,8 +575,8 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"            
-  
+            $ref: "#/definitions/ApiError"
+
   /proposal/{proposal_id}/change_validate:
     put:
       tags:
@@ -619,15 +585,13 @@ paths:
       description: Change Proposal Validate
       operationId: ChangeProposalValidate
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
-        -
-          in: body
+        - $ref: "#/parameters/ProposalID"
+        - in: body
           name: body
           description: Proposal Object to be added
           required: true
           schema:
-            $ref: '#/definitions/ChangeProposalDate'
+            $ref: "#/definitions/ChangeProposalDate"
       responses:
         200:
           description: Proposal Validate Added
@@ -648,15 +612,13 @@ paths:
       description: Change Proposal Text
       operationId: ChangeProposalText
       parameters:
-        -
-          $ref: '#/parameters/ProposalID'
-        -
-          in: body
+        - $ref: "#/parameters/ProposalID"
+        - in: body
           name: body
           description: Proposal Object to be added
           required: true
           schema:
-            $ref: '#/definitions/ChangeProposalText'
+            $ref: "#/definitions/ChangeProposalText"
       responses:
         200:
           description: Proposal Text Added
@@ -744,8 +706,7 @@ paths:
       description: Put user accept
       operationId: PutUserAccept
       parameters:
-        -
-          $ref: '#/parameters/TermID'      
+        - $ref: "#/parameters/TermID"
       responses:
         200:
           description: User Accepted Term
@@ -762,38 +723,38 @@ parameters:
   ProposalState:
     name: proposal_state
     in: path
-    description: 'Proposal State'
+    description: "Proposal State"
     required: true
     type: boolean
 
   ProposalID:
     name: proposal_id
     in: path
-    description: 'Proposal ID'
+    description: "Proposal ID"
     required: true
     type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$' 
+    pattern: "^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$"
 
   TransactionID:
     name: transaction_id
     in: path
-    description: 'Transaction ID'
+    description: "Transaction ID"
     required: true
     type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'
+    pattern: "^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$"
 
   TermID:
     name: term_id
     in: path
-    description: 'Term ID'
+    description: "Term ID"
     required: true
     type: string
-    pattern: '^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$'    
+    pattern: "^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{26}$"
 
   GiverID:
     name: giver_id
     in: path
-    description: 'Giver ID'
+    description: "Giver ID"
     required: true
     type: string
     pattern: "^[0-9a-zA-Z]{1,128}$"
@@ -801,7 +762,7 @@ parameters:
   TakerID:
     name: taker_id
     in: path
-    description: 'Taker ID'
+    description: "Taker ID"
     required: true
     type: string
     pattern: "^[0-9a-zA-Z]{1,128}$"
@@ -809,7 +770,7 @@ parameters:
   UserID:
     name: user_id
     in: path
-    description: 'User ID'
+    description: "User ID"
     required: true
     type: string
     pattern: "^[0-9a-zA-Z]{1,128}$"
@@ -872,7 +833,7 @@ definitions:
         format: date-time
       last_update:
         type: string
-        format: date-time          
+        format: date-time
       name:
         type: string
       description:
@@ -975,7 +936,7 @@ definitions:
         format: date-time
       last_update:
         type: string
-        format: date-time        
+        format: date-time
       side:
         $ref: "#/definitions/Side"
       proposal_type:
@@ -985,7 +946,7 @@ definitions:
       tags:
         $ref: "#/definitions/Tags"
       title:
-        type: string        
+        type: string
       description:
         type: string
       proposal_validate:
@@ -1013,12 +974,14 @@ definitions:
     type: object
     required:
     properties:
+      user_id:
+        $ref: "#/definitions/UserID"
       tags:
         $ref: "#/definitions/Tags"
       target_area:
         $ref: "#/definitions/Area"
       side:
-        $ref: "#/definitions/Side"        
+        $ref: "#/definitions/Side"
       proposal_types:
         type: array
         items:
@@ -1028,18 +991,16 @@ definitions:
         type: string
       max_value:
         type: number
-        format: float64        
+        format: float64
       min_value:
         type: number
         format: float64
-      on_validate:
+      include_expired:
         type: boolean
-        default: true
-      is_active:
+      include_inactive:
         type: boolean
-        default: true
-      page_number: 
-        type: integer        
+      page_number:
+        type: integer
         minimum: 0
         maximum: 500
         default: 0
@@ -1052,7 +1013,7 @@ definitions:
 
   FindResponse:
     type: object
-    required:
+    required: [result, current_page, current_page_size]
     properties:
       filter:
         $ref: "#/definitions/Filter"
@@ -1062,15 +1023,20 @@ definitions:
           $ref: "#/definitions/Proposal"
       current_page:
         type: integer
+        minimum: 0
+        maximum: 500
+        exclusiveMinimum: true
       current_page_size:
-          type: integer
+        type: integer
+        minimum: 0
+        maximum: 500
 
   Transaction:
     type: object
     required:
     properties:
       transaction_id:
-        $ref: "#/definitions/ID"    
+        $ref: "#/definitions/ID"
       proposal_id:
         $ref: "#/definitions/ID"
       giver_id:
@@ -1082,7 +1048,7 @@ definitions:
         format: date-time
       last_update:
         type: string
-        format: date-time         
+        format: date-time
       giver_review:
         $ref: "#/definitions/Review"
       taker_review:
@@ -1125,7 +1091,7 @@ definitions:
     type: string
     enum:
       - open
-      - in-progress      
+      - in-progress
       - done
       - cancel
 
@@ -1142,11 +1108,11 @@ definitions:
     type: array
     items:
       type: string
-    x-omitempty: true 
+    x-omitempty: true
 
   DataToShare:
     type: string
-    enum:      
+    enum:
       - Phone
       - Email
       - Facebook
@@ -1155,7 +1121,7 @@ definitions:
 
   DataToShareResponse:
     type: object
-    required: [ contact_type, value ]
+    required: [contact_type, value]
     properties:
       contact_type:
         $ref: "#/definitions/DataToShare"
@@ -1191,7 +1157,7 @@ definitions:
         type: string
         format: date-time
       is_accepted:
-        type: boolean      
+        type: boolean
 
   UserID:
     type: string

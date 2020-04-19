@@ -186,16 +186,16 @@ func createFilterAll() *models.Filter {
 }
 
 func createFilterActive() *models.Filter {
-	v := true
+	v := false
 	return &models.Filter{
-		IsActive: &v,
+		IncludeInactive: &v,
 	}
 }
 
 func createFilterNotActive() *models.Filter {
-	v := false
+	v := true
 	return &models.Filter{
-		IsActive: &v,
+		IncludeInactive: &v,
 	}
 }
 
