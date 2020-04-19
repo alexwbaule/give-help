@@ -143,23 +143,23 @@ func (ctx *changeProposalValidDate) Handle(params proposal.ChangeProposalValidat
 	return proposal.NewChangeProposalValidateOK()
 }
 
-func FindProposalHandler(rt *runtimeApp.Runtime) proposal.FindProposalHandler {
-	return &findProposal{rt: rt}
+func GetProposalsHandler(rt *runtimeApp.Runtime) proposal.GetProposalsHandler {
+	return &getProposalsHandler{rt: rt}
 }
 
-type findProposal struct {
+type getProposalsHandler struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *findProposal) Handle(params proposal.FindProposalParams) middleware.Responder {
+func (ctx *getProposalsHandler) Handle(params proposal.GetProposalsParams) middleware.Responder {
 
 	p := handler.New(ctx.rt.GetDatabase())
-	result, err := p.Find(params.Body)
+	result, err := p.LoadFromFilter(params.Body)
 	if err != nil {
-		return proposal.NewFindProposalInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+		return proposal.NewGetProposalsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
 	}
 
-	return proposal.NewFindProposalOK().WithPayload(result)
+	return proposal.NewGetProposalsOK().WithPayload(result)
 }
 
 func GetProposalByIDHandler(rt *runtimeApp.Runtime) proposal.GetProposalByIDHandler {
@@ -173,7 +173,7 @@ type getProposalByID struct {
 func (ctx *getProposalByID) Handle(params proposal.GetProposalByIDParams) middleware.Responder {
 
 	p := handler.New(ctx.rt.GetDatabase())
-	oneProposal, err := p.Load(params.ProposalID)
+	oneProposal, err := p.LoadFromID(params.ProposalID)
 	if err != nil {
 		return proposal.NewGetProposalByIDInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
 	}
