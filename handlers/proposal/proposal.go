@@ -88,6 +88,10 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 
 //LoadFromFilter Load all proposals that match with filter
 func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsResponse, error) {
+	if filter == nil {
+		filter = &models.Filter{}
+	}
+
 	result, err := p.storage.Find(filter)
 
 	if err != nil {
