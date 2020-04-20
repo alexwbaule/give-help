@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
@@ -56,4 +57,20 @@ type DbConfig struct {
 	User   string
 	Pass   string
 	DBName string
+}
+
+func NormalizeTagArray(arr []string) []string {
+	m := map[string]interface{}
+
+	for _, a := range arr {
+		m[strings.ToLower(a)] = nil
+	}
+
+	ret := []string{}
+
+	for k := range ret {
+		ret = append(ret, k)		
+	}
+
+	return ret
 }

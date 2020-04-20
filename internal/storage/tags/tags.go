@@ -31,7 +31,7 @@ func (t *Tags) Insert(categories []string) (int64, error) {
 	items := make([]string, len(categories))
 	for pos, cat := range categories {
 		if len(cat) > 0 {
-			items[pos] = fmt.Sprintf(`('%s')`, cat)
+			items[pos] = fmt.Sprintf(`('%s')`, strings.ToLower(cat))
 		}
 	}
 
@@ -54,13 +54,13 @@ func (t *Tags) Insert(categories []string) (int64, error) {
 
 const selectCategories = `
 SELECT 
-	DISTINCT Name
+	DISTINCT LOWER(Name) as Name
 FROM 
 	TAGS
 WHERE
 	Name IS NOT NULL
 	AND LENGTH(Name) > 0
-ORDER BY NAME`
+ORDER BY Name;`
 
 //Load load categories from database
 func (t *Tags) Load() ([]string, error) {
