@@ -50,6 +50,7 @@ type Proposal struct {
 	Facebook       string
 	Instagram      string
 	Twitter        string
+	Line           int
 }
 
 type FirebaseUser struct {
@@ -58,6 +59,7 @@ type FirebaseUser struct {
 	Password    string
 	DisplayName string
 	PhotoURL    string
+	Line        int
 }
 
 var rt *runtimeApp.Runtime
@@ -111,8 +113,6 @@ func main() {
 			continue
 		}
 
-		log.Printf("[id=%s] user added on firebase! %v\n", id, u)
-
 		err = insertDbTags(p.Tags)
 		if err != nil {
 			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
@@ -127,8 +127,14 @@ func main() {
 		if err != nil {
 			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
 		}
-		log.Printf("[id=%s] Done!\n", id)
+
+		log.Printf("[id=%s] Import ok!\n", id)
 	}
+}
+
+func showError(prop Proposal) {
+	j, _ := json.MarshalIndent(prop, "", "\t")
+	log.Printf("Error on: \n%s", string(j))
 }
 
 func loadFromFile(path string, offset int) ([]Proposal, error) {
@@ -146,7 +152,7 @@ func loadFromFile(path string, offset int) ([]Proposal, error) {
 	for scanner.Scan() {
 		if line > offset {
 			data := scanner.Text()
-			u, err := parser(data)
+			u, err := parser(data, line)
 
 			if err != nil {
 				log.Printf("[line: %d] - Fail to parser data: %s", line, data)
@@ -154,7 +160,9 @@ func loadFromFile(path string, offset int) ([]Proposal, error) {
 				log.Printf("[line: %d] - line parsed!", line)
 			}
 
-			ret = append(ret, u)
+			if len(u.Name) > 0 {
+				ret = append(ret, u)
+			}
 		}
 		line++
 	}
@@ -167,7 +175,7 @@ func loadFromFile(path string, offset int) ([]Proposal, error) {
 	return ret, err
 }
 
-func parser(line string) (Proposal, error) {
+func parser(line string, index int) (Proposal, error) {
 	fields := strings.Split(line, "\t")
 
 	if len(fields) < 17 {
@@ -195,6 +203,7 @@ func parser(line string) (Proposal, error) {
 		Facebook:       parserURL(fields[10], "facebook"),
 		Instagram:      parserURL(fields[10], "instagram"),
 		Twitter:        parserURL(fields[10], "@"),
+		Line:           index,
 	}
 
 	t, s := getType(fields[7], ret)
@@ -216,6 +225,10 @@ func getPhoneRegion(input string) string {
 func getPhoneCountry(input string) string {
 	if len(input) == 0 {
 		return "+55"
+	}
+
+	if string(input[0]) != "+" {
+		input = "+" + input
 	}
 
 	return input
@@ -313,7 +326,7 @@ func parserURL(input string, target string) string {
 }
 
 func parserToFirebaseUser(prop Proposal) FirebaseUser {
-	ret := FirebaseUser{}
+	ret := FirebaseUser{Line: prop.Line}
 
 	if len(prop.Email) > 0 {
 		ret.Email = prop.Email
@@ -321,13 +334,15 @@ func parserToFirebaseUser(prop Proposal) FirebaseUser {
 		re := regexp.MustCompile(`[^A-Za-z0-9]`)
 		replaced := re.ReplaceAll([]byte(prop.Name), []byte(""))
 
-		ret.Email = fmt.Sprintf("%s@%s.com", string(replaced), prop.SheetType)
+		ret.Email = fmt.Sprintf("%s@%s.com", string(replaced), string(re.ReplaceAll([]byte(prop.SheetType), []byte(""))))
 	}
 
 	ret.Password = ret.Email
 
 	if len(prop.PhoneNumbers) > 0 {
-		ret.PhoneNumber = fmt.Sprintf("%s%s%s", prop.PhoneCountry, prop.PhoneRegion, prop.PhoneNumbers[0])
+		if len(prop.PhoneNumbers[0]) > 0 {
+			ret.PhoneNumber = fmt.Sprintf("%s%s%s", prop.PhoneCountry, prop.PhoneRegion, prop.PhoneNumbers[0])
+		}
 	}
 
 	ret.DisplayName = prop.Name
@@ -335,8 +350,6 @@ func parserToFirebaseUser(prop Proposal) FirebaseUser {
 	if len(prop.Images) > 0 {
 		ret.PhotoURL = prop.Images[0]
 	}
-
-	log.Printf("Firebase user: %v", ret)
 
 	return ret
 }
@@ -363,7 +376,11 @@ func insertFirebase(user FirebaseUser) (string, error) {
 
 	params.Password(user.Password)
 	params.DisplayName(user.DisplayName)
-	params.PhotoURL(user.PhotoURL)
+
+	if len(user.PhotoURL) > 0 {
+		params.PhotoURL(user.PhotoURL)
+	}
+
 	params.Disabled(false)
 
 	ctx := context.Background()
@@ -373,14 +390,21 @@ func insertFirebase(user FirebaseUser) (string, error) {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	u, err := client.CreateUser(ctx, params)
+	u, err := client.GetUserByEmail(ctx, user.Email)
+	if err == nil {
+		log.Printf("[id=%s] User already exists on firebase\n", u.UID)
+		return u.UID, err
+	}
+
+	u, err = client.CreateUser(ctx, params)
 
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		dt, _ := json.MarshalIndent(user, "", "\t")
+		log.Fatalf("error creating user: data%s\nerror: %s", string(dt), err)
 		return "", err
 	}
 
-	log.Printf("Successfully created user: %v\n", u)
+	log.Printf("[id=%s] Successfully created user\n", u.UID)
 
 	return u.UID, err
 }
@@ -418,28 +442,26 @@ func insertDbUser(prop Proposal, userID string) error {
 		State:   "São Paulo",
 	}
 
-	retID, err := userSvc.Insert(
-		&models.User{
-			AllowShareData: prop.AllowShareData,
-			Contact:        contact,
-			Description:    prop.Description,
-			DeviceID:       prop.DeviceID,
-			Images:         prop.Images,
-			Location:       location,
-			Name:           prop.Name,
-			RegisterFrom:   "admin",
-			Tags:           prop.Tags,
-		},
-		userID,
-	)
+	data := &models.User{
+		AllowShareData: prop.AllowShareData,
+		Contact:        contact,
+		Description:    prop.Description,
+		DeviceID:       prop.DeviceID,
+		Images:         prop.Images,
+		Location:       location,
+		Name:           prop.Name,
+		RegisterFrom:   "admin",
+		Tags:           prop.Tags,
+		UserID:         models.UserID(userID),
+	}
+
+	err := userSvc.Update(data)
 
 	if err != nil {
 		log.Printf("[id=%s] error to try insert user: %s", userID, err)
 
 		return err
 	}
-
-	log.Printf("[id=%s] user inserted on database", retID)
 
 	return err
 }
@@ -481,12 +503,10 @@ func insertDbProposal(prop Proposal, userID string) error {
 	})
 
 	if err != nil {
-		log.Printf("[id=%s] error to try insert proposal: %s", userID, err)
+		log.Printf("[id=%s] error to try insert proposal: %s", retID, err)
 
 		return err
 	}
-
-	log.Printf("[id=%s] proposal inserted on database", retID)
 
 	return err
 }

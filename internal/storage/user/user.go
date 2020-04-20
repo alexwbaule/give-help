@@ -216,8 +216,6 @@ func (u *User) Upsert(user *models.User) error {
 		return u.conn.CheckError(err)
 	}
 
-	log.Printf("Phones....")
-
 	err = u.insertPhones(user)
 
 	return u.conn.CheckError(err)
