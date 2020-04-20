@@ -500,6 +500,7 @@ func insertDbProposal(prop Proposal, userID string) error {
 		Tags:             prop.Tags,
 		Title:            prop.Name,
 		UserID:           models.UserID(userID),
+		IsActive:         true,
 	})
 
 	if err != nil {

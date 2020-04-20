@@ -65,7 +65,7 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 	userHeader := map[string]string{
 		"UserID":         "A%d",
 		"Name":           "B%d",
-		"Description":    "c%d",
+		"Description":    "C%d",
 		"Tags":           "D%d",
 		"Images":         "E%d",
 		"CreatedAt":      "F%d",
