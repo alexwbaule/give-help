@@ -39,8 +39,8 @@ func (t *Tags) Insert(tags []string) error {
 
 	qtd, err := t.storage.Insert(tags)
 
-	if qtd != int64(len(tags)) {
-		log.Printf("numer of affected rows is invalid. Expected %d, received %d", qtd, len(tags))
+	if qtd > 0 {
+		log.Printf("%d tags affected", qtd)
 	}
 
 	if err != nil {

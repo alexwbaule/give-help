@@ -6,3 +6,6 @@ generate:
 	mkdir generated
 	swagger generate server -t generated  -P models.LoggedUser --exclude-main --skip-validation -f api/swagger.yml -r LICENSE
 
+importer:
+	go build -o bin/importer -v cmd/importer/main.go
+
