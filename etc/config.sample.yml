@@ -1,0 +1,29 @@
+service:
+  EnabledListeners:
+    - https
+  CleanupTimeout: 10s
+  MaxHeaderSize: 1MiB
+  SocketPath: /var/run/give-help.sock
+  Host: 127.0.0.1
+  Port: 80
+  ListenLimit: 0
+  KeepAlive: 3m
+  ReadTimeout: 1m
+  WriteTimeout: 30m
+  TLSHost: 127.0.0.1
+  TLSPort: 443
+  TLSCertificate: etc/cert.crt
+  TLSCertificateKey: etc/cert.key
+  TLSListenLimit: 0
+  TLSKeepAlive: 3m
+  TLSReadTimeout: 1m
+  TLSWriteTimeout: 30m
+
+database:
+  Host: localhost
+  User: postgres
+  Pass: example
+  DBName: postgres
+
+metrics:
+  splunk: 52da7db5-50b4-48f0-bce0-317fee5b2e8a
