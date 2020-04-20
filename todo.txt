@@ -1,9 +1,0 @@
-To Do:    
-    -enviar push do backend para o firebase
-
-Done:
-    2020/04/17  
-        -mudar o endpoint de categories para Tags    
-        -método para retonar contatos da proposal (fazendo match dts)    
-        -paginação para get de proposal (mudar o objeto de retorno com os dados do filtro e da paginação)    
-        -incluir service para aceitar termos de uso

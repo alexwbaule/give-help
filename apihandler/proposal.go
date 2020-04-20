@@ -152,6 +152,7 @@ type getProposalsHandler struct {
 
 func (ctx *getProposalsHandler) Handle(params proposal.GetProposalsParams) middleware.Responder {
 	p := handler.New(ctx.rt.GetDatabase())
+
 	result, err := p.LoadFromFilter(params.Body)
 	if err != nil {
 		return proposal.NewGetProposalsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
