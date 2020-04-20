@@ -147,3 +147,17 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("fail to update user (Whatsapp), error=%s", err)
 	}
 }
+
+func TestLoadAll(t *testing.T) {
+	userStorage := createConn()
+
+	users, err := userStorage.LoadAll()
+
+	if err != nil {
+		t.Errorf("fail to load user, error=%s", err)
+	}
+
+	if len(users) == 0 {
+		t.Errorf("fail to load user, error=%s", err)
+	}
+}

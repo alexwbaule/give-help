@@ -64,3 +64,14 @@ func (u *User) Load(userID string) (*models.User, error) {
 
 	return ret, err
 }
+
+//LoadAll load all data
+func (u *User) LoadAll() ([]*models.User, error) {
+	ret, err := u.storage.LoadAll()
+
+	if err != nil {
+		log.Printf("fail to load all users: %s", err)
+	}
+
+	return ret, err
+}
