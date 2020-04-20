@@ -89,33 +89,12 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		"DeviceID":       "X%d",
 		"AllowShareData": "Y%d",
 	}
+
 	currentLine := 1
 
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["UserID"], currentLine), "UserID")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Name"], currentLine), "Name")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Description"], currentLine), "Description")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Tags"], currentLine), "Tags")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Images"], currentLine), "Images")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["CreatedAt"], currentLine), "CreatedAt")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["LastUpdate"], currentLine), "LastUpdate")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["URL"], currentLine), "Contact.URL")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Email"], currentLine), "Contact.Email")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Facebook"], currentLine), "Contact.Facebook")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Instagram"], currentLine), "Contact.Instagram")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Google"], currentLine), "Contact.Google")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Address"], currentLine), "Location.Address")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["City"], currentLine), "Location.City")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["State"], currentLine), "Location.State")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["ZipCode"], currentLine), "Location.ZipCode")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Country"], currentLine), "Location.Country")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Lat"], currentLine), "Location.Lat")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["Long"], currentLine), "Location.Long")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["RegisterFrom"], currentLine), "RegisterFrom")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["PCountry"], currentLine), "Phones.Country")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["PRegion"], currentLine), "Phones.Region")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["PNumbers"], currentLine), "Phones.Numbers")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["DeviceID"], currentLine), "DeviceID")
-	f.SetCellValue("Users", fmt.Sprintf(userHeader["AllowShareData"], currentLine), "AllowShareData")
+	for k, v := range userHeader {
+		f.SetCellValue("Users", fmt.Sprintf(v, currentLine), k)
+	}
 
 	for _, u := range users {
 		if u.Contact == nil {
@@ -194,24 +173,9 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		"DataToShare":      "S%d",
 	}
 
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalID"], currentLine), "ProposalID")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["UserID"], currentLine), "UserID")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Title"], currentLine), "Title")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Side"], currentLine), "Side")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalType"], currentLine), "ProposalType")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Tags"], currentLine), "Tags")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["IsActive"], currentLine), "IsActive")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["CreatedAt"], currentLine), "CreatedAt")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["LastUpdate"], currentLine), "LastUpdate")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalValidate"], currentLine), "ProposalValidate")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["AreaTags"], currentLine), "AreaTags")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Lat"], currentLine), "Lat")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Long"], currentLine), "Long")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Range"], currentLine), "Range")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Images"], currentLine), "Images")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["EstimatedValue"], currentLine), "EstimatedValue")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ExposeUserData"], currentLine), "ExposeUserData")
-	f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["DataToShare"], currentLine), "DataToShare")
+	for k, v := range propsHeader {
+		f.SetCellValue("Proposals", fmt.Sprintf(v, currentLine), k)
+	}
 
 	for _, p := range props.Result {
 		currentLine++
@@ -229,6 +193,7 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalID"], currentLine), p.ProposalID)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["UserID"], currentLine), p.UserID)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Title"], currentLine), p.Title)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Description"], currentLine), p.Description)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Side"], currentLine), p.Side)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalType"], currentLine), p.ProposalType)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Tags"], currentLine), strings.Join(p.Tags, ","))

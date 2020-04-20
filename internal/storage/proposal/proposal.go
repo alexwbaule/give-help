@@ -109,9 +109,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		long = proposal.TargetArea.Long
 		areaRange = proposal.TargetArea.Range
 
-		for _, t := range proposal.TargetArea.AreaTags {
-			areaTags = append(areaTags, strings.ToUpper(t))
-		}
+		areaTags = common.NormalizeTagArray(proposal.TargetArea.AreaTags)
 	}
 
 	if proposal.DataToShare == nil {
@@ -128,7 +126,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		proposal.UserID,
 		proposal.Side,
 		proposal.ProposalType,
-		pq.Array(proposal.Tags),
+		pq.Array(common.NormalizeTagArray(proposal.Tags)),
 		proposal.Title,
 		proposal.Description,
 		proposal.ProposalValidate,
