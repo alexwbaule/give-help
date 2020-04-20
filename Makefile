@@ -9,3 +9,5 @@ generate:
 importer:
 	go build -o bin/importer -v cmd/importer/main.go
 
+exporter:
+	go build -o bin/exporter -v cmd/exporter/main.go
