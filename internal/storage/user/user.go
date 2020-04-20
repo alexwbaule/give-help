@@ -223,6 +223,7 @@ func (u *User) Upsert(user *models.User) error {
 
 const selectUser string = `
 SELECT 
+	UserID,
 	Name,
 	Description,
 	DeviceID,
@@ -260,9 +261,84 @@ SELECT
 	coalesce(RegisterFrom, '-')
 FROM
 	USERS
-WHERE
-	UserID = $1;
-`
+%s
+;`
+
+func (u *User) LoadAll() ([]*models.User, error) {
+	ret := []*models.User{}
+
+	db := u.conn.Get()
+
+	rows, err := db.Query(fmt.Sprintf(selectUser, " "))
+
+	if err != nil {
+		log.Printf("fail to try load all users: %s", err)
+	}
+
+	if err != nil {
+		return ret, u.conn.CheckError(err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		user := models.User{
+			Contact:    &models.Contact{},
+			Reputation: &models.Reputation{},
+			Location:   &models.Location{},
+		}
+
+		var tags []string
+		var userID string
+
+		err := rows.Scan(
+			&userID,
+			&user.Name,
+			&user.Description,
+			&user.DeviceID,
+			&user.AllowShareData,
+			pq.Array(&tags),
+			pq.Array(&user.Images),
+			&user.CreatedAt,
+			&user.LastUpdate,
+			&user.Reputation.Giver,
+			&user.Reputation.Taker,
+			&user.Contact.URL,
+			&user.Contact.Email,
+			&user.Contact.Facebook,
+			&user.Contact.Instagram,
+			&user.Contact.Google,
+			&user.Contact.AdditionalData,
+			&user.Location.Address,
+			&user.Location.City,
+			&user.Location.State,
+			&user.Location.ZipCode,
+			&user.Location.Country,
+			&user.Location.Lat,
+			&user.Location.Long,
+			&user.RegisterFrom,
+		)
+
+		user.Tags = models.Tags(tags)
+		user.UserID = models.UserID(userID)
+
+		if err != nil {
+			log.Printf("fail to try load user from database: error = %s", err.Error())
+			return ret, u.conn.CheckError(err)
+		}
+
+		user.Contact.Phones, err = u.loadPhones(userID)
+
+		if err != nil {
+			log.Printf("fail to try load user phones from database: error = %s", err.Error())
+			return ret, u.conn.CheckError(err)
+		}
+
+		ret = append(ret, &user)
+	}
+
+	return ret, err
+}
 
 //Load load from database
 func (u *User) Load(userID string) (*models.User, error) {
@@ -275,11 +351,12 @@ func (u *User) Load(userID string) (*models.User, error) {
 
 	db := u.conn.Get()
 
-	row := db.QueryRow(selectUser, userID)
+	row := db.QueryRow(fmt.Sprintf(selectUser, ` WHERE UserID = $1 `), userID)
 
 	var tags []string
 
 	err := row.Scan(
+		&userID,
 		&user.Name,
 		&user.Description,
 		&user.DeviceID,
@@ -309,7 +386,7 @@ func (u *User) Load(userID string) (*models.User, error) {
 	user.Tags = models.Tags(tags)
 
 	if err != nil {
-		log.Printf("fail to try load user from database: error = %s", err.Error())
+		log.Printf("fail to try load user from database: id=%s, error = %s", userID, err.Error())
 		return &user, u.conn.CheckError(err)
 	}
 

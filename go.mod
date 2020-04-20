@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	firebase.google.com/go v3.12.0+incompatible
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/alexwbaule/go-app v1.0.3
 	github.com/alexwbaule/viper v1.5.1 // indirect
 	github.com/casualjim/middlewares v0.0.0-20180203195520-396189822216 // indirect
