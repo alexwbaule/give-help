@@ -6,3 +6,6 @@ etc/config.yml
 
 .git-credentials
 .vscode/
+
+etc/serviceAccountKey.json
+etc/source.*
