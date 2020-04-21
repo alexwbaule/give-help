@@ -295,11 +295,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		wheres = append(wheres, fmt.Sprintf("EstimatedValue >= $%d", len(args)))
 	}
 
-	if filter.IncludeInactive {
-		args = append(args, false)
-		wheres = append(wheres, fmt.Sprintf("IsActive = $%d", len(args)))
-	}
-
 	if filter.TargetArea != nil {
 		for _, t := range filter.TargetArea.AreaTags {
 			args = append(args, strings.ToUpper(t))
@@ -330,10 +325,14 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		}
 	}
 
-	expired := " ProposalValidate >= CURRENT_TIMESTAMP "
+	andFilters := []string{} // "ProposalValidate >= %s ", "IsActive = true" }
 
-	if filter.IncludeExpired {
-		expired = ""
+	if !filter.IncludeExpired {
+		andFilters = append(andFilters, "ProposalValidate >= CURRENT_TIMESTAMP")
+	}
+
+	if !filter.IncludeInactive {
+		andFilters = append(andFilters, "IsActive = true")
 	}
 
 	if filter.PageSize <= 0 {
@@ -344,22 +343,33 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		filter.PageNumber = 0
 	}
 
+	var baseFilter string
+
+	switch len(andFilters) {
+	case 0:
+		baseFilter = ""
+	case 1:
+		baseFilter = andFilters[0]
+	default:
+		baseFilter = strings.Join(andFilters, " AND ")
+	}
+
 	limit := fmt.Sprintf(" LIMIT %d OFFSET %d ", filter.PageSize, filter.PageNumber*filter.PageSize)
 	var cmd string
 	if len(wheres) > 0 {
 		cmd = fmt.Sprintf(
 			selectProposal,
 			fmt.Sprintf(
-				"( %s ) \n\tAND %s",
+				"( %s ) \n\tAND ( %s )",
 				strings.Join(wheres, " OR \n\t"),
-				expired,
+				baseFilter,
 			),
 			limit,
 		)
 	} else {
 		cmd = fmt.Sprintf(
 			selectProposal,
-			expired,
+			baseFilter,
 			limit,
 		)
 	}

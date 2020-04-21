@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/lib/pq"
 )
@@ -191,7 +192,7 @@ func (u *User) Upsert(user *models.User) error {
 		user.Description,
 		user.DeviceID,
 		user.AllowShareData,
-		pq.Array(user.Tags),
+		pq.Array(common.NormalizeTagArray(user.Tags)),
 		pq.Array(user.Images),
 		repGiver,
 		repTaker,
