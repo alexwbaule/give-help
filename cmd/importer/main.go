@@ -211,6 +211,10 @@ func parser(line string, index int) (Proposal, error) {
 	ret.Type = t
 	ret.Side = s
 
+	if len(ret.Facebook) > 0 || len(ret.Instagram) > 0 || len(ret.Twitter) > 0 {
+		ret.URL = ""
+	}
+
 	return ret, nil
 }
 
