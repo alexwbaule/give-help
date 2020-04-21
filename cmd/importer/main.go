@@ -49,7 +49,6 @@ type Proposal struct {
 	Images         []string
 	Facebook       string
 	Instagram      string
-	Twitter        string
 	Line           int
 }
 
@@ -202,7 +201,6 @@ func parser(line string, index int) (Proposal, error) {
 		Images:         getArray(fields[16]),
 		Facebook:       parserURL(fields[10], "facebook"),
 		Instagram:      parserURL(fields[10], "instagram"),
-		Twitter:        parserURL(fields[10], "@"),
 		Line:           index,
 	}
 
@@ -211,7 +209,7 @@ func parser(line string, index int) (Proposal, error) {
 	ret.Type = t
 	ret.Side = s
 
-	if len(ret.Facebook) > 0 || len(ret.Instagram) > 0 || len(ret.Twitter) > 0 {
+	if len(ret.Facebook) > 0 || len(ret.Instagram) > 0 {
 		ret.URL = ""
 	}
 
