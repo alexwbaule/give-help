@@ -55,10 +55,10 @@ paths:
           description: Authorization Error
           schema:
             $ref: "#/definitions/ApiError"
-            500:
-              description: Internal Error
-              schema:
-                $ref: "#/definitions/ApiError"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
     get:
       tags:
         - user

@@ -60,7 +60,7 @@ type DbConfig struct {
 }
 
 func NormalizeTagArray(arr []string) []string {
-	m := map[string]interface{}
+	m := map[string]interface{}{}
 
 	for _, a := range arr {
 		m[strings.ToLower(a)] = nil
@@ -68,8 +68,8 @@ func NormalizeTagArray(arr []string) []string {
 
 	ret := []string{}
 
-	for k := range ret {
-		ret = append(ret, k)		
+	for k := range m {
+		ret = append(ret, k)
 	}
 
 	return ret
