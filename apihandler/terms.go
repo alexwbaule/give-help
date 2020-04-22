@@ -38,7 +38,7 @@ type getTermsHandler struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *getTermsHandler) Handle(params terms.GetTermsParams, principal *models.LoggedUser) middleware.Responder {
+func (ctx *getTermsHandler) Handle(params terms.GetTermsParams) middleware.Responder {
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadTerms()
 

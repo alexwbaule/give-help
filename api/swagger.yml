@@ -660,6 +660,7 @@ paths:
       summary: Get Terms
       description: Get Terms
       operationId: GetTerms
+      security: []
       responses:
         200:
           description: Get Terms
