@@ -668,10 +668,6 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Term"
-        401:
-          description: Authorization Error
-          schema:
-            $ref: "#/definitions/ApiError"
         500:
           description: Internal Error
           schema:
