@@ -1,56 +1,25 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
-	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"github.com/360EntSecGroup-Skylar/excelize"
+
 	"github.com/alexwbaule/give-help/v2/generated/models"
-	"github.com/go-openapi/strfmt"
-	"google.golang.org/api/option"
-
-	app "github.com/alexwbaule/go-app"
-
 	proposalHandler "github.com/alexwbaule/give-help/v2/handlers/proposal"
-	tagsHandler "github.com/alexwbaule/give-help/v2/handlers/tags"
 	userHandler "github.com/alexwbaule/give-help/v2/handlers/user"
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
+	"github.com/alexwbaule/go-app"
 )
-
-type Proposal struct {
-	ProposaldID    string
-	DeviceID       string
-	Timestamp      time.Time
-	Name           string
-	Email          string
-	Lat            float64
-	Long           float64
-	SheetType      string
-	Type           string // volunteer|taker|job|local_business
-	Side           string
-	Tags           []string // categoria
-	Description    string
-	URL            string
-	Address        string
-	PhoneNumbers   []string
-	PhoneRegion    string
-	PhoneCountry   string
-	AllowShareData bool
-	Images         []string
-	Facebook       string
-	Instagram      string
-	Line           int
-}
 
 type FirebaseUser struct {
 	Email       string
@@ -61,313 +30,360 @@ type FirebaseUser struct {
 	Line        int
 }
 
-var rt *runtimeApp.Runtime
-var fbase *firebase.App
-var userSvc *userHandler.User
-var proposalSvc *proposalHandler.Proposal
-var tagsSvc *tagsHandler.Tags
-
 func main() {
+	Execute(os.Args[1])
+}
+
+func Execute(filename string) {
 	app, err := app.New("give-help-service")
-	cfg := app.Config()
 
-	cfg.SetDefault("service.Host", "127.0.0.1")
-	cfg.SetDefault("service.Port", "8081")
-	cfg.SetDefault("service.TLSWriteTimeout", "15m")
-	cfg.SetDefault("service.WriteTimeout", "15m")
-
-	rt, err = runtimeApp.NewRuntime(app)
+	rt, err := runtimeApp.NewRuntime(app)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	defer rt.CloseDatabase()
 
-	props, err := loadFromFile(os.Args[1], 4)
+	f, err := excelize.OpenFile(filename)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 
-	log.Printf("read %d lines - Done!\n", len(props))
+	users, errs := importUsers(f, rt)
 
-	j, err := json.MarshalIndent(props, "", "\t")
+	for line, err := range errs {
+		log.Printf("[line %d] Error to try import user: %s\n", line, err)
+	}
 
-	err = ioutil.WriteFile(os.Args[1]+".output.json", j, 0644)
+	if len(users) == 0 {
+		log.Println("[line %d] No users to import")
+	}
 
-	log.Printf("output in %s\n", os.Args[1]+".output.json")
+	errs = importProps(users, f, rt)
 
-	initFirebase()
+	for line, err := range errs {
+		log.Printf("[line %d] Error to try import proposal: %s\n", line, err)
+	}
 
-	userSvc = userHandler.New(rt.GetDatabase())
-	proposalSvc = proposalHandler.New(rt.GetDatabase())
-	tagsSvc = tagsHandler.New(rt.GetDatabase())
+	log.Printf("Finish!")
+}
 
-	for _, p := range props {
-		u := parserToFirebaseUser(p)
-		id, err := insertFirebase(u)
+func importUsers(f *excelize.File, rt *runtimeApp.Runtime) (map[string]*models.User, map[int]error) {
+	userIds := map[string]*models.User{}
+	errs := map[int]error{}
 
-		if err != nil {
-			log.Printf("[ERROR] fail to try add user on firebase: %s\n", err)
+	h := map[string]int{
+		"UserID":         -1,
+		"Name":           -1,
+		"Description":    -1,
+		"Tags":           -1,
+		"Images":         -1,
+		"CreatedAt":      -1,
+		"LastUpdate":     -1,
+		"URL":            -1,
+		"Email":          -1,
+		"Facebook":       -1,
+		"Instagram":      -1,
+		"Google":         -1,
+		"Address":        -1,
+		"City":           -1,
+		"State":          -1,
+		"ZipCode":        -1,
+		"Country":        -1,
+		"Lat":            -1,
+		"Long":           -1,
+		"RegisterFrom":   -1,
+		"PCountry":       -1,
+		"PRegion":        -1,
+		"PNumbers":       -1,
+		"DeviceID":       -1,
+		"AllowShareData": -1,
+	}
+
+	rows := f.GetRows("Users")
+
+	if len(rows) < 2 {
+		err := fmt.Errorf("[Users] no lines to read")
+		log.Println(err)
+
+		errs[0] = err
+
+		return userIds, errs
+	}
+
+	svc := userHandler.New(rt.GetDatabase())
+
+	for line, row := range rows {
+		//header
+		if line == 0 {
+			for pos, name := range rows[0] {
+				if _, found := h[name]; found {
+					h[name] = pos
+				}
+			}
 			continue
 		}
 
-		err = insertDbTags(p.Tags)
-		if err != nil {
-			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
+		//row
+		user := &models.User{
+			Contact: &models.Contact{
+				Phones: []*models.Phone{},
+			},
+			Location:   &models.Location{},
+			Images:     []string{},
+			Reputation: &models.Reputation{},
+			Tags:       models.Tags{},
 		}
 
-		insertDbUser(p, id)
-		if err != nil {
-			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
+		sheetId := getData("UserID", h, row)
+
+		if len(sheetId) == 0 {
+			sheetId = common.GetULID()
 		}
 
-		insertDbProposal(p, id)
-		if err != nil {
-			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
+		user.Name = getData("Name", h, row)
+		user.Description = getData("Description", h, row)
+		user.Tags = strings.Split(getData("Tags", h, row), ",")
+		user.Images = strings.Split(getData("Images", h, row), ",")
+		user.Contact.URL = getData("URL", h, row)
+		user.Contact.Email = getData("Email", h, row)
+		user.Contact.Facebook = getData("Facebook", h, row)
+		user.Contact.Instagram = getData("Instagram", h, row)
+		user.Contact.Google = getData("Google", h, row)
+		user.Location.Address = getData("Address", h, row)
+		user.Location.City = getData("City", h, row)
+		user.Location.State = getData("State", h, row)
+		user.Location.ZipCode = getInt(getData("ZipCode", h, row))
+		user.Location.Country = getData("Country", h, row)
+		user.Location.Lat = getFloat(getData("Lat", h, row))
+		user.Location.Long = getFloat(getData("Long", h, row))
+		user.RegisterFrom = getData("RegisterFrom", h, row)
+		user.AllowShareData = getBool(getData("AllowShareData", h, row))
+
+		for _, phone := range strings.Split(getData("PNumbers", h, row), ",") {
+			user.Contact.Phones = append(user.Contact.Phones, &models.Phone{
+				CountryCode: getData("PCountry", h, row),
+				Region:      getData("PRegion", h, row),
+				PhoneNumber: phone,
+			})
 		}
 
-		log.Printf("[id=%s] Import ok!\n", id)
+		if len(user.Contact.Phones) > 0 {
+			user.Contact.Phones[0].IsDefault = true
+		}
+
+		//get firebase user id
+		id, err := upsertFirebase(line, user, rt)
+		if err != nil {
+			errs[line] = err
+			continue
+		}
+
+		user.UserID = models.UserID(id)
+
+		//insert user
+		_, err = svc.Insert(user, id)
+		if err != nil {
+			errs[line] = err
+			continue
+		}
+
+		userIds[sheetId] = user
+
+		log.Printf("[line %d] [API] User added\n", line)
 	}
+
+	return userIds, errs
 }
 
-func showError(prop Proposal) {
-	j, _ := json.MarshalIndent(prop, "", "\t")
-	log.Printf("Error on: \n%s", string(j))
-}
-
-func loadFromFile(path string, offset int) ([]Proposal, error) {
-	ret := []Proposal{}
-
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-		return ret, err
+func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp.Runtime) map[int]error {
+	h := map[string]int{
+		"ProposalID":       -1,
+		"UserID":           -1,
+		"Title":            -1,
+		"Description":      -1,
+		"Side":             -1,
+		"ProposalType":     -1,
+		"Tags":             -1,
+		"IsActive":         -1,
+		"CreatedAt":        -1,
+		"LastUpdate":       -1,
+		"ProposalValidate": -1,
+		"AreaTags":         -1,
+		"Lat":              -1,
+		"Long":             -1,
+		"Range":            -1,
+		"Images":           -1,
+		"EstimatedValue":   -1,
+		"ExposeUserData":   -1,
+		"DataToShare":      -1,
 	}
-	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	line := 0
-	for scanner.Scan() {
-		if line > offset {
-			data := scanner.Text()
-			u, err := parser(data, line)
+	rows := f.GetRows("Proposals")
 
-			if err != nil {
-				log.Printf("[line: %d] - Fail to parser data: %s", line, data)
-			} else {
-				log.Printf("[line: %d] - line parsed!", line)
+	if len(rows) < 2 {
+		err := fmt.Errorf("[proposals] no lines to read")
+		log.Println(err)
+
+		return map[int]error{0: err}
+	}
+
+	ret := map[int]error{}
+	svc := proposalHandler.New(rt.GetDatabase())
+
+	for line, row := range rows {
+		//header
+		if line == 0 {
+			for pos, name := range rows[0] {
+				if _, found := h[name]; found {
+					h[name] = pos
+				}
 			}
-
-			if len(u.Name) > 0 {
-				ret = append(ret, u)
-			}
+			continue
 		}
-		line++
-	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-		return ret, err
-	}
+		//row
+		prop := &models.Proposal{
+			DataToShare: []models.DataToShare{},
+			Images:      []string{},
+			Tags:        models.Tags{},
+			TargetArea:  &models.Area{},
+			IsActive:    true,
+		}
 
-	return ret, err
-}
+		sheetUserID := getData("UserID", h, row)
 
-func parser(line string, index int) (Proposal, error) {
-	fields := strings.Split(line, "\t")
+		if len(sheetUserID) == 0 {
+			ret[line] = fmt.Errorf("[line %d] invalid user id", line)
+			continue
+		}
 
-	if len(fields) < 17 {
-		return Proposal{}, fmt.Errorf("invalid input format (expected at least 17 fields)")
-	}
+		user, found := users[sheetUserID]
 
-	ret := Proposal{
-		ProposaldID:    fields[0],
-		DeviceID:       fields[1],
-		Timestamp:      getTime(fields[2]),
-		Name:           fields[3],
-		Email:          fields[4],
-		Lat:            getFloat(fields[5]),
-		Long:           getFloat(fields[6]),
-		SheetType:      fields[7],
-		Tags:           getArray(fields[8]),
-		Description:    fields[9],
-		URL:            fields[10],
-		Address:        fields[11],
-		PhoneNumbers:   getPhoneNumbers(fields[12]),
-		PhoneRegion:    getPhoneRegion(fields[13]),
-		PhoneCountry:   getPhoneCountry(fields[14]),
-		AllowShareData: getBool(fields[15]),
-		Images:         getArray(fields[16]),
-		Facebook:       parserURL(fields[10], "facebook"),
-		Instagram:      parserURL(fields[10], "instagram"),
-		Line:           index,
-	}
+		if !found {
+			ret[line] = fmt.Errorf("[line %d] user id (%s) not found!", line, sheetUserID)
+			continue
+		}
 
-	t, s := getType(fields[7], ret)
+		dts := []models.DataToShare{}
 
-	ret.Type = t
-	ret.Side = s
+		if len(user.Contact.Facebook) > 0 {
+			dts = append(dts, models.DataToShareFacebook)
+		}
 
-	if len(ret.Facebook) > 0 || len(ret.Instagram) > 0 {
-		ret.URL = ""
-	}
+		if len(user.Contact.Instagram) > 0 {
+			dts = append(dts, models.DataToShareInstagram)
+		}
 
-	return ret, nil
-}
+		if len(user.Contact.Email) > 0 {
+			dts = append(dts, models.DataToShareEmail)
+		}
 
-func getPhoneRegion(input string) string {
-	if len(input) == 0 {
-		return "11"
-	}
+		if len(user.Contact.URL) > 0 {
+			dts = append(dts, models.DataToShareURL)
+		}
 
-	return input
-}
+		if len(user.Contact.Phones) > 0 {
+			dts = append(dts, models.DataToSharePhone)
+		}
 
-func getPhoneCountry(input string) string {
-	if len(input) == 0 {
-		return "+55"
-	}
+		prop.DataToShare = dts
 
-	if string(input[0]) != "+" {
-		input = "+" + input
-	}
+		prop.Title = getData("Title", h, row)
+		prop.Description = getData("Description", h, row)
 
-	return input
-}
+		prop.Side = models.Side(getData("Side", h, row))
+		prop.ProposalType = models.Type(getData("ProposalType", h, row))
 
-func getPhoneNumbers(input string) []string {
-	re := regexp.MustCompile(`[^0-9]`)
+		prop.Tags = strings.Split(getData("Tags", h, row), ",")
+		prop.Images = strings.Split(getData("Images", h, row), ",")
 
-	ret := []string{}
+		prop.TargetArea.Lat = getFloat(getData("Lat", h, row))
+		prop.TargetArea.Long = getFloat(getData("Long", h, row))
+		prop.TargetArea.Range = getFloat(getData("Range", h, row))
+		prop.TargetArea.AreaTags = strings.Split(getData("AreaTags", h, row), ",")
 
-	for _, t := range getArray(input) {
-		ret = append(ret, string(re.ReplaceAll([]byte(t), []byte(""))))
+		prop.EstimatedValue = getFloat(getData("EstimatedValue", h, row))
+		prop.ExposeUserData = getBool(getData("ExposeUserData", h, row))
+
+		//insert proposal
+		propId, err := svc.Insert(prop)
+		if err != nil {
+			ret[line] = err
+			continue
+		}
+
+		log.Printf("[line %d] [API] Proposal added (%s)\n", line, propId)
 	}
 
 	return ret
 }
 
-func getTime(input string) time.Time {
-	return time.Now()
+func getData(name string, h map[string]int, row []string) string {
+	pos := h[name]
+	ret := ""
+	if pos >= 0 {
+		ret = strings.TrimSpace(row[pos])
+	}
+	return ret
 }
 
 func getFloat(input string) float64 {
-	if len(input) == 0 {
-		return 0.0
-	}
-
 	if ret, err := strconv.ParseFloat(input, 64); err == nil {
 		return ret
 	}
 
-	return 0.0
+	return 0
 }
 
-func getArray(input string) []string {
-	ret := []string{}
-	for _, v := range strings.Split(input, ",") {
-		item := strings.TrimSpace(v)
-
-		if len(item) > 0 {
-			ret = append(ret, item)
-		}
+func getInt(input string) int64 {
+	if ret, err := strconv.ParseInt(input, 10, 64); err == nil {
+		return ret
 	}
 
-	return ret
+	return 0
 }
 
 func getBool(input string) bool {
-	i := strings.ToUpper(input)
-
-	switch i {
-	case "NÃO":
-	case "NAO":
-	case "N":
-		return false
+	if ret, err := strconv.ParseBool(input); err == nil {
+		return ret
 	}
 
-	return true
+	return false
 }
 
-const (
-	InputTypeVolunteer     string = "voluteer"
-	InputTypeLocalBusiness string = "local_business"
-	InputTypeJob           string = "job"
-	InputTypeTaker         string = "taker"
-)
+func parserToFirebaseUser(line int, user *models.User) FirebaseUser {
+	ret := FirebaseUser{Line: line}
 
-func getType(input string, prop Proposal) (string, string) {
-	t := models.TypeService
-	s := models.SideRequest
-
-	switch strings.ToLower(input) {
-	case strings.ToLower(InputTypeVolunteer):
-		t = models.TypeService
-		s = models.SideRequest
-	case strings.ToLower(InputTypeLocalBusiness):
-		t = models.TypeService
-		s = models.SideLocalBusiness
-	case strings.ToLower(InputTypeJob):
-		t = models.TypeJob
-		s = models.SideRequest
-	case strings.ToLower(InputTypeTaker):
-		t = models.TypeJob
-		s = models.SideOffer
-	}
-
-	return string(t), string(s)
-}
-
-func parserURL(input string, target string) string {
-	if strings.Contains(strings.ToLower(input), strings.ToLower(target)) {
-		return strings.ToLower(input)
-	}
-
-	return ""
-}
-
-func parserToFirebaseUser(prop Proposal) FirebaseUser {
-	ret := FirebaseUser{Line: prop.Line}
-
-	if len(prop.Email) > 0 {
-		ret.Email = prop.Email
+	if len(user.Contact.Email) > 0 {
+		ret.Email = user.Contact.Email
 	} else {
 		re := regexp.MustCompile(`[^A-Za-z0-9]`)
-		replaced := re.ReplaceAll([]byte(prop.Name), []byte(""))
+		replaced := re.ReplaceAll([]byte(user.Name), []byte(""))
 
-		ret.Email = fmt.Sprintf("%s@%s.com", string(replaced), string(re.ReplaceAll([]byte(prop.SheetType), []byte(""))))
+		ret.Email = fmt.Sprintf("%s@%s.com", string(replaced), "give-help-importer")
 	}
 
 	ret.Password = ret.Email
 
-	if len(prop.PhoneNumbers) > 0 {
-		if len(prop.PhoneNumbers[0]) > 0 {
-			ret.PhoneNumber = fmt.Sprintf("%s%s%s", prop.PhoneCountry, prop.PhoneRegion, prop.PhoneNumbers[0])
-		}
+	if len(user.Contact.Phones) > 0 {
+		ret.PhoneNumber = fmt.Sprintf("%s%s%s", user.Contact.Phones[0].CountryCode, user.Contact.Phones[0].Region, user.Contact.Phones[0].PhoneNumber)
 	}
 
-	ret.DisplayName = prop.Name
+	ret.DisplayName = user.Name
 
-	if len(prop.Images) > 0 {
-		ret.PhotoURL = prop.Images[0]
+	if len(user.Images) > 0 {
+		ret.PhotoURL = user.Images[0]
 	}
 
 	return ret
 }
 
-func initFirebase() {
-	opt := option.WithCredentialsFile("etc/serviceAccountKey.json")
-	app, err := firebase.NewApp(context.Background(), nil, opt)
+func upsertFirebase(line int, input *models.User, rt *runtimeApp.Runtime) (string, error) {
+	user := parserToFirebaseUser(line, input)
 
-	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
-	}
-
-	fbase = app
-}
-
-func insertFirebase(user FirebaseUser) (string, error) {
 	params := &auth.UserToCreate{}
 	params.Email(user.Email)
 	params.EmailVerified(false)
@@ -387,14 +403,14 @@ func insertFirebase(user FirebaseUser) (string, error) {
 
 	ctx := context.Background()
 
-	client, err := fbase.Auth(ctx)
+	client, err := rt.GetFirebase().Auth(ctx)
 	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
+		log.Fatalf("[line %d] [firebase] Error getting Auth client: %v\n", line, err)
 	}
 
 	u, err := client.GetUserByEmail(ctx, user.Email)
 	if err == nil {
-		log.Printf("[id=%s] User already exists on firebase\n", u.UID)
+		log.Printf("[line %d] [firebase] User (id=%s) already exists on firebase\n", line, u.UID)
 		return u.UID, err
 	}
 
@@ -402,114 +418,11 @@ func insertFirebase(user FirebaseUser) (string, error) {
 
 	if err != nil {
 		dt, _ := json.MarshalIndent(user, "", "\t")
-		log.Fatalf("error creating user: data%s\nerror: %s", string(dt), err)
+		log.Fatalf("[line %d] [firebase] Error creating user: data%s\nerror: %s", line, string(dt), err)
 		return "", err
 	}
 
-	log.Printf("[id=%s] Successfully created user\n", u.UID)
+	log.Printf("[line %d] [firebase] Successfully created user (id=%s)\n", line, u.UID)
 
 	return u.UID, err
-}
-
-func insertDbTags(tags []string) error {
-	return tagsSvc.Insert(tags)
-}
-
-func insertDbUser(prop Proposal, userID string) error {
-	phones := []*models.Phone{}
-
-	for _, p := range prop.PhoneNumbers {
-		phones = append(phones, &models.Phone{
-			CountryCode: prop.PhoneCountry,
-			Region:      prop.PhoneRegion,
-			PhoneNumber: p,
-		})
-	}
-
-	if len(phones) > 0 {
-		phones[0].IsDefault = true
-	}
-
-	contact := &models.Contact{
-		Email:     prop.Email,
-		Facebook:  prop.Facebook,
-		Instagram: prop.Instagram,
-		URL:       prop.URL,
-		Phones:    phones,
-	}
-	location := &models.Location{
-		Address: prop.Address,
-		City:    "São Paulo",
-		Country: "Brasil",
-		State:   "São Paulo",
-	}
-
-	data := &models.User{
-		AllowShareData: prop.AllowShareData,
-		Contact:        contact,
-		Description:    prop.Description,
-		DeviceID:       prop.DeviceID,
-		Images:         prop.Images,
-		Location:       location,
-		Name:           prop.Name,
-		RegisterFrom:   "admin",
-		Tags:           prop.Tags,
-		UserID:         models.UserID(userID),
-	}
-
-	err := userSvc.Update(data)
-
-	if err != nil {
-		log.Printf("[id=%s] error to try insert user: %s", userID, err)
-
-		return err
-	}
-
-	return err
-}
-
-func insertDbProposal(prop Proposal, userID string) error {
-	dts := []models.DataToShare{}
-
-	if len(prop.Facebook) > 0 {
-		dts = append(dts, models.DataToShareFacebook)
-	}
-
-	if len(prop.Instagram) > 0 {
-		dts = append(dts, models.DataToShareInstagram)
-	}
-
-	if len(prop.Email) > 0 {
-		dts = append(dts, models.DataToShareEmail)
-	}
-
-	if len(prop.URL) > 0 {
-		dts = append(dts, models.DataToShareURL)
-	}
-
-	if len(prop.PhoneNumbers) > 0 {
-		dts = append(dts, models.DataToSharePhone)
-	}
-
-	retID, err := proposalSvc.Insert(&models.Proposal{
-		ProposalValidate: strfmt.DateTime(time.Now().AddDate(10, 0, 0)),
-		DataToShare:      dts,
-		Description:      prop.Description,
-		ExposeUserData:   prop.AllowShareData,
-		Images:           prop.Images,
-		ProposalType:     models.Type(prop.Type),
-		Side:             models.Side(prop.Side),
-		Tags:             prop.Tags,
-		Title:            prop.Name,
-		UserID:           models.UserID(userID),
-		IsActive:         true,
-	})
-
-	if err != nil {
-		log.Printf("[id=%s] error to try insert proposal: %s", retID, err)
-
-		return err
-	}
-
-	return err
 }
