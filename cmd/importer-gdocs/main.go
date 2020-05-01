@@ -127,7 +127,7 @@ func main() {
 			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
 		}
 
-		log.Printf("[id=%s] Import ok!\n", id)
+		log.Printf("[line=%d] [id=%s] Import ok!\n", p.Line, id)
 	}
 }
 
