@@ -22,4 +22,4 @@ all:
 	go build -o bin/give-help-server -v cmd/give-help-server/main.go
 	go build -o bin/exporter -v cmd/exporter/main.go
 	go build -o bin/importer -v cmd/importer/main.go
-	go build -o bin/importer -v cmd/importer-gdocs/main.go
+	go build -o bin/importer-dgocs -v cmd/importer-gdocs/main.go
