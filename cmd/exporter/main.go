@@ -27,6 +27,12 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	log.Printf("Database config:\n\tHost:   %s\n\tDBName: %s\n\tUser:   %s\n",
+		app.Config().GetString("database.Host"),
+		app.Config().GetString("database.DBName"),
+		app.Config().GetString("database.User"),
+	)
+
 	defer rt.CloseDatabase()
 
 	f := createOutputFile()
