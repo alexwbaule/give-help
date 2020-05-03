@@ -1022,6 +1022,8 @@ definitions:
         maxLength: 2048
       description:
         type: string
+        minLength: 4
+        maxLength: 4096
       proposal_validate:
         type: string
         format: date-time
@@ -1259,14 +1261,14 @@ definitions:
     properties:
       complainer:
         type: string
-        minLength: 3
+        minLength: 1
         maxLength: 1024
       proposal_id:
         $ref: "#/definitions/ID"
       comment:
         type: string
         minLength: 1
-        maxLength: 1024            
+        maxLength: 4096
 
   UserID:
     type: string
