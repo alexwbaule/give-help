@@ -34,6 +34,10 @@ func createProposal() *models.Proposal {
 	proposalID := getPrposalID()
 	userID := getUserID()
 
+	lat := float64(-23.5475)
+	long := float64(-46.6361)
+	estimatedValue := float64(99.3)
+
 	return &models.Proposal{
 		ProposalID:       models.ID(proposalID),
 		UserID:           models.UserID(userID),
@@ -43,15 +47,15 @@ func createProposal() *models.Proposal {
 		ProposalValidate: strfmt.DateTime(time.Time{}.AddDate(2020, 5, 8)),
 		TargetArea: &models.Area{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
-			Lat:      -23.5475,
-			Long:     -46.6361,
+			Lat:      &lat,
+			Long:     &long,
 			Range:    5,
 		},
 		Title:          "Quero comer",
 		Description:    "Estou morrendo de fome, adoraria qualquer coisa para comer",
 		Tags:           models.Tags([]string{"Alimentação"}),
 		Images:         []string{`http://my-domain.com/image1.jpg`, `http://my-domain.com/image2.jpg`, `http://my-domain.com/image3.jpg`},
-		EstimatedValue: float64(50),
+		EstimatedValue: &estimatedValue,
 		ExposeUserData: true,
 		DataToShare:    []models.DataToShare{models.DataToSharePhone, models.DataToShareEmail, models.DataToShareFacebook, models.DataToShareInstagram, models.DataToShareURL},
 	}
@@ -281,5 +285,21 @@ func TestFind(t *testing.T) {
 
 	if *result.CurrentPageSize < 1 {
 		t.Errorf("no proposals return")
+	}
+}
+
+func TestComplaint(t *testing.T) {
+	service, prop := prepare(t)
+
+	complaint := &models.Complaint{
+		Comment:    "Não curti esse comentário via serviço",
+		Complainer: "Handler do testador de sistemas",
+		ProposalID: prop.ProposalID,
+	}
+
+	err := service.InsertComplaint(complaint)
+
+	if err != nil {
+		t.Errorf("fail to try insert a complaint: %s", err.Error())
 	}
 }

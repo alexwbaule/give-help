@@ -30,15 +30,15 @@ func CalculeRange(area *models.Area) (float64, float64, float64, float64, error)
 
 	var err error
 
-	if area == nil {
+	if area == nil || area.Lat == nil || area.Long == nil {
 		err = fmt.Errorf("cannot calculate nil model.Area")
 		return latN, latS, longW, longE, err
 	}
 
-	latN = round(area.Lat + area.Range/DegreeInKM)
-	latS = round(area.Lat - area.Range/DegreeInKM)
-	longW = round(area.Long - math.Cos(area.Lat)*area.Range/DegreeInKM)
-	longE = round(area.Long + math.Cos(area.Lat)*area.Range/DegreeInKM)
+	latN = round(*area.Lat + area.Range/DegreeInKM)
+	latS = round(*area.Lat - area.Range/DegreeInKM)
+	longW = round(*area.Long - math.Cos(*area.Lat)*area.Range/DegreeInKM)
+	longE = round(*area.Long + math.Cos(*area.Lat)*area.Range/DegreeInKM)
 
 	return latN, latS, longW, longE, err
 }

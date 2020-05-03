@@ -111,6 +111,7 @@ func main() {
 	api.ProposalGetProposalByIDHandler = apihandler.GetProposalByIDHandler(rt)
 	api.ProposalGetProposalByUserIDHandler = apihandler.GetProposalByUserIDHandler(rt)
 	api.ProposalGetProposalShareDataIDHandler = apihandler.GetProposalShareDataIDHandler(rt)
+	api.ProposalAddProposalComplaintHandler = apihandler.AddProposalComplaintHandler(rt)
 
 	/* API User */
 	api.UserAddUserHandler = apihandler.AddUserHandler(rt)
