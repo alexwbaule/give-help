@@ -635,7 +635,7 @@ paths:
     put:
       tags:
         - proposal
-      summary: Add proposal compaint
+      summary: Add proposal complaint
       description: Add proposal complaint
       operationId: AddProposalComplaint
       security: []
