@@ -279,3 +279,14 @@ func (p *Proposal) ChangeText(proposalID string, title string, description strin
 
 	return p.update(prop)
 }
+
+//InsertComplaint inserts a proposal complaint
+func (p *Proposal) InsertComplaint(complaint *models.Complaint) error {
+	if complaint != nil {
+		log.Printf("A complaint happened: %v\n", *complaint)
+
+		return p.storage.InsertComplaint(complaint)
+	}
+
+	return fmt.Errorf("cannot try insert an empty complaint")
+}

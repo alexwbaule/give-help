@@ -143,8 +143,8 @@ func (u *User) Upsert(user *models.User) error {
 	repTaker := 0.0
 
 	if user.Reputation != nil {
-		repGiver = user.Reputation.Giver
-		repTaker = user.Reputation.Taker
+		repGiver = *user.Reputation.Giver
+		repTaker = *user.Reputation.Taker
 	}
 
 	url := ""
@@ -176,11 +176,19 @@ func (u *User) Upsert(user *models.User) error {
 		address = user.Location.Address
 		city = user.Location.City
 		state = user.Location.State
-		zipCode = user.Location.ZipCode
+		zipCode = *user.Location.ZipCode
 		country = user.Location.Country
 
-		lat = user.Location.Lat
-		long = user.Location.Long
+		lat = *user.Location.Lat
+		long = *user.Location.Long
+	}
+
+	if lat == 0 {
+		lat = -23.5486
+	}
+
+	if long == 0 {
+		long = -46.6392
 	}
 
 	db := u.conn.Get()

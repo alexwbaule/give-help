@@ -216,3 +216,22 @@ func (ctx *getProposalShareData) Handle(params proposal.GetProposalShareDataIDPa
 
 	return proposal.NewGetProposalShareDataIDOK().WithPayload(shareData)
 }
+
+func AddProposalComplaintHandler(rt *runtimeApp.Runtime) proposal.AddProposalComplaintHandler {
+	return &addProposalComplaintHandler{rt: rt}
+}
+
+type addProposalComplaintHandler struct {
+	rt *runtimeApp.Runtime
+}
+
+func (ctx *addProposalComplaintHandler) Handle(params proposal.AddProposalComplaintParams) middleware.Responder {
+
+	p := handler.New(ctx.rt.GetDatabase())
+	err := p.InsertComplaint(params.Body)
+	if err != nil {
+		return proposal.NewAddProposalComplaintInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+	}
+
+	return proposal.NewAddProposalComplaintOK()
+}
