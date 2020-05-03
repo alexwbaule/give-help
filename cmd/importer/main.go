@@ -155,10 +155,10 @@ func importUsers(f *excelize.File, rt *runtimeApp.Runtime) (map[string]*models.U
 		user.Location.Address = getData("Address", h, row)
 		user.Location.City = getData("City", h, row)
 		user.Location.State = getData("State", h, row)
-		user.Location.ZipCode = getInt(getData("ZipCode", h, row))
+		*user.Location.ZipCode = getInt(getData("ZipCode", h, row))
 		user.Location.Country = getData("Country", h, row)
-		user.Location.Lat = getFloat(getData("Lat", h, row))
-		user.Location.Long = getFloat(getData("Long", h, row))
+		*user.Location.Lat = getFloat(getData("Lat", h, row))
+		*user.Location.Long = getFloat(getData("Long", h, row))
 		user.RegisterFrom = getData("RegisterFrom", h, row)
 		user.AllowShareData = getBool(getData("AllowShareData", h, row))
 
@@ -300,12 +300,12 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 		prop.Tags = strings.Split(getData("Tags", h, row), ",")
 		prop.Images = strings.Split(getData("Images", h, row), ",")
 
-		prop.TargetArea.Lat = getFloat(getData("Lat", h, row))
-		prop.TargetArea.Long = getFloat(getData("Long", h, row))
+		*prop.TargetArea.Lat = getFloat(getData("Lat", h, row))
+		*prop.TargetArea.Long = getFloat(getData("Long", h, row))
 		prop.TargetArea.Range = getFloat(getData("Range", h, row))
 		prop.TargetArea.AreaTags = strings.Split(getData("AreaTags", h, row), ",")
 
-		prop.EstimatedValue = getFloat(getData("EstimatedValue", h, row))
+		*prop.EstimatedValue = getFloat(getData("EstimatedValue", h, row))
 		prop.ExposeUserData = getBool(getData("ExposeUserData", h, row))
 
 		//insert proposal
