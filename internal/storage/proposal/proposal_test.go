@@ -37,6 +37,10 @@ func createProposal() *models.Proposal {
 	proposalID := getProposalID()
 	userID := getUserID()
 
+	estimatedValue := float64(72.6)
+	lat := float64(-23.5475)
+	long := float64(-46.6361)
+
 	return &models.Proposal{
 		ProposalID:       models.ID(proposalID),
 		UserID:           models.UserID(userID),
@@ -46,17 +50,103 @@ func createProposal() *models.Proposal {
 		ProposalValidate: strfmt.DateTime(time.Time{}.AddDate(2020, 5, 8)),
 		TargetArea: &models.Area{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
-			Lat:      -23.5475,
-			Long:     -46.6361,
+			Lat:      &lat,
+			Long:     &long,
 			Range:    5,
 		},
 		Title:          "Quero comer",
 		Description:    "Estou morrendo de fome, adoraria qualquer coisa para comer",
 		Tags:           models.Tags([]string{"Alimentação"}),
 		Images:         []string{`http://my-domain.com/image1.jpg`, `http://my-domain.com/image2.jpg`, `http://my-domain.com/image3.jpg`},
-		EstimatedValue: float64(50),
+		EstimatedValue: &estimatedValue,
 		ExposeUserData: true,
 		DataToShare:    []models.DataToShare{models.DataToSharePhone, models.DataToShareEmail, models.DataToShareFacebook, models.DataToShareInstagram, models.DataToShareURL},
+	}
+}
+
+func createFilterDescription() *models.Filter {
+	return &models.Filter{
+		Description: "fome",
+	}
+}
+
+func createFilterSide() *models.Filter {
+	return &models.Filter{
+		Side: models.SideRequest,
+	}
+}
+
+func createFilterType() *models.Filter {
+	return &models.Filter{
+		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
+	}
+}
+
+func createFilterArea() *models.Filter {
+	lat := float64(-23.5475)
+	long := float64(-46.6361)
+
+	return &models.Filter{
+		TargetArea: &models.Area{
+			Lat:   &lat,
+			Long:  &long,
+			Range: 15,
+		},
+	}
+}
+
+func createFilterAreaTags() *models.Filter {
+	lat := float64(-23.5475)
+	long := float64(-46.6361)
+
+	return &models.Filter{
+		TargetArea: &models.Area{
+			AreaTags: models.Tags{"ZL"},
+			Lat:      &lat,
+			Long:     &long,
+			Range:    15,
+		},
+	}
+}
+
+func createFilterInvalidArea() *models.Filter {
+	lat := float64(-20.5475)
+	long := float64(-40.6361)
+
+	return &models.Filter{
+		TargetArea: &models.Area{
+			Lat:   &lat,
+			Long:  &long,
+			Range: 5,
+		},
+	}
+}
+
+func createFilterAll() *models.Filter {
+	lat := float64(-23.5475)
+	long := float64(-46.6361)
+
+	return &models.Filter{
+		Description:   "fome",
+		Side:          models.SideRequest,
+		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
+		TargetArea: &models.Area{
+			Lat:   &lat,
+			Long:  &long,
+			Range: 10,
+		},
+	}
+}
+
+func createFilterActive() *models.Filter {
+	return &models.Filter{
+		IncludeInactive: false,
+	}
+}
+
+func createFilterNotActive() *models.Filter {
+	return &models.Filter{
+		IncludeInactive: true,
 	}
 }
 
@@ -106,12 +196,12 @@ func TestUpsert(t *testing.T) {
 		t.Errorf("fail to load proposal, [Tags] expected: %v received: %v", data.Tags, loaded.Tags)
 	}
 
-	if loaded.TargetArea.Lat != data.TargetArea.Lat {
-		t.Errorf("fail to load proposal, [TargetArea.Lat] expected: %f received: %f", data.TargetArea.Lat, loaded.TargetArea.Lat)
+	if *loaded.TargetArea.Lat != *data.TargetArea.Lat {
+		t.Errorf("fail to load proposal, [TargetArea.Lat] expected: %f received: %f", *data.TargetArea.Lat, *loaded.TargetArea.Lat)
 	}
 
-	if loaded.TargetArea.Long != data.TargetArea.Long {
-		t.Errorf("fail to load proposal, [TargetArea.Long] expected: %f received: %f", data.TargetArea.Long, loaded.TargetArea.Long)
+	if *loaded.TargetArea.Long != *data.TargetArea.Long {
+		t.Errorf("fail to load proposal, [TargetArea.Long] expected: %f received: %f", *data.TargetArea.Long, *loaded.TargetArea.Long)
 	}
 
 	if loaded.TargetArea.Range != data.TargetArea.Range {
@@ -120,80 +210,6 @@ func TestUpsert(t *testing.T) {
 
 	if len(loaded.TargetArea.AreaTags) != len(data.TargetArea.AreaTags) {
 		t.Errorf("fail to load proposal, [TargetArea.AreaTags] expected: %s received: %s", data.TargetArea.AreaTags, loaded.TargetArea.AreaTags)
-	}
-}
-
-func createFilterDescription() *models.Filter {
-	return &models.Filter{
-		Description: "fome",
-	}
-}
-
-func createFilterSide() *models.Filter {
-	return &models.Filter{
-		Side: models.SideRequest,
-	}
-}
-
-func createFilterType() *models.Filter {
-	return &models.Filter{
-		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
-	}
-}
-
-func createFilterArea() *models.Filter {
-	return &models.Filter{
-		TargetArea: &models.Area{
-			Lat:   -23.5475,
-			Long:  -46.6361,
-			Range: 15,
-		},
-	}
-}
-
-func createFilterAreaTags() *models.Filter {
-	return &models.Filter{
-		TargetArea: &models.Area{
-			AreaTags: models.Tags{"ZL"},
-			Lat:      -23.5475,
-			Long:     -46.6361,
-			Range:    15,
-		},
-	}
-}
-
-func createFilterInvalidArea() *models.Filter {
-	return &models.Filter{
-		TargetArea: &models.Area{
-			Lat:   -20.5475,
-			Long:  -40.6361,
-			Range: 5,
-		},
-	}
-}
-
-func createFilterAll() *models.Filter {
-	return &models.Filter{
-		Description:   "fome",
-		Side:          models.SideRequest,
-		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
-		TargetArea: &models.Area{
-			Lat:   -23.5475,
-			Long:  -46.6361,
-			Range: 10,
-		},
-	}
-}
-
-func createFilterActive() *models.Filter {
-	return &models.Filter{
-		IncludeInactive: false,
-	}
-}
-
-func createFilterNotActive() *models.Filter {
-	return &models.Filter{
-		IncludeInactive: true,
 	}
 }
 
@@ -280,7 +296,23 @@ func TestFilter(t *testing.T) {
 		t.Errorf("fail to find proposals, error=%s", err)
 	}
 
-	if len(proposals) > 0 {
+	if len(proposals) == 0 {
 		t.Error("proposals active status filter didn't work! (found an invalid active status)")
+	}
+}
+
+func TestComplaint(t *testing.T) {
+	storage := createConn()
+
+	complaint := &models.Complaint{
+		Comment:    "Não curti esse comentário",
+		Complainer: "Testador de sistemas",
+		ProposalID: models.ID(getProposalID()),
+	}
+
+	err := storage.InsertComplaint(complaint)
+
+	if err != nil {
+		t.Errorf("fail to try insert a complaint: %s", err.Error())
 	}
 }

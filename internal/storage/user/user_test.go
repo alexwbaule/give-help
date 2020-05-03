@@ -28,6 +28,12 @@ func getUserID() string {
 func createUser() *models.User {
 	userID := getUserID()
 
+	giver := float64(2.6)
+	taker := float64(2.5)
+	zipcode := int64(11222333)
+	lat := float64(-23.5475)
+	long := float64(-46.63611)
+
 	return &models.User{
 		UserID:         models.UserID(userID),
 		AllowShareData: true,
@@ -72,8 +78,8 @@ func createUser() *models.User {
 		DeviceID:    common.GetULID(),
 		Name:        "Usuario Da Silva",
 		Reputation: &models.Reputation{
-			Giver: 2.5,
-			Taker: 2.5,
+			Giver: &giver,
+			Taker: &taker,
 		},
 		Tags: models.Tags([]string{"Usuário de testes", "TI", "Serviços Gerais"}),
 		Location: &models.Location{
@@ -81,9 +87,9 @@ func createUser() *models.User {
 			City:    "São Paulo",
 			Country: "Brasil",
 			State:   "São Paulo",
-			ZipCode: 99999000,
-			Lat:     -23.5475,
-			Long:    -46.63611,
+			ZipCode: &zipcode,
+			Lat:     &lat,
+			Long:    &long,
 		},
 	}
 }

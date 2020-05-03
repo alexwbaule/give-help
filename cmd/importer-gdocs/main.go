@@ -68,6 +68,11 @@ var proposalSvc *proposalHandler.Proposal
 var tagsSvc *tagsHandler.Tags
 
 func main() {
+	log.Printf("Import from tsf gdocs - start\n")
+	for i, a := range os.Args {
+		log.Printf("Arg %d: %s\n", i, a)
+	}
+
 	app, err := app.New("give-help-service")
 	cfg := app.Config()
 
@@ -129,6 +134,7 @@ func main() {
 
 		log.Printf("[line=%d] [id=%s] Import ok!\n", p.Line, id)
 	}
+	log.Printf("Import from tsf gdocs - done!\n")
 }
 
 func showError(prop Proposal) {

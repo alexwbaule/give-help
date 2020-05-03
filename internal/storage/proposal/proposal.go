@@ -105,11 +105,19 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	areaTags := []string{}
 
 	if proposal.TargetArea != nil {
-		lat = proposal.TargetArea.Lat
-		long = proposal.TargetArea.Long
+		lat = *proposal.TargetArea.Lat
+		long = *proposal.TargetArea.Long
 		areaRange = proposal.TargetArea.Range
 
 		areaTags = common.NormalizeTagArray(proposal.TargetArea.AreaTags)
+	}
+
+	if lat == 0 {
+		lat = -23.5486
+	}
+
+	if long == 0 {
+		long = -46.6392
 	}
 
 	if proposal.DataToShare == nil {
@@ -285,12 +293,12 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		wheres = append(wheres, fmt.Sprintf("$%d = ANY(Tags)", len(args)))
 	}
 
-	if filter.MaxValue > 0 {
+	if filter.MaxValue != nil && *filter.MaxValue > 0 {
 		args = append(args, filter.MinValue, filter.MaxValue)
 		wheres = append(wheres, fmt.Sprintf("(EstimatedValue >= $%d AND EstimatedValue <= $%d )", len(args)-1, len(args)))
 	}
 
-	if filter.MinValue > 0 {
+	if filter.MinValue != nil && *filter.MinValue > 0 {
 		args = append(args, filter.MinValue)
 		wheres = append(wheres, fmt.Sprintf("EstimatedValue >= $%d", len(args)))
 	}
@@ -303,7 +311,7 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 
 		rang := filter.TargetArea.Range
 
-		if filter.TargetArea.Lat != 0 && filter.TargetArea.Long != 0 {
+		if filter.TargetArea.Lat != nil && filter.TargetArea.Long != nil {
 			if rang < 1 {
 				rang = 1
 			}
@@ -450,4 +458,50 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 	}
 
 	return ret, p.conn.CheckError(err)
+}
+
+const insertComplaint = `INSERT INTO COMPLAINTS
+(
+	Complainer,
+	ProposalID,
+	Comment,
+	Accepted
+) 
+VALUES 
+(
+	$1,
+	$2,
+	$3,
+	false
+);`
+
+//InsertComplaint insert categories on database
+func (p *Proposal) InsertComplaint(complaint *models.Complaint) error {
+	db := p.conn.Get()
+
+	if len(complaint.ProposalID) == 0 {
+		return fmt.Errorf("fail to try insert a complaint: not allowed empty proposalID: %v", *complaint)
+	}
+
+	if len(complaint.Comment) == 0 {
+		return fmt.Errorf("fail to try insert a complaint: not allowed empty comment: %v", *complaint)
+	}
+
+	if len(complaint.Complainer) == 0 {
+		complaint.Complainer = "system:anonymous"
+	}
+
+	result, err := db.Exec(insertComplaint, complaint.Complainer, complaint.ProposalID, complaint.Comment)
+
+	if err != nil {
+		log.Printf("fail to try insert a complaint: %v", *complaint)
+		return fmt.Errorf("fail to try insert a complaint: %v", *complaint)
+	}
+
+	if aff, _ := result.RowsAffected(); aff == 0 {
+		log.Printf("fail to try insert a complaint: %v", *complaint)
+		return fmt.Errorf("fail to try insert a complaint: %v", *complaint)
+	}
+
+	return p.conn.CheckError(err)
 }

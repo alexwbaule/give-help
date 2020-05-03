@@ -630,6 +630,29 @@ paths:
           description: Internal Error
           schema:
             $ref: "#/definitions/ApiError"
+  
+  /proposal/{proposal_id}/complaint:
+    put:
+      tags:
+        - proposal
+      summary: Add proposal compaint
+      description: Add proposal complaint
+      operationId: AddProposalComplaint
+      security: []
+      parameters:
+        - in: body
+          name: body
+          description: Proposal Complaint
+          required: true
+          schema:
+            $ref: "#/definitions/Complaint"
+      responses:
+        200:
+          description: Complaint Registered
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError" 
 
   /tags:
     get:
@@ -715,7 +738,7 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"
+            $ref: "#/definitions/ApiError"           
 
 parameters:
   ProposalState:
@@ -808,8 +831,12 @@ definitions:
     properties:
       title:
         type: string
+        minLength: 1
+        maxLength: 1024
       description:
         type: string
+        minLength: 1
+        maxLength: 2048
 
   ChangeProposalDate:
     type: object
@@ -834,10 +861,16 @@ definitions:
         format: date-time
       name:
         type: string
+        minLength: 1
+        maxLength: 1024
       description:
         type: string
+        minLength: 1
+        maxLength: 2048
       device_id:
         type: string
+        minLength: 1
+        maxLength: 2048
       location:
         $ref: "#/definitions/Location"
       contact:
@@ -848,12 +881,16 @@ definitions:
         type: array
         items:
           type: string
+          minLength: 1
+          maxLength: 1024
       reputation:
         $ref: "#/definitions/Reputation"
       tags:
         $ref: "#/definitions/Tags"
       register_from:
         type: string
+        minLength: 1
+        maxLength: 1024
 
   Contact:
     type: object
@@ -865,16 +902,28 @@ definitions:
           $ref: "#/definitions/Phone"
       email:
         type: string
+        minLength: 1
+        maxLength: 1024
       instagram:
         type: string
+        minLength: 1
+        maxLength: 1024
       facebook:
         type: string
+        minLength: 1
+        maxLength: 1024
       google:
         type: string
+        minLength: 1
+        maxLength: 1024
       url:
         type: string
+        minLength: 1
+        maxLength: 1024
       additional_data:
         type: string
+        minLength: 1
+        maxLength: 1024
 
   Phone:
     type: object
@@ -882,10 +931,16 @@ definitions:
     properties:
       region:
         type: string
+        minLength: 1
+        maxLength: 3
       phone_number:
         type: string
+        minLength: 1
+        maxLength: 9
       country_code:
         type: string
+        minLength: 1
+        maxLength: 4
       whatsapp:
         type: boolean
       is_default:
@@ -897,20 +952,34 @@ definitions:
     properties:
       zip_code:
         type: integer
+        minimum: 0
+        maximum: 99999999
       address:
         type: string
+        minLength: 2
+        maxLength: 2048
       city:
         type: string
+        minLength: 2
+        maxLength: 256
       state:
         type: string
+        minLength: 2
+        maxLength: 256
       country:
         type: string
+        minLength: 2
+        maxLength: 256
       lat:
         type: number
         format: float64
+        minimum: -90
+        maximum: 90        
       long:
         type: number
         format: float64
+        minimum: -90
+        maximum: 90
 
   Reputation:
     type: object
@@ -919,9 +988,13 @@ definitions:
       giver:
         type: number
         format: float64
+        minimum: 0
+        maximum: 10
       taker:
         type: number
         format: float64
+        minimum: 0
+        maximum: 10
 
   Proposal:
     type: object
@@ -945,6 +1018,8 @@ definitions:
         $ref: "#/definitions/Tags"
       title:
         type: string
+        minLength: 4
+        maxLength: 2048
       description:
         type: string
       proposal_validate:
@@ -958,6 +1033,8 @@ definitions:
         type: array
         items:
           type: string
+          minLength: 1
+          maxLength: 4096
       expose_user_data:
         type: boolean
       data_to_share:
@@ -967,6 +1044,7 @@ definitions:
       estimated_value:
         type: number
         format: float64
+        minimum: 0
 
   Filter:
     type: object
@@ -987,12 +1065,16 @@ definitions:
         x-omitempty: true
       description:
         type: string
+        minLength: 1
+        maxLength: 4096
       max_value:
         type: number
         format: float64
+        minimum: 0
       min_value:
         type: number
         format: float64
+        minimum: 0
       include_expired:
         type: boolean
       include_inactive:
@@ -1076,12 +1158,20 @@ definitions:
       lat:
         type: number
         format: float64
+        minimum: -90
+        maximum: 90
+        default: -23.5486
       long:
         type: number
         format: float64
+        minimum: -90
+        maximum: 90
+        default: -46.6392
       range:
         type: number
         format: float64
+        minimum: 0.1
+        maximum: 100
       area_tags:
         $ref: "#/definitions/Tags"
 
@@ -1099,13 +1189,19 @@ definitions:
     properties:
       rating:
         type: integer
+        minimum: 0
+        maximum: 10
       comment:
         type: string
+        minLength: 1
+        maxLength: 1024
 
   Tags:
     type: array
     items:
       type: string
+      minLength: 1
+      maxLength: 1024
     x-omitempty: true
 
   DataToShare:
@@ -1156,6 +1252,21 @@ definitions:
         format: date-time
       is_accepted:
         type: boolean
+
+  Complaint:
+    type: object
+    required:
+    properties:
+      complainer:
+        type: string
+        minLength: 3
+        maxLength: 1024
+      proposal_id:
+        $ref: "#/definitions/ID"
+      comment:
+        type: string
+        minLength: 1
+        maxLength: 1024            
 
   UserID:
     type: string
