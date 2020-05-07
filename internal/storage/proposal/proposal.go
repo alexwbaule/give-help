@@ -40,7 +40,8 @@ INSERT INTO PROPOSALS (
 	Images,
 	DataToShare,
 	ExposeUserData,
-	EstimatedValue
+	EstimatedValue,
+	Ranking
 ) 
 VALUES
 (
@@ -60,7 +61,8 @@ VALUES
 	$14, --Images,
 	$15, --DataToShare,
 	$16, --ExposeUserData,
-	$17  --EstimatedValue,
+	$17, --EstimatedValue,
+	$18  --Ranking
 )
 ON CONFLICT (ProposalID) 
 DO UPDATE SET
@@ -79,7 +81,8 @@ DO UPDATE SET
 	Images = $14,
 	DataToShare = $15,
 	ExposeUserData = $16,
-	EstimatedValue = $17
+	EstimatedValue = $17,
+	Ranking = $18
 ;
 `
 
@@ -147,6 +150,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		pq.Array(proposal.DataToShare),
 		proposal.ExposeUserData,
 		proposal.EstimatedValue,
+		proposal.Ranking,
 	)
 
 	if err != nil {
@@ -180,12 +184,14 @@ SELECT
 	Images,
 	EstimatedValue,
 	ExposeUserData,
-	DataToShare
+	DataToShare,
+	Ranking
 FROM
 	PROPOSALS
 WHERE	
 	%s
 ORDER BY
+	Ranking DESC,
 	CreatedAt ASC
 %s
 `
@@ -226,6 +232,7 @@ func (p *Proposal) LoadFromID(prposalID string) (*models.Proposal, error) {
 		&ret.EstimatedValue,
 		&ret.ExposeUserData,
 		pq.Array(&dataToShare),
+		&ret.Ranking,
 	)
 
 	ret.Tags = tags

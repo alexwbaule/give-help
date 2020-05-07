@@ -177,6 +177,7 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		"EstimatedValue":   "Q%d",
 		"ExposeUserData":   "R%d",
 		"DataToShare":      "S%d",
+		"Ranking":          "T%d",
 	}
 
 	for k, v := range propsHeader {
@@ -215,6 +216,7 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["EstimatedValue"], currentLine), p.EstimatedValue)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ExposeUserData"], currentLine), p.ExposeUserData)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["DataToShare"], currentLine), strings.Join(dts, ","))
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Ranking"], currentLine), p.Ranking)
 	}
 
 	log.Printf("Exported %d proposals", len(props.Result))

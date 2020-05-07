@@ -50,6 +50,7 @@ type Proposal struct {
 	Facebook       string
 	Instagram      string
 	Line           int
+	Ranking        float64
 }
 
 type FirebaseUser struct {
@@ -208,6 +209,7 @@ func parser(line string, index int) (Proposal, error) {
 		Facebook:       parserURL(fields[10], "facebook"),
 		Instagram:      parserURL(fields[10], "instagram"),
 		Line:           index,
+		Ranking:        getFloat(fields[17]),
 	}
 
 	t, s := getType(fields[7], ret)
@@ -509,6 +511,7 @@ func insertDbProposal(prop Proposal, userID string) error {
 		Title:            prop.Name,
 		UserID:           models.UserID(userID),
 		IsActive:         true,
+		Ranking:          &prop.Ranking,
 	})
 
 	if err != nil {
