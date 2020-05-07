@@ -176,13 +176,23 @@ func (u *User) Upsert(user *models.User) error {
 		address = user.Location.Address
 		city = user.Location.City
 		state = user.Location.State
-		zipCode = *user.Location.ZipCode
+
+		if user.Location.ZipCode != nil {
+			zipCode = *user.Location.ZipCode
+		}
+
 		country = user.Location.Country
 
-		lat = *user.Location.Lat
-		long = *user.Location.Long
+		if user.Location.Lat != nil {
+			lat = *user.Location.Lat
+		}
+
+		if user.Location.Long != nil {
+			long = *user.Location.Long
+		}
 	}
 
+	//SP
 	if lat == 0 {
 		lat = -23.5486
 	}

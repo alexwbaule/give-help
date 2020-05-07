@@ -5,7 +5,7 @@ INSERT INTO TERMS (
 ) VALUES (
     '01E7N5XZVPMWBW496M5B3WYWPR',
     'Termos de Uso e Política de Privacidade',
-    'TodosUnidos
+'TodosUnidos
 
 Vivemos em um mundo em que diversas restrições acabam impactando a vida dos diversos seres vivos que o habitam. Todos esses impactos nos fazem repensar a forma como enxergamos e conhecemos o mundo, e acabam nos levando ao que realmente importa: uns aos outros.
 
@@ -21,22 +21,20 @@ Para que possa realizar seu cadastro e utilizar a plataforma TodosUnidos (“Pla
 
 Você poderá verificar as disposições destes Termos a qualquer momento, por meio da Plataforma.
 
-Antes de utilizar a Plataforma, Você deverá ler atentamente todo o conteúdo deste documento, e, caso esteja de acordo, manifestar seu consentimento livre, expresso, informado, e inequívoco acerca de
+ANTES DE UTILIZAR A PLATAFORMA, VOCÊ DEVERÁ LER ATENTAMENTE TODO O CONTEÚDO DESTE DOCUMENTO, E, CASO ESTEJA DE ACORDO, MANIFESTAR SEU CONSENTIMENTO LIVRE, EXPRESSO, INFORMADO, E
 
-todas as disposições aqui apresentadas, por meio do seu clique no botão “Cadastrar”. Tal consentimento poderá ser revogado a qualquer momento, por meio de um de nossos Canais de Atendimento indicados no item 13 destes Termos, ok? Entretanto, ao revogar o seu consentimento, Você compreende que isto poderá restringir ou suspender o seu acesso à Plataforma. De todo modo, assim que a TodosUnidos receber sua solicitação, seus dados pessoais serão excluídos, exceto caso o armazenamento destes dados decorra de obrigação legal.
+INEQUÍVOCO ACERCA DE TODAS AS DISPOSIÇÕES AQUI APRESENTADAS, POR MEIO DO SEU CLIQUE NO BOTÃO “CADASTRAR”. TAL CONSENTIMENTO PODERÁ SER REVOGADO A QUALQUER MOMENTO, POR MEIO DE UM DE NOSSOS CANAIS DE ATENDIMENTO INDICADOS NO ITEM 13 DESTES TERMOS, OK? ENTRETANTO, AO REVOGAR O SEU CONSENTIMENTO, VOCÊ COMPREENDE QUE ISTO PODERÁ RESTRINGIR OU SUSPENDER O SEU ACESSO À PLATAFORMA. DE TODO MODO, ASSIM QUE A TODOSUNIDOS RECEBER SUA SOLICITAÇÃO, SEUS DADOS PESSOAIS SERÃO EXCLUÍDOS, EXCETO CASO O ARMAZENAMENTO DESTES DADOS DECORRA DE OBRIGAÇÃO LEGAL.
 
 1. Como posso acessar à Plataforma?
     A Plataforma está disponível para download, em smartphones e tablets, nas lojas virtuais App Store e Google Play, podendo ser também acessada via web.
-
     Por meio da Plataforma, Você ainda poderá acessar nosso Catálogo de Pedidos de Ajuda (se doador) ou nosso Catálogo de Doações (se desejar receber ajuda).
-
     Para tanto, será necessário que Você realize o seu cadastro na Plataforma, de acordo com as orientações indicadas no item 2, abaixo.
 
 2. Como cadastro uma oferta ou pedido de ajuda na Plataforma?
-    Ao aceitar estes Termos, Você compreende que não poderá, em hipótese alguma, cadastrar na Plataforma ofertas ou pedidos de ajuda que estejam relacionados a conteúdos ilícitos, imorais, inapropriados ou, de qualquer forma, em desacordo com a legislação vigente.
-
-    Ainda, Você também se declara ciente de que todo o processo de negociação ocorrerá em ambiente externo à Plataforma, ao qual a TodosUnidos não possui qualquer ingerência. Neste sentido, Você compreende que deverá adotar todas as precauções adequadas para verificação do destinatário da oferta ou do pedido, de modo a garantir sua segurança, não podendo ser a TodosUnidos ser responsabilizada por qualquer dano eventualmente causado a Você ou a terceiro em decorrências de tais negociações.
-
+    Ao aceitar estes Termos, Você compreende que NÃO PODERÁ, EM HIPÓTESE ALGUMA, CADASTRAR NA PLATAFORMA OFERTAS OU PEDIDOS DE AJUDA QUE ESTEJAM RELACIONADOS A CONTEÚDOS ILÍCITOS, IMORAIS, INAPROPRIADOS OU, DE QUALQUER FORMA, EM DESACORDO COM A LEGISLAÇÃO VIGENTE.
+    
+    Ainda, Você também se declara ciente de que TODO O PROCESSO DE NEGOCIAÇÃO OCORRERÁ EM AMBIENTE EXTERNO À PLATAFORMA, AO QUAL A TODOSUNIDOS NÃO POSSUI QUALQUER INGERÊNCIA. Neste sentido, Você compreende que deverá adotar todas as precauções adequadas para verificação do destinatário da oferta ou do pedido, de modo a garantir sua segurança, NÃO PODENDO SER A TODOSUNIDOS SER RESPONSABILIZADA POR QUALQUER DANO EVENTUALMENTE CAUSADO A VOCÊ OU A TERCEIRO EM DECORRÊNCIAS DE TAIS NEGOCIAÇÕES.
+    
     Caso Você tenha qualquer problema com algum usuário da Plataforma, ou deseje elogiá-lo, após a conclusão das negociações Você poderá avaliar como foi o processo estabelecido com este usuário, por meio da nossa Plataforma online.
     
     Para a realização de seu cadastro na Plataforma TodosUnidos, Você deverá seguir os seguintes passos:
@@ -46,25 +44,25 @@ todas as disposições aqui apresentadas, por meio do seu clique no botão “Ca
             3) Se pessoa jurídica, fornecer o nome completo da pessoa que será contato da empresa;
             4) Indicar a sua oferta de ajuda; e
             5) Publicar a sua oferta de ajuda.
-        b) Se Você quiser receber ajuda:    
+        b) Se Você quiser receber ajuda:
             Se Você deseja cadastrar um pedido de ajuda, deverá:
-                1) Fornecer seu Nome completo, E-mail e Endereço e Telefone;
-                2) Data de Nascimento;
-                3) Indicar a qual ajuda se refere o pedido; e
-                4) Publicar seu pedido de ajuda.
-        c) Se quiser cadastrar um pequeno negócio:
-            1) Fornecer sua Razão Social, Nome Fantasia, Endereço e Telefone;
-            2) Fornecer o Nome completo da pessoa que será contato do pequeno negócio;
+            1) Fornecer seu Nome completo, E-mail e Endereço e Telefone;
+            2) Data de Nascimento;
             3) Indicar a qual ajuda se refere o pedido; e
             4) Publicar seu pedido de ajuda.
+            c) Se quiser cadastrar um pequeno negócio:
+                1) Fornecer sua Razão Social, Nome Fantasia, Endereço e Telefone;
+                2) Fornecer o Nome completo da pessoa que será contato do pequeno negócio;
+                3) Indicar a qual ajuda se refere o pedido; e
+                4) Publicar seu pedido de ajuda.
 
-    Você reconhece ser o único responsável pelo fornecimento de dados verídicos, corretos, exatos e atualizados para a realização do cadastro, eximindo a TodosUnidos de toda e qualquer responsabilidade relativa à eventuais informações falsas ou inexatas, bem como por eventuais danos e prejuízos decorrentes de tais informações causados a Você, a terceiros ou à própria TodosUnidos.    
+VOCÊ RECONHECE SER O ÚNICO RESPONSÁVEL PELO FORNECIMENTO DE DADOS VERÍDICOS, CORRETOS, EXATOS E ATUALIZADOS PARA A REALIZAÇÃO DO CADASTRO, EXIMINDO A TODOSUNIDOS DE TODA E QUALQUER RESPONSABILIDADE RELATIVA À EVENTUAIS INFORMAÇÕES FALSAS OU INEXATAS, BEM COMO POR EVENTUAIS DANOS E PREJUÍZOS DECORRENTES DE TAIS INFORMAÇÕES CAUSADOS A VOCÊ, A TERCEIROS OU À PRÓPRIA TODOSUNIDOS.
 
-    Você compreende ainda que, caso queira realizar o cadastro de um terceiro, na Plataforma, para oferta ou pedido de ajuda, é de sua exclusiva responsabilidade obter a prévia e expressa autorização do titular dos dados.
+Você compreende ainda que, caso queira realizar o cadastro de um terceiro, na Plataforma, para oferta ou pedido de ajuda, É DE SUA EXCLUSIVA RESPONSABILIDADE OBTER A PRÉVIA E EXPRESSA AUTORIZAÇÃO DO TITULAR DOS DADOS.
 
-    Note que Você poderá optar por compartilhar seus dados pessoais automaticamente com o usuário que pretender receber ou oferecer ajuda, ou apenas após sua prévia autorização. Neste caso, Você poderá selecionar os dados que deseja compartilhar com o usuário solicitante, combinado?
+Note que Você poderá optar por compartilhar seus dados pessoais automaticamente com o usuário que pretender receber ou oferecer ajuda, ou apenas após sua prévia autorização. Neste caso, Você poderá selecionar os dados que deseja compartilhar com o usuário solicitante, combinado?
 
-    Por fim, a partir do aceite aos presentes Termos, Você se declara ciente de ser o único e exclusivo responsável pelas informações fornecidas quando de seu acesso ao Aplicativo, responsabilizando-se perante a TodosUnidos e inclusive perante terceiros por danos ou prejuízos decorrentes do fornecimento de informações incorretas, incompletas ou inverídicas.
+POR FIM, A PARTIR DO ACEITE AOS PRESENTES TERMOS, VOCÊ SE DECLARA CIENTE DE SER O ÚNICO E EXCLUSIVO RESPONSÁVEL PELAS INFORMAÇÕES FORNECIDAS QUANDO DE SEU ACESSO AO APLICATIVO, RESPONSABILIZANDO-SE PERANTE A TODOSUNIDOS E INCLUSIVE PERANTE TERCEIROS POR DANOS OU PREJUÍZOS DECORRENTES DO FORNECIMENTO DE INFORMAÇÕES INCORRETAS, INCOMPLETAS OU INVERÍDICAS.
 
 3. Quais as regras para a utilização da Plataforma?
     Para utilizar a Plataforma, você declara estar ciente das seguintes condições:
@@ -80,7 +78,7 @@ todas as disposições aqui apresentadas, por meio do seu clique no botão “Ca
         j) Compreender que suas credenciais de acesso, tais como, login e senha, são de natureza individual e intransferível, não devendo ser fornecidas a terceiros; e
         k) Reconhecer que, em caso de suspeita de ocorrência de fraude, seu cadastro e acesso poderão ser suspensos ou bloqueados a qualquer tempo.
 
-    Ao aceitar estes Termos, Você se declara ciente de que, em qualquer hipótese, é o único responsável pela utilização da Plataforma e pela confidencialidade de suas credenciais de acesso, ou de terceiros os quais tenha cadastrado na Plataforma, isentando a TodosUnidos de toda e qualquer responsabilidade por danos e prejuízos decorrentes do uso indevido da Plataforma e de tais credenciais.
+    AO ACEITAR ESTES TERMOS, VOCÊ SE DECLARA CIENTE DE QUE, EM QUALQUER HIPÓTESE, É O ÚNICO RESPONSÁVEL PELA UTILIZAÇÃO DA PLATAFORMA E PELA CONFIDENCIALIDADE DE SUAS CREDENCIAIS DE ACESSO, OU DE TERCEIROS OS QUAIS TENHA CADASTRADO NA PLATAFORMA, ISENTANDO A TODOSUNIDOS DE TODA E QUALQUER RESPONSABILIDADE POR DANOS E PREJUÍZOS DECORRENTES DO USO INDEVIDO DA PLATAFORMA E DE TAIS CREDENCIAIS.
 
 4. A quem pertencem a propriedade intelectual da Plataforma?
     Todos os materiais, incluindo textos, imagens, ilustrações, ícones, tecnologias, links e demais conteúdos audiovisuais ou sonoros, inclusive o software da Plataforma, desenhos gráficos e códigos-fonte, que façam referência à TodosUnidos, são de propriedade única e exclusiva da TodosUnidos ou de terceiro que tenha autorizado sua utilização na Plataforma, estando protegidos pelas leis e tratados internacionais, sendo absolutamente vedada sua cópia, reprodução, ou qualquer outro tipo de utilização, ficando os infratores sujeitos às sanções civis e criminais correspondentes, nos termos das Leis n. 9.279/96, 9.609/98, 9.610/98, de modo que a utilização da Plataforma não importa autorização para que Você possa citar as tais marcas, nomes comerciais e logotipos.
@@ -106,16 +104,16 @@ todas as disposições aqui apresentadas, por meio do seu clique no botão “Ca
 
     Todos os dados coletados por meio da Plataforma são considerados confidenciais pela TodosUnidos, comprometendo-se esta a adotar adequadas medidas de segurança e conferir tratamento e armazenamento apropriados, conforme disposto nestes Termos.
 
-    As informações coletadas pela TodosUnidos são e serão destinadas (i) a desenvolver, manter e aperfeiçoar os recursos e funcionalidades da Plataforma a fim de aprimorar a experiência do usuário, (ii) para a elaboração de relatórios estatísticos e (iii) permitir a comunicação entre Você e a TodosUnidos, inclusive mediante o envio e recebimento de e-mails, contatos telefônicos e/ou envio de mensagens pelas redes sociais.
+    AS INFORMAÇÕES COLETADAS PELA TODOSUNIDOS SÃO E SERÃO DESTINADAS (I) A DESENVOLVER, MANTER E APERFEIÇOAR OS RECURSOS E FUNCIONALIDADES DA PLATAFORMA A FIM DE APRIMORAR A EXPERIÊNCIA DO USUÁRIO, (II) PARA A ELABORAÇÃO DE RELATÓRIOS ESTATÍSTICOS E (III) PERMITIR A COMUNICAÇÃO ENTRE VOCÊ E A TODOSUNIDOS, INCLUSIVE MEDIANTE O ENVIO E RECEBIMENTO DE E-MAILS, CONTATOS TELEFÔNICOS E/OU ENVIO DE MENSAGENS PELAS REDES SOCIAIS.
 
-    Nesse sentido, Você manifesta, por meio do aceite a este documento, seu consentimento livre, expresso, informado e inequívoco para que os dados coletados sejam tratados da forma descrita nestes Termos, acima.
+    NESSE SENTIDO, VOCÊ MANIFESTA, POR MEIO DO ACEITE A ESTE DOCUMENTO, SEU CONSENTIMENTO LIVRE, EXPRESSO, INFORMADO E INEQUÍVOCO PARA QUE OS DADOS COLETADOS SEJAM TRATADOS DA FORMA DESCRITA NESTES TERMOS, ACIMA.
 
 7. Em que circunstâncias meus dados pessoais poderão ser compartilhados?
     A TodosUnidos poderá compartilhar os dados coletados por meio da Plataforma, nas seguintes hipóteses:
         a) Quando necessário à disponibilização da Plataforma;
         b) De modo a proteger os interesses da TodosUnidos, em qualquer espécie de conflito, inclusive demandas judiciais; ou
         c) Mediante ordem judicial ou por requerimento de autoridades administrativas que detenham competência legal para sua requisição.
-    
+
     Ainda, Você reconhece que os dados coletados pela TodosUnidos por meio da Plataforma serão armazenados em servidores próprios ou de empresas contratadas para este propósito, sendo empregados todos os esforços razoáveis de mercado para garantir a segurança dos referidos sistemas na guarda de suas informações, entre eles aqueles que atendem às diretrizes sobre padrões de segurança estabelecidas na legislação brasileira, quais sejam:
         a) Utilização de métodos padrões de mercado para criptografar os dados coletados para garantir sua inviolabilidade;
         b) Emprego de softwares de alta tecnologia para proteção contra o acesso não autorizado aos sistemas, sendo estes considerados ambientes controlados e de segurança;
@@ -137,7 +135,7 @@ todas as disposições aqui apresentadas, por meio do seu clique no botão “Ca
 
 9. Por quanto tempo a Plataforma será disponibilizada?
     A Plataforma será disponibilizada pela TodosUnidos por prazo indeterminado. Contudo, isto não significa dizer que a mesma estará disponível eternamente, sendo certo que a TodosUnidos poderá, a qualquer tempo, a seu exclusivo critério, descontinuar a Plataforma, sem necessidade de avisá-lo previamente e sem que lhe seja devida qualquer indenização em razão disso.
-
+    
     Ademais, a TodosUnidos também poderá, a qualquer momento, limitar o seu acesso à Plataforma, sendo-lhe possível negá-lo ou suspendê-lo em caso de suspeita de uso indevido ou ilícito da Plataforma, o que também poderá motivar a exclusão de todas as informações fornecidas, sem que qualquer indenização ou compensação lhe seja devida por conta disso.
 
 10. Atenção aos Links de Terceiros!
@@ -162,4 +160,4 @@ todas as disposições aqui apresentadas, por meio do seu clique no botão “Ca
     Fica eleito o Foro do domicilio do Usuário para dirimir quaisquer dúvidas, questões ou litígios decorrentes dos presentes Termos, renunciando as partes a qualquer outro, por mais privilegiado que seja.
 
 Última atualização: 05.05.2020.'
-)
+);

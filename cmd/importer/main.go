@@ -219,6 +219,7 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 		"EstimatedValue":   -1,
 		"ExposeUserData":   -1,
 		"DataToShare":      -1,
+		"Ranking":          -1,
 	}
 
 	rows := f.GetRows("Proposals")
@@ -307,6 +308,8 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 
 		*prop.EstimatedValue = getFloat(getData("EstimatedValue", h, row))
 		prop.ExposeUserData = getBool(getData("ExposeUserData", h, row))
+
+		*prop.Ranking = getFloat(getData("Ranking", h, row))
 
 		//insert proposal
 		propId, err := svc.Insert(prop)

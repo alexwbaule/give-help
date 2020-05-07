@@ -1031,6 +1031,11 @@ definitions:
         $ref: "#/definitions/Area"
       is_active:
         type: boolean
+      ranking:
+        type: number
+        format: float64
+        minimum: 0
+        default: 0
       images:
         type: array
         items:
