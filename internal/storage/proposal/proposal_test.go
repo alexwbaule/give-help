@@ -2,6 +2,7 @@ package proposal
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
@@ -168,7 +169,7 @@ func TestUpsert(t *testing.T) {
 		t.Errorf("fail to load proposal, error=%s", err)
 	}
 
-	if loaded.UserID != data.UserID {
+	if strings.TrimSpace(string(loaded.UserID)) != strings.TrimSpace(string(data.UserID)) {
 		t.Errorf("fail to load proposal, [UserID] expected: %s received: %s", data.UserID, loaded.UserID)
 	}
 

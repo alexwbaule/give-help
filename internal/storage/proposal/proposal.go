@@ -433,6 +433,7 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 			&i.EstimatedValue,
 			&i.ExposeUserData,
 			pq.Array(&dataToShare),
+			&i.Ranking,
 		)
 
 		if err != nil {
