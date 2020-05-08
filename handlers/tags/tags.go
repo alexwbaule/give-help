@@ -37,11 +37,7 @@ func (t *Tags) Insert(tags []string) error {
 		return nil
 	}
 
-	qtd, err := t.storage.Insert(tags)
-
-	if qtd > 0 {
-		log.Printf("%d tags affected", qtd)
-	}
+	_, err := t.storage.Insert(tags)
 
 	if err != nil {
 		log.Printf("fail to try insert tags [%v]: %s", tags, err)
