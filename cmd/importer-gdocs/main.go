@@ -222,41 +222,36 @@ func parser(line string, index int) (Proposal, error) {
 		ret.URL = ""
 	}
 
-	//animals
-	found := 0
-	for _, t := range common.NormalizeTagArray(ret.Tags) {
+	ret.Ranking = calcRanking(ret)
+
+	return ret, nil
+}
+
+func calcRanking(p Proposal) float64 {
+	//Natal
+	if strings.Contains(p.Description, "Natal") {
+		return 0
+	}
+
+	ret := float64(0)
+	for _, t := range common.NormalizeTagArray(p.Tags) {
 		switch t {
 		case "animais":
 		case "dogs":
 		case "gatos":
-			found++
+		case "cães":
+			return 0
+		case "crianças":
+			ret += 2
+		case "alimentação":
+		case "saúde":
+		case "trabalho voluntário":
+		case "serviço social":
+			ret++
 		}
 	}
 
-	//Natal
-	if strings.Contains(ret.Description, "Natal") {
-		found++
-	}
-
-	if found == 0 {
-		ret.Ranking = 1
-		for _, t := range common.NormalizeTagArray(ret.Tags) {
-			switch t {
-			case "crianças":
-				ret.Ranking += 2
-			case "alimentação":
-				ret.Ranking += 1
-			case "saúde":
-				ret.Ranking += 1
-			case "trabalho voluntário":
-				ret.Ranking += 1
-			case "serviço social":
-				ret.Ranking += 1
-			}
-		}
-	}
-
-	return ret, nil
+	return ret
 }
 
 func getPhoneRegion(input string) string {
