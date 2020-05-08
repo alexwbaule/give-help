@@ -55,7 +55,7 @@ func createTransaction() *models.Transaction {
 	}
 }
 
-func TestInsert(t *testing.T) {
+func insert(t *testing.T) {
 	storage := createConn()
 	data := createTransaction()
 
@@ -84,7 +84,7 @@ func TestInsert(t *testing.T) {
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func update(t *testing.T) {
 	storage := createConn()
 	initial := createTransaction()
 
@@ -157,4 +157,9 @@ func TestUpdate(t *testing.T) {
 	if updated.TakerReview.Comment != trs.TakerReview.Comment {
 		t.Errorf("fail to try update transaction taker review comment - error: %s expected: %s received: %s", err, trs.Status, updated.Status)
 	}
+}
+
+func Test(t *testing.T) {
+	insert(t)
+	update(t)
 }

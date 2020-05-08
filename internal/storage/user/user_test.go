@@ -94,7 +94,7 @@ func createUser() *models.User {
 	}
 }
 
-func TestInsert(t *testing.T) {
+func insert(t *testing.T) {
 	userStorage := createConn()
 
 	userData := createUser()
@@ -113,7 +113,7 @@ func TestInsert(t *testing.T) {
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func update(t *testing.T) {
 	userStorage := createConn()
 
 	userData := createUser()
@@ -154,7 +154,7 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-func TestLoadAll(t *testing.T) {
+func loadAll(t *testing.T) {
 	userStorage := createConn()
 
 	users, err := userStorage.LoadAll()
@@ -166,4 +166,10 @@ func TestLoadAll(t *testing.T) {
 	if len(users) == 0 {
 		t.Errorf("fail to load user, error=%s", err)
 	}
+}
+
+func Test(t *testing.T) {
+	insert(t)
+	update(t)
+	loadAll(t)
 }

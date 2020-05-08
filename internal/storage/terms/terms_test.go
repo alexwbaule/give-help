@@ -11,7 +11,7 @@ func getUserID() string {
 	return "01E5DEKKFZRKEYCRN6PDXJ8GYZ"
 }
 
-func TestLoadTerms(t *testing.T) {
+func loadTerms(t *testing.T) {
 	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
@@ -34,7 +34,7 @@ func TestLoadTerms(t *testing.T) {
 	}
 }
 
-func TestAcceptTerms(t *testing.T) {
+func acceptTerms(t *testing.T) {
 	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
@@ -65,7 +65,7 @@ func TestAcceptTerms(t *testing.T) {
 	}
 }
 
-func TestLoadUserTerms(t *testing.T) {
+func loadUserTerms(t *testing.T) {
 	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
@@ -86,4 +86,10 @@ func TestLoadUserTerms(t *testing.T) {
 	if len(terms) == 0 {
 		t.Errorf("no terms loaded")
 	}
+}
+
+func Test(t *testing.T) {
+	loadTerms(t)
+	acceptTerms(t)
+	loadUserTerms(t)
 }

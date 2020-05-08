@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	"github.com/alexwbaule/give-help/v2/handlers/user"
 	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
@@ -151,7 +152,7 @@ func createFilterNotActive() *models.Filter {
 	}
 }
 
-func TestUpsert(t *testing.T) {
+func upsert(t *testing.T) {
 	storage := createConn()
 
 	proposalID := getProposalID()
@@ -214,7 +215,7 @@ func TestUpsert(t *testing.T) {
 	}
 }
 
-func TestFilter(t *testing.T) {
+func filter(t *testing.T) {
 	storage := createConn()
 
 	//match
@@ -302,7 +303,7 @@ func TestFilter(t *testing.T) {
 	}
 }
 
-func TestComplaint(t *testing.T) {
+func complaint(t *testing.T) {
 	storage := createConn()
 
 	complaint := &models.Complaint{
@@ -316,4 +317,12 @@ func TestComplaint(t *testing.T) {
 	if err != nil {
 		t.Errorf("fail to try insert a complaint: %s", err.Error())
 	}
+}
+
+func Test(t *testing.T) {
+	n := user.New(nil)
+	n.Test(t)
+	upsert(t)
+	filter(t)
+	complaint(t)
 }
