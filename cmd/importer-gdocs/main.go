@@ -110,7 +110,7 @@ func main() {
 	proposalSvc = proposalHandler.New(rt.GetDatabase())
 	tagsSvc = tagsHandler.New(rt.GetDatabase())
 
-	for _, p := range props {
+	for i, p := range props {
 		u := parserToFirebaseUser(p)
 		id, err := insertFirebase(u)
 
@@ -134,7 +134,7 @@ func main() {
 			log.Printf("[ERROR] [id=%s] fail: %s\n", id, err)
 		}
 
-		log.Printf("[line=%d] [id=%s] Import ok!\n", p.Line, id)
+		log.Printf("[line=%d] [%d/%d] [id=%s] Import ok!\n", p.Line, i+1, len(props), id)
 	}
 	log.Printf("Import from tsf gdocs - done!\n")
 }
@@ -243,10 +243,14 @@ func parser(line string, index int) (Proposal, error) {
 		for _, t := range common.NormalizeTagArray(ret.Tags) {
 			switch t {
 			case "crianças":
-				ret.Ranking += 3
-			case "alimentação":
 				ret.Ranking += 2
+			case "alimentação":
+				ret.Ranking += 1
 			case "saúde":
+				ret.Ranking += 1
+			case "trabalho voluntário":
+				ret.Ranking += 1
+			case "serviço social":
 				ret.Ranking += 1
 			}
 		}
@@ -433,7 +437,7 @@ func insertFirebase(user FirebaseUser) (string, error) {
 
 	u, err := client.GetUserByEmail(ctx, user.Email)
 	if err == nil {
-		log.Printf("[id=%s] User already exists on firebase\n", u.UID)
+		//log.Printf("[id=%s] User already exists on firebase\n", u.UID)
 		return u.UID, err
 	}
 
