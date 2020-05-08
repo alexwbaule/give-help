@@ -7,7 +7,7 @@ import (
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 )
 
-func TestTags(t *testing.T) {
+func Test(t *testing.T) {
 	dbConfig := &common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
