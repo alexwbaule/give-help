@@ -110,7 +110,15 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		}
 
 		if u.Location == nil {
-			u.Location = &models.Location{}
+			defaultZero := float64(0)
+			u.Location = &models.Location{
+				Lat:  &defaultZero,
+				Long: &defaultZero,
+			}
+		}
+
+		if u.Location.ZipCode == nil {
+			*u.Location.ZipCode = 0
 		}
 
 		currentLine++
@@ -130,10 +138,10 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Address"], currentLine), u.Location.Address)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["City"], currentLine), u.Location.City)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["State"], currentLine), u.Location.State)
-		f.SetCellValue("Users", fmt.Sprintf(userHeader["ZipCode"], currentLine), u.Location.ZipCode)
+		f.SetCellValue("Users", fmt.Sprintf(userHeader["ZipCode"], currentLine), *u.Location.ZipCode)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Country"], currentLine), u.Location.Country)
-		f.SetCellValue("Users", fmt.Sprintf(userHeader["Lat"], currentLine), u.Location.Lat)
-		f.SetCellValue("Users", fmt.Sprintf(userHeader["Long"], currentLine), u.Location.Long)
+		f.SetCellValue("Users", fmt.Sprintf(userHeader["Lat"], currentLine), *u.Location.Lat)
+		f.SetCellValue("Users", fmt.Sprintf(userHeader["Long"], currentLine), *u.Location.Long)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["RegisterFrom"], currentLine), u.RegisterFrom)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["PCountry"], currentLine), getPhoneCountryCode(u))
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["PRegion"], currentLine), getPhoneRegion(u))
@@ -197,6 +205,20 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 			dts = append(dts, string(d))
 		}
 
+		defaultZero := float64(0)
+
+		if p.EstimatedValue == nil {
+			p.EstimatedValue = &defaultZero
+		}
+
+		if p.TargetArea.Lat == nil {
+			p.TargetArea.Lat = &defaultZero
+		}
+
+		if p.TargetArea.Long == nil {
+			p.TargetArea.Long = &defaultZero
+		}
+
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalID"], currentLine), p.ProposalID)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["UserID"], currentLine), p.UserID)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Title"], currentLine), p.Title)
@@ -209,14 +231,14 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["LastUpdate"], currentLine), p.LastUpdate)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalValidate"], currentLine), p.ProposalValidate)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["AreaTags"], currentLine), strings.Join(p.TargetArea.AreaTags, ","))
-		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Lat"], currentLine), p.TargetArea.Lat)
-		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Long"], currentLine), p.TargetArea.Long)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Lat"], currentLine), *p.TargetArea.Lat)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Long"], currentLine), *p.TargetArea.Long)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Range"], currentLine), p.TargetArea.Range)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Images"], currentLine), strings.Join(p.Images, ","))
-		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["EstimatedValue"], currentLine), p.EstimatedValue)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["EstimatedValue"], currentLine), *p.EstimatedValue)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ExposeUserData"], currentLine), p.ExposeUserData)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["DataToShare"], currentLine), strings.Join(dts, ","))
-		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Ranking"], currentLine), p.Ranking)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Ranking"], currentLine), *p.Ranking)
 	}
 
 	log.Printf("Exported %d proposals", len(props.Result))
