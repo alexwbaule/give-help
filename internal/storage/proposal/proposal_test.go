@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
-	"github.com/alexwbaule/give-help/v2/handlers/user"
 	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
@@ -320,8 +319,6 @@ func complaint(t *testing.T) {
 }
 
 func Test(t *testing.T) {
-	n := user.New(nil)
-	n.Test(t)
 	upsert(t)
 	filter(t)
 	complaint(t)
