@@ -27,8 +27,13 @@ func getUserID() string {
 func createUser() *models.User {
 	userID := getUserID()
 
+	lat := float64(-23.5475)
+	long := float64(-46.6361)
+	zipCode := int64(99888777)
+	rating := float64(3.2)
+
 	return &models.User{
-		UserID:         models.ID(userID),
+		UserID:         models.UserID(userID),
 		AllowShareData: true,
 		Contact: &models.Contact{
 			Email:     "usuario@email.com",
@@ -57,8 +62,8 @@ func createUser() *models.User {
 		DeviceID:    common.GetULID(),
 		Name:        "José Insertido Pelo Serviço",
 		Reputation: &models.Reputation{
-			Giver: 2.5,
-			Taker: 2.5,
+			Giver: &rating,
+			Taker: &rating,
 		},
 		Tags: models.Tags([]string{"Usuário de testes", "TI", "Serviços Gerais"}),
 		Location: &models.Location{
@@ -66,19 +71,25 @@ func createUser() *models.User {
 			City:    "São Paulo",
 			Country: "Brasil",
 			State:   "São Paulo",
-			ZipCode: 99999000,
-			Lat:     -23.5475,
-			Long:    -46.63611,
+			ZipCode: &zipCode,
+			Lat:     &lat,
+			Long:    &long,
 		},
 	}
 }
 
-func TestUserInsert(t *testing.T) {
+func Test(t *testing.T) {
+	testUserInsert(t)
+	testUserUpdate(t)
+	testUserLoad(t)
+}
+
+func testUserInsert(t *testing.T) {
 	user := createUser()
 
 	service := createHandler()
 
-	id, err := service.Insert(user)
+	id, err := service.Insert(user, string(user.UserID))
 
 	if err != nil {
 		t.Errorf("fail to try insert user data from %v - error: %s", user, err.Error())
@@ -89,7 +100,7 @@ func TestUserInsert(t *testing.T) {
 	}
 }
 
-func TestUserUpdate(t *testing.T) {
+func testUserUpdate(t *testing.T) {
 	user := createUser()
 
 	service := createHandler()
@@ -103,7 +114,7 @@ func TestUserUpdate(t *testing.T) {
 	}
 }
 
-func TestUserLoad(t *testing.T) {
+func testUserLoad(t *testing.T) {
 	service := createHandler()
 
 	user, err := service.Load(getUserID())
@@ -112,7 +123,7 @@ func TestUserLoad(t *testing.T) {
 		t.Errorf("fail to try load user data from %v - error: %s", user, err.Error())
 	}
 
-	if user.UserID != models.ID(getUserID()) {
+	if user.UserID != models.UserID(getUserID()) {
 		t.Errorf("fail to try load user data from %v", getUserID())
 	}
 }

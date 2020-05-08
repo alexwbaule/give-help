@@ -6,18 +6,21 @@ import (
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	tagsStorage "github.com/alexwbaule/give-help/v2/internal/storage/tags"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/user"
 )
 
 //User Object struct
 type User struct {
 	storage *storage.User
+	tags    *tagsStorage.Tags
 }
 
 //New creates a new instance
 func New(conn *connection.Connection) *User {
 	return &User{
 		storage: storage.New(conn),
+		tags:    tagsStorage.New(conn),
 	}
 }
 
@@ -30,6 +33,12 @@ func (u *User) Insert(user *models.User, uid string) (models.UserID, error) {
 
 	if err != nil {
 		log.Printf("fail to insert new user [%s]: %s", user.UserID, err)
+	}
+
+	_, err = u.tags.Insert(user.Tags)
+
+	if err != nil {
+		log.Printf("fail to insert new user tags [%s]: %s", user.UserID, err)
 	}
 
 	return user.UserID, err
@@ -45,6 +54,12 @@ func (u *User) Update(user *models.User) error {
 
 	if err != nil {
 		log.Printf("fail to update user [%s]: %s", user.UserID, err)
+	}
+
+	_, err = u.tags.Insert(user.Tags)
+
+	if err != nil {
+		log.Printf("fail to insert new user tags [%s]: %s", user.UserID, err)
 	}
 
 	return err
