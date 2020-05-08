@@ -222,36 +222,35 @@ func parser(line string, index int) (Proposal, error) {
 		ret.URL = ""
 	}
 
-	ret.Ranking = calcRanking(ret)
+	calcRanking(&ret)
 
 	return ret, nil
 }
 
-func calcRanking(p Proposal) float64 {
+func calcRanking(p *Proposal) {
 	//Natal
 	if strings.Contains(p.Description, "Natal") {
-		return 0
+		p.Ranking = 0
+		return
 	}
 
-	ret := float64(0)
 	for _, t := range common.NormalizeTagArray(p.Tags) {
 		switch t {
 		case "animais":
 		case "dogs":
 		case "gatos":
 		case "cães":
-			return 0
+			p.Ranking = 0
+			return
 		case "crianças":
-			ret += 2
+			p.Ranking += 2
 		case "alimentação":
 		case "saúde":
 		case "trabalho voluntário":
 		case "serviço social":
-			ret++
+			p.Ranking++
 		}
 	}
-
-	return ret
 }
 
 func getPhoneRegion(input string) string {
