@@ -79,7 +79,7 @@ func prepare(t *testing.T) (*Proposal, *models.Proposal) {
 	return service, prop
 }
 
-func TestInsert(t *testing.T) {
+func testInsert(t *testing.T) {
 	prop := createProposal()
 
 	service := createHandler()
@@ -95,21 +95,21 @@ func TestInsert(t *testing.T) {
 	}
 }
 
-func TestLoadFromID(t *testing.T) {
+func testLoadFromID(t *testing.T) {
 	service, prop := prepare(t)
 
-	LoadFromIDed, err := service.LoadFromID(getPrposalID())
+	loaded, err := service.LoadFromID(getPrposalID())
 
 	if err != nil {
 		t.Errorf("fail to try LoadFromID proposal data from %v - error: %s", prop, err.Error())
 	}
 
-	if prop.ProposalID != LoadFromIDed.ProposalID {
+	if prop.ProposalID != loaded.ProposalID {
 		t.Errorf("fail to try LoadFromID proposal data from %s", getUserID())
 	}
 }
 
-func TestLoadFromIDFromUser(t *testing.T) {
+func testLoadFromIDFromUser(t *testing.T) {
 	service, prop := prepare(t)
 
 	props, err := service.LoadFromUser(string(prop.UserID))
@@ -123,7 +123,7 @@ func TestLoadFromIDFromUser(t *testing.T) {
 	}
 }
 
-func TestDTS(t *testing.T) {
+func testDTS(t *testing.T) {
 	service, prop := prepare(t)
 
 	dts, err := service.GetUserDataToShare(getPrposalID())
@@ -137,14 +137,14 @@ func TestDTS(t *testing.T) {
 	}
 }
 
-func TestChangeValidate(t *testing.T) {
+func testChangeValidate(t *testing.T) {
 	service, prop := prepare(t)
 
 	newValidate := time.Time{}.AddDate(2020, 6, 8)
 	if err := service.ChangeValidate(getPrposalID(), newValidate); err == nil {
-		if LoadFromIDed, err := service.LoadFromID(getPrposalID()); err == nil {
-			if newValidate.Unix() != time.Time(LoadFromIDed.ProposalValidate).Unix() {
-				t.Errorf("invalid LoadFromIDed value - propoosal (validate) expected: %s received: %s", newValidate, LoadFromIDed.ProposalValidate)
+		if loaded, err := service.LoadFromID(getPrposalID()); err == nil {
+			if newValidate.Unix() != time.Time(loaded.ProposalValidate).Unix() {
+				t.Errorf("invalid loaded value - propoosal (validate) expected: %s received: %s", newValidate, loaded.ProposalValidate)
 			}
 		} else {
 			t.Errorf("fail to try LoadFromID updated proposal (validate) from %v - error: %s", getPrposalID(), err.Error())
@@ -154,14 +154,14 @@ func TestChangeValidate(t *testing.T) {
 	}
 }
 
-func TestChangeValidStatus(t *testing.T) {
+func testChangeValidStatus(t *testing.T) {
 	service, prop := prepare(t)
 
 	newStatus := false
 	if err := service.ChangeValidStatus(getPrposalID(), newStatus); err == nil {
-		if LoadFromIDed, err := service.LoadFromID(getPrposalID()); err == nil {
-			if newStatus != LoadFromIDed.IsActive {
-				t.Errorf("invalid LoadFromIDed value - propoosal (IsActive) expected: %v received: %v", newStatus, LoadFromIDed.IsActive)
+		if loaded, err := service.LoadFromID(getPrposalID()); err == nil {
+			if newStatus != loaded.IsActive {
+				t.Errorf("invalid loaded value - propoosal (IsActive) expected: %v received: %v", newStatus, loaded.IsActive)
 			}
 		} else {
 			t.Errorf("fail to try LoadFromID updated proposal (IsActive) from %v - error: %s", getPrposalID(), err.Error())
@@ -171,24 +171,26 @@ func TestChangeValidStatus(t *testing.T) {
 	}
 }
 
-func TestAddTags(t *testing.T) {
+func testAddTags(t *testing.T) {
 	service, prop := prepare(t)
 
-	newTag := "TestingService"
+	newTag := common.NormalizeTagArray([]string{"TestingService"})
 
-	if err := service.AddTags(getPrposalID(), []string{newTag}); err == nil {
-		if LoadFromIDed, err := service.LoadFromID(getPrposalID()); err == nil {
+	if err := service.AddTags(getPrposalID(), newTag); err == nil {
+		if loaded, err := service.LoadFromID(getPrposalID()); err == nil {
 
-			found := false
+			found := 0
 
-			for _, t := range LoadFromIDed.Tags {
-				if t == newTag {
-					found = true
+			for _, t := range loaded.Tags {
+				for _, nt := range newTag {
+					if nt == t {
+						found++
+					}
 				}
 			}
 
-			if !found {
-				t.Errorf("invalid LoadFromIDed value - propoosal (AddTags) tag not found!")
+			if found != len(newTag) {
+				t.Errorf("invalid loaded value - propoosal (AddTags) tag not found!")
 			}
 
 		} else {
@@ -199,24 +201,24 @@ func TestAddTags(t *testing.T) {
 	}
 }
 
-func TestAddImages(t *testing.T) {
+func testAddImages(t *testing.T) {
 	service, prop := prepare(t)
 
 	newImage := "http://my-domain-test.com/image-test-1.jpg"
 
 	if err := service.AddImages(getPrposalID(), []string{newImage}); err == nil {
-		if LoadFromIDed, err := service.LoadFromID(getPrposalID()); err == nil {
+		if loaded, err := service.LoadFromID(getPrposalID()); err == nil {
 
 			found := false
 
-			for _, t := range LoadFromIDed.Images {
+			for _, t := range loaded.Images {
 				if t == newImage {
 					found = true
 				}
 			}
 
 			if !found {
-				t.Errorf("invalid LoadFromIDed value - propoosal (AddImages) image not found!")
+				t.Errorf("invalid loaded value - propoosal (AddImages) image not found!")
 			}
 
 		} else {
@@ -227,21 +229,21 @@ func TestAddImages(t *testing.T) {
 	}
 }
 
-func TestChangeText(t *testing.T) {
+func testChangeText(t *testing.T) {
 	service, prop := prepare(t)
 
 	newTitle := "Estou com fome e testando o código"
 	newDesc := "Sim, dá fome testar tanto código assim, e segundo meu amigo Danilo é muito importante testar tudo direitinho, nunca vou esquece disso, já me salvou a pele várias vezes! Fica aqui a minha dica"
 
 	if err := service.ChangeText(getPrposalID(), newTitle, newDesc); err == nil {
-		if LoadFromIDed, err := service.LoadFromID(getPrposalID()); err == nil {
+		if loaded, err := service.LoadFromID(getPrposalID()); err == nil {
 
-			if newTitle != LoadFromIDed.Title {
-				t.Errorf("invalid LoadFromIDed value - propoosal (ChangeText) expected: %s received: %s", newTitle, LoadFromIDed.Title)
+			if newTitle != loaded.Title {
+				t.Errorf("invalid loaded value - propoosal (ChangeText) expected: %s received: %s", newTitle, loaded.Title)
 			}
 
-			if newDesc != LoadFromIDed.Description {
-				t.Errorf("invalid LoadFromIDed value - propoosal (ChangeText) expected: %s received: %s", newTitle, LoadFromIDed.Title)
+			if newDesc != loaded.Description {
+				t.Errorf("invalid loaded value - propoosal (ChangeText) expected: %s received: %s", newTitle, loaded.Title)
 			}
 
 		} else {
@@ -252,7 +254,7 @@ func TestChangeText(t *testing.T) {
 	}
 }
 
-func TestFind(t *testing.T) {
+func testFind(t *testing.T) {
 	filter := &models.Filter{
 		Description: "fome",
 	}
@@ -288,7 +290,7 @@ func TestFind(t *testing.T) {
 	}
 }
 
-func TestComplaint(t *testing.T) {
+func testComplaint(t *testing.T) {
 	service, prop := prepare(t)
 
 	complaint := &models.Complaint{
@@ -302,4 +304,18 @@ func TestComplaint(t *testing.T) {
 	if err != nil {
 		t.Errorf("fail to try insert a complaint: %s", err.Error())
 	}
+}
+
+func Test(t *testing.T) {
+	testInsert(t)
+	testLoadFromID(t)
+	testLoadFromIDFromUser(t)
+	testDTS(t)
+	testChangeValidate(t)
+	testChangeValidStatus(t)
+	testAddTags(t)
+	testAddImages(t)
+	testChangeText(t)
+	testComplaint(t)
+	testFind(t)
 }
