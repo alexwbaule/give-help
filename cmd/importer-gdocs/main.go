@@ -16,6 +16,7 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/go-openapi/strfmt"
 	"google.golang.org/api/option"
 
@@ -219,6 +220,36 @@ func parser(line string, index int) (Proposal, error) {
 
 	if len(ret.Facebook) > 0 || len(ret.Instagram) > 0 {
 		ret.URL = ""
+	}
+
+	//animals
+	found := 0
+	for _, t := range common.NormalizeTagArray(ret.Tags) {
+		switch t {
+		case "animais":
+		case "dogs":
+		case "gatos":
+			found++
+		}
+	}
+
+	//Natal
+	if strings.Contains(ret.Description, "Natal") {
+		found++
+	}
+
+	if found == 0 {
+		ret.Ranking = 1
+		for _, t := range common.NormalizeTagArray(ret.Tags) {
+			switch t {
+			case "crianças":
+				ret.Ranking += 3
+			case "alimentação":
+				ret.Ranking += 2
+			case "saúde":
+				ret.Ranking += 1
+			}
+		}
 	}
 
 	return ret, nil
