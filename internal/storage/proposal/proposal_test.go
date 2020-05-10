@@ -57,7 +57,7 @@ func createProposal() *models.Proposal {
 		},
 		Title:          "Quero comer",
 		Description:    "Estou morrendo de fome, adoraria qualquer coisa para comer",
-		Tags:           models.Tags([]string{"Alimentação"}),
+		Tags:           models.Tags([]string{"Alimentação", "comercio"}),
 		Images:         []string{`http://my-domain.com/image1.jpg`, `http://my-domain.com/image2.jpg`, `http://my-domain.com/image3.jpg`},
 		EstimatedValue: &estimatedValue,
 		ExposeUserData: true,

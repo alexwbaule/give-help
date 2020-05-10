@@ -27,7 +27,7 @@ func getUserID() string {
 }
 
 func getPrposalID() string {
-	return "01E5DEKKFZRKEYCRN6PDXJ8PPP"
+	return "01E5DEKKFZRKEYCRN6PDXJ8BBB"
 }
 
 func createProposal() *models.Proposal {
@@ -43,7 +43,7 @@ func createProposal() *models.Proposal {
 		UserID:           models.UserID(userID),
 		IsActive:         true,
 		ProposalType:     models.TypeProduct,
-		Side:             models.SideRequest,
+		Side:             models.SideLocalBusiness,
 		ProposalValidate: strfmt.DateTime(time.Time{}.AddDate(2020, 5, 8)),
 		TargetArea: &models.Area{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
@@ -53,7 +53,7 @@ func createProposal() *models.Proposal {
 		},
 		Title:          "Quero comer",
 		Description:    "Estou morrendo de fome, adoraria qualquer coisa para comer",
-		Tags:           models.Tags([]string{"Alimentação"}),
+		Tags:           models.Tags([]string{"Alimentação", "Comercio"}),
 		Images:         []string{`http://my-domain.com/image1.jpg`, `http://my-domain.com/image2.jpg`, `http://my-domain.com/image3.jpg`},
 		EstimatedValue: &estimatedValue,
 		ExposeUserData: true,
@@ -290,6 +290,50 @@ func testFind(t *testing.T) {
 	}
 }
 
+func testFindLocalBusiness(t *testing.T) {
+	filter := &models.Filter{
+		Side: models.SideLocalBusiness,
+	}
+
+	service, prop := prepare(t)
+
+	result, err := service.LoadFromFilter(filter)
+
+	if err != nil {
+		t.Errorf("fail to try LoadFromID proposal data from %v - error: %s", prop, err.Error())
+	}
+
+	if len(result.Result) == 0 {
+		t.Errorf("fail to try find data with filters - error: %s", err.Error())
+	}
+
+	if *result.CurrentPageSize < 1 {
+		t.Errorf("no proposals return")
+	}
+}
+
+func testFindOmini(t *testing.T) {
+	filter := &models.Filter{
+		Description: "Comercio",
+	}
+
+	service, prop := prepare(t)
+
+	result, err := service.LoadFromFilter(filter)
+
+	if err != nil {
+		t.Errorf("fail to try LoadFromID proposal data from %v - error: %s", prop, err.Error())
+	}
+
+	if len(result.Result) == 0 {
+		t.Errorf("fail to try find data with filters - error: %s", err.Error())
+	}
+
+	if *result.CurrentPageSize < 1 {
+		t.Errorf("no proposals return")
+	}
+}
+
 func testComplaint(t *testing.T) {
 	service, prop := prepare(t)
 
@@ -318,4 +362,6 @@ func Test(t *testing.T) {
 	testChangeText(t)
 	testComplaint(t)
 	testFind(t)
+	testFindLocalBusiness(t)
+	testFindOmini(t)
 }
