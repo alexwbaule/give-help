@@ -269,7 +269,7 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	wheres := []string{}
 
 	if len(filter.Description) > 0 {
-		likeTarger := "%" + strings.ToLower(filter.Description) + "%"
+		likeTarger := "%" + strings.ToLower(strings.TrimSpace(filter.Description)) + "%"
 		args = append(args, likeTarger)
 		wheres = append(wheres, fmt.Sprintf("( LOWER(Description) LIKE $%d OR LOWER(Title) LIKE $%d ) ", len(args), len(args)))
 
@@ -300,8 +300,8 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	}
 
 	for _, t := range filter.Tags {
-		args = append(args, strings.ToLower(t))
-		wheres = append(wheres, fmt.Sprintf("$%d = ANY(Tags)", len(args)))
+		args = append(args, "%"+strings.ToLower(strings.TrimSpace(t))+"%")
+		wheres = append(wheres, fmt.Sprintf("array_to_string(Tags, ',') LIKE $%d", len(args)))
 	}
 
 	if filter.MaxValue != nil && *filter.MaxValue > 0 {
@@ -316,8 +316,8 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 
 	if filter.TargetArea != nil {
 		for _, t := range filter.TargetArea.AreaTags {
-			args = append(args, strings.ToLower(t))
-			wheres = append(wheres, fmt.Sprintf("$%d = ANY(AreaTags)", len(args)))
+			args = append(args, "%"+strings.ToLower(strings.TrimSpace(t))+"%")
+			wheres = append(wheres, fmt.Sprintf("array_to_string(AreaTags, ',') LIKE $%d", len(args)))
 		}
 
 		rang := filter.TargetArea.Range
