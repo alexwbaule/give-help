@@ -3,6 +3,7 @@ package proposal
 import (
 	"fmt"
 	"log"
+	"sort"
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
@@ -116,17 +117,28 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		}, err
 	}
 
-	ret := models.ProposalsResponse{
-		Filter: filter,
-		Result: result,
+	tags := []string{}
+	sides := []models.Side{}
+	types := []models.Type{}
+	pgSize := int64(len(result))
+
+	for _, p := range result {
+		tags = append(tags, p.Tags...)
+		sides = append(sides, p.Side)
+		types = append(types, p.ProposalType)
 	}
 
-	ret.CurrentPage = &filter.PageNumber
+	sort.Strings(tags)
 
-	pgSize := int64(len(result))
-	ret.CurrentPageSize = &pgSize
-
-	return &ret, err
+	return &models.ProposalsResponse{
+		Filter:              filter,
+		Result:              result,
+		ResultProposalTypes: types,
+		ResultSides:         sides,
+		ResultTags:          tags,
+		CurrentPage:         &filter.PageNumber,
+		CurrentPageSize:     &pgSize,
+	}, err
 }
 
 //GetUserDataToShare load user data to share on proposal

@@ -144,7 +144,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		lat,
 		long,
 		areaRange,
-		pq.Array(areaTags),
+		pq.Array(common.NormalizeTagArray(areaTags)),
 		proposal.IsActive,
 		pq.Array(proposal.Images),
 		pq.Array(proposal.DataToShare),
@@ -235,8 +235,8 @@ func (p *Proposal) LoadFromID(prposalID string) (*models.Proposal, error) {
 		&ret.Ranking,
 	)
 
-	ret.Tags = tags
-	ret.TargetArea.AreaTags = areaTags
+	ret.Tags = common.NormalizeTagArray(tags)
+	ret.TargetArea.AreaTags = common.NormalizeTagArray(areaTags)
 	ret.Images = images
 
 	ret.DataToShare = make([]models.DataToShare, len(dataToShare))
@@ -449,8 +449,8 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 			return ret, p.conn.CheckError(err)
 		}
 
-		i.Tags = tags
-		i.TargetArea.AreaTags = areaTags
+		i.Tags = common.NormalizeTagArray(tags)
+		i.TargetArea.AreaTags = common.NormalizeTagArray(areaTags)
 		i.Images = images
 
 		i.DataToShare = make([]models.DataToShare, len(dataToShare))
