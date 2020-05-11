@@ -1108,6 +1108,16 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Proposal"
+      result_sides:
+        type: array
+        items:
+          $ref: "#/definitions/Side"        
+      result_proposal_types:
+        type: array
+        items:
+          $ref: "#/definitions/Type"
+      result_tags:
+        $ref: "#/definitions/Tags"
       current_page:
         type: integer
         minimum: 0
