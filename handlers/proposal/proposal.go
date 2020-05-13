@@ -117,39 +117,41 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		}, err
 	}
 
-	tm := map[string]interface{}{}
-	ts := map[models.Side]interface{}{}
-	tt := map[models.Type]interface{}{}
+	//Não questione, o front pediu isso... :/
+	tagMap := map[string]interface{}{}
+	sideMap := map[models.Side]interface{}{}
+	typeMap := map[models.Type]interface{}{}
 
 	for _, p := range result {
 		for _, t := range p.Tags {
-			tm[t] = nil
+			tagMap[t] = nil
 		}
-		ts[p.Side] = nil
-		tt[p.ProposalType] = nil
+		sideMap[p.Side] = nil
+		typeMap[p.ProposalType] = nil
 	}
 
-	tags := make([]string, len(tm))
-	sides := make([]models.Side, len(ts))
-	types := make([]models.Type, len(tt))
+	tags := make([]string, len(tagMap))
+	sides := make([]models.Side, len(sideMap))
+	types := make([]models.Type, len(typeMap))
 
 	i := 0
-	for t := range tm {
+	for t := range tagMap {
 		tags[i] = t
 		i++
 	}
 
 	i = 0
-	for s := range ts {
+	for s := range sideMap {
 		sides[i] = s
 		i++
 	}
 
 	i = 0
-	for t := range tt {
+	for t := range typeMap {
 		types[i] = t
 		i++
 	}
+	//fim do pedido do front
 
 	sort.Strings(tags)
 
