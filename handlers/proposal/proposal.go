@@ -117,18 +117,43 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		}, err
 	}
 
-	tags := []string{}
-	sides := []models.Side{}
-	types := []models.Type{}
-	pgSize := int64(len(result))
+	tm := map[string]interface{}{}
+	ts := map[models.Side]interface{}{}
+	tt := map[models.Type]interface{}{}
 
 	for _, p := range result {
-		tags = append(tags, p.Tags...)
-		sides = append(sides, p.Side)
-		types = append(types, p.ProposalType)
+		for _, t := range p.Tags {
+			tm[t] = nil
+		}
+		ts[p.Side] = nil
+		tt[p.ProposalType] = nil
+	}
+
+	tags := make([]string, len(tm))
+	sides := make([]models.Side, len(ts))
+	types := make([]models.Type, len(tt))
+
+	i := 0
+	for t := range tm {
+		tags[i] = t
+		i++
+	}
+
+	i = 0
+	for s := range ts {
+		sides[i] = s
+		i++
+	}
+
+	i = 0
+	for t := range tt {
+		types[i] = t
+		i++
 	}
 
 	sort.Strings(tags)
+
+	pgSize := int64(len(result))
 
 	return &models.ProposalsResponse{
 		Filter:              filter,
