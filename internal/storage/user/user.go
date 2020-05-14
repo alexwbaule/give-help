@@ -41,7 +41,7 @@ INSERT INTO USERS
 	Email,
 	Facebook,
 	Instagram,
-	Google,
+	Twitter,
 	AdditionalData,
 
 	--Contact Address
@@ -113,7 +113,7 @@ DO
 		Email = $11,
 		Facebook = $12,
 		Instagram = $13,
-		Google = $14,
+		Twitter = $14,
 		AdditionalData = $15,
 		
 		--Contact Address
@@ -151,7 +151,7 @@ func (u *User) Upsert(user *models.User) error {
 	email := ""
 	facebook := ""
 	instagram := ""
-	google := ""
+	twitter := ""
 	additionalData := ""
 
 	if user.Contact != nil {
@@ -159,7 +159,7 @@ func (u *User) Upsert(user *models.User) error {
 		email = user.Contact.Email
 		facebook = user.Contact.Facebook
 		instagram = user.Contact.Instagram
-		google = user.Contact.Google
+		twitter = user.Contact.Twitter
 		additionalData = user.Contact.AdditionalData
 	}
 
@@ -218,7 +218,7 @@ func (u *User) Upsert(user *models.User) error {
 		email,
 		facebook,
 		instagram,
-		google,
+		twitter,
 		additionalData,
 		address,
 		city,
@@ -262,7 +262,7 @@ SELECT
 	Email,
 	Facebook,
 	Instagram,
-	Google,
+	Twitter,
 	AdditionalData,
 
 	--Contact Address
@@ -326,7 +326,7 @@ func (u *User) LoadAll() ([]*models.User, error) {
 			&user.Contact.Email,
 			&user.Contact.Facebook,
 			&user.Contact.Instagram,
-			&user.Contact.Google,
+			&user.Contact.Twitter,
 			&user.Contact.AdditionalData,
 			&user.Location.Address,
 			&user.Location.City,
@@ -390,7 +390,7 @@ func (u *User) Load(userID string) (*models.User, error) {
 		&user.Contact.Email,
 		&user.Contact.Facebook,
 		&user.Contact.Instagram,
-		&user.Contact.Google,
+		&user.Contact.Twitter,
 		&user.Contact.AdditionalData,
 		&user.Location.Address,
 		&user.Location.City,

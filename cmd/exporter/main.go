@@ -80,7 +80,7 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		"Email":          "I%d",
 		"Facebook":       "J%d",
 		"Instagram":      "K%d",
-		"Google":         "L%d",
+		"Twitter":        "L%d",
 		"Address":        "M%d",
 		"City":           "N%d",
 		"State":          "O%d",
@@ -134,7 +134,7 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Email"], currentLine), u.Contact.Email)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Facebook"], currentLine), u.Contact.Facebook)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Instagram"], currentLine), u.Contact.Instagram)
-		f.SetCellValue("Users", fmt.Sprintf(userHeader["Google"], currentLine), u.Contact.Google)
+		f.SetCellValue("Users", fmt.Sprintf(userHeader["Twitter"], currentLine), u.Contact.Twitter)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Address"], currentLine), u.Location.Address)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["City"], currentLine), u.Location.City)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["State"], currentLine), u.Location.State)

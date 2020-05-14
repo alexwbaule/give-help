@@ -350,7 +350,7 @@ paths:
             $ref: "#/definitions/ApiError"
 
   /proposal:
-    post:
+    put:
       tags:
         - proposal
       summary: Add a Proposal
@@ -377,12 +377,12 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
 
-    get:
+    post:
       tags:
         - proposal
-      summary: Get proposals
-      description: Get Proposals
-      operationId: GetProposals
+      summary: Seach proposals
+      description: Seach proposals
+      operationId: SearchProposals
       security: []
       parameters:
         - in: body
@@ -912,10 +912,10 @@ definitions:
         type: string
         minLength: 1
         maxLength: 1024
-      google:
+      twitter:
         type: string
         minLength: 1
-        maxLength: 1024
+        maxLength: 1024        
       url:
         type: string
         minLength: 1
@@ -1228,6 +1228,7 @@ definitions:
       - Email
       - Facebook
       - Instagram
+      - Twitter
       - URL
 
   DataToShareResponse:

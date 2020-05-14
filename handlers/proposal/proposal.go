@@ -218,6 +218,11 @@ func (p *Proposal) GetUserDataToShare(proposalID string) ([]*models.DataToShareR
 					ContactType: models.DataToShareURL,
 					Contact:     user.Contact.URL,
 				})
+			case models.DataToShareTwitter:
+				ret = append(ret, &models.DataToShareResponse{
+					ContactType: models.DataToShareTwitter,
+					Contact:     user.Contact.Twitter,
+				})
 			}
 		}
 	}
