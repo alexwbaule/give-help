@@ -195,7 +195,7 @@ func parser(line string, index int) (Proposal, error) {
 		DeviceID:       fields[1],
 		Timestamp:      getTime(fields[2]),
 		Name:           fields[3],
-		Email:          fields[4],
+		Email:          strings.ToLower(fields[4]),
 		Lat:            getFloat(fields[5]),
 		Long:           getFloat(fields[6]),
 		SheetType:      fields[7],
@@ -575,6 +575,10 @@ func insertDbProposal(prop Proposal, userID string) error {
 
 	if len(prop.Instagram) > 0 {
 		dts = append(dts, models.DataToShareInstagram)
+	}
+
+	if len(prop.Twitter) > 0 {
+		dts = append(dts, models.DataToShareTwitter)
 	}
 
 	if len(prop.Email) > 0 {
