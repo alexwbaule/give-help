@@ -401,20 +401,24 @@ func getInstagram(input string) string {
 func getURL(input string) string {
 	ret := ""
 
-	for _, p := range strings.Split(strings.ToLower(input), ",") {
-		if strings.Contains(p, "instagram") {
-			continue
-		}
+	for _, str := range strings.Split(strings.ToLower(input), ",") {
+		p := strings.TrimSpace(str)
 
-		if strings.Contains(p, "facebook") || strings.Contains(p, "fb.com") {
-			continue
-		}
+		if len(p) > 0 {
+			if strings.Contains(p, "instagram") {
+				continue
+			}
 
-		if strings.Contains(input, "@") {
-			continue
-		}
+			if strings.Contains(p, "facebook") || strings.Contains(p, "fb.com") {
+				continue
+			}
 
-		ret = strings.TrimSpace(p)
+			if strings.Contains(p, "@") {
+				continue
+			}
+
+			ret = p
+		}
 	}
 
 	return ret
