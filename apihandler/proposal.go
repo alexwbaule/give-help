@@ -142,23 +142,23 @@ func (ctx *changeProposalValidDate) Handle(params proposal.ChangeProposalValidat
 	return proposal.NewChangeProposalValidateOK()
 }
 
-func GetProposalsHandler(rt *runtimeApp.Runtime) proposal.GetProposalsHandler {
-	return &getProposalsHandler{rt: rt}
+func SearchProposalsHandler(rt *runtimeApp.Runtime) proposal.SearchProposalsHandler {
+	return &searchProposalsHandler{rt: rt}
 }
 
-type getProposalsHandler struct {
+type searchProposalsHandler struct {
 	rt *runtimeApp.Runtime
 }
 
-func (ctx *getProposalsHandler) Handle(params proposal.GetProposalsParams) middleware.Responder {
+func (ctx *searchProposalsHandler) Handle(params proposal.SearchProposalsParams) middleware.Responder {
 	p := handler.New(ctx.rt.GetDatabase())
 
 	result, err := p.LoadFromFilter(params.Body)
 	if err != nil {
-		return proposal.NewGetProposalsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
+		return proposal.NewSearchProposalsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
 	}
 
-	return proposal.NewGetProposalsOK().WithPayload(result)
+	return proposal.NewSearchProposalsOK().WithPayload(result)
 }
 
 func GetProposalByIDHandler(rt *runtimeApp.Runtime) proposal.GetProposalByIDHandler {

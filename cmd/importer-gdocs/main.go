@@ -50,6 +50,7 @@ type Proposal struct {
 	Images         []string
 	Facebook       string
 	Instagram      string
+	Twitter        string
 	Line           int
 	Ranking        float64
 }
@@ -200,15 +201,16 @@ func parser(line string, index int) (Proposal, error) {
 		SheetType:      fields[7],
 		Tags:           getArray(fields[8]),
 		Description:    fields[9],
-		URL:            fields[10],
+		URL:            getURL(fields[10]),
 		Address:        fields[11],
 		PhoneNumbers:   getPhoneNumbers(fields[12]),
 		PhoneRegion:    getPhoneRegion(fields[13]),
 		PhoneCountry:   getPhoneCountry(fields[14]),
 		AllowShareData: getBool(fields[15]),
 		Images:         getArray(fields[16]),
-		Facebook:       parserURL(fields[10], "facebook"),
-		Instagram:      parserURL(fields[10], "instagram"),
+		Facebook:       getFacebook(fields[10]),
+		Instagram:      getInstagram(fields[10]),
+		Twitter:        getTwitter(fields[10]),
 		Line:           index,
 		Ranking:        getFloat(fields[17]),
 	}
@@ -364,6 +366,60 @@ func parserURL(input string, target string) string {
 	return ""
 }
 
+func getTwitter(input string) string {
+	if strings.Contains(input, "@") {
+		for _, p := range strings.Split(input, ",") {
+			if string(p[0]) == "@" {
+				return strings.TrimSpace(strings.ToLower(p))
+			}
+		}
+	}
+
+	return ""
+}
+
+func getFacebook(input string) string {
+	for _, p := range strings.Split(strings.ToLower(input), ",") {
+		if strings.Contains(p, "facebook") || strings.Contains(p, "fb.com") {
+			return strings.TrimSpace(p)
+		}
+	}
+
+	return ""
+}
+
+func getInstagram(input string) string {
+	for _, p := range strings.Split(strings.ToLower(input), ",") {
+		if strings.Contains(p, "instagram") {
+			return strings.TrimSpace(p)
+		}
+	}
+
+	return ""
+}
+
+func getURL(input string) string {
+	ret := ""
+
+	for _, p := range strings.Split(strings.ToLower(input), ",") {
+		if strings.Contains(p, "instagram") {
+			continue
+		}
+
+		if strings.Contains(p, "facebook") || strings.Contains(p, "fb.com") {
+			continue
+		}
+
+		if strings.Contains(input, "@") {
+			continue
+		}
+
+		ret = strings.TrimSpace(p)
+	}
+
+	return ret
+}
+
 func parserToFirebaseUser(prop Proposal) FirebaseUser {
 	ret := FirebaseUser{Line: prop.Line}
 
@@ -373,7 +429,7 @@ func parserToFirebaseUser(prop Proposal) FirebaseUser {
 		re := regexp.MustCompile(`[^A-Za-z0-9]`)
 		replaced := re.ReplaceAll([]byte(prop.Name), []byte(""))
 
-		ret.Email = fmt.Sprintf("%s@%s.com", string(replaced), string(re.ReplaceAll([]byte(prop.SheetType), []byte(""))))
+		ret.Email = strings.ToLower(fmt.Sprintf("%s@%s.com", string(replaced), string(re.ReplaceAll([]byte(prop.SheetType), []byte("")))))
 	}
 
 	ret.Password = ret.Email
@@ -472,6 +528,7 @@ func insertDbUser(prop Proposal, userID string) error {
 		Facebook:  prop.Facebook,
 		Instagram: prop.Instagram,
 		URL:       prop.URL,
+		Twitter:   prop.Twitter,
 		Phones:    phones,
 	}
 	location := &models.Location{

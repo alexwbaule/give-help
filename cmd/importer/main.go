@@ -86,7 +86,7 @@ func importUsers(f *excelize.File, rt *runtimeApp.Runtime) (map[string]*models.U
 		"Email":          -1,
 		"Facebook":       -1,
 		"Instagram":      -1,
-		"Google":         -1,
+		"Twitter":        -1,
 		"Address":        -1,
 		"City":           -1,
 		"State":          -1,
@@ -151,7 +151,7 @@ func importUsers(f *excelize.File, rt *runtimeApp.Runtime) (map[string]*models.U
 		user.Contact.Email = getData("Email", h, row)
 		user.Contact.Facebook = getData("Facebook", h, row)
 		user.Contact.Instagram = getData("Instagram", h, row)
-		user.Contact.Google = getData("Google", h, row)
+		user.Contact.Twitter = getData("Twitter", h, row)
 		user.Location.Address = getData("Address", h, row)
 		user.Location.City = getData("City", h, row)
 		user.Location.State = getData("State", h, row)
