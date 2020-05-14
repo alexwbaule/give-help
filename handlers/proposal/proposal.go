@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
@@ -206,7 +207,7 @@ func (p *Proposal) GetUserDataToShare(proposalID string) ([]*models.DataToShareR
 			case models.DataToSharePhone:
 				ret = append(ret, &models.DataToShareResponse{
 					ContactType: models.DataToSharePhone,
-					Contact:     user.Contact.Phones,
+					Contact:     formatPhones(user.Contact.Phones),
 				})
 			case models.DataToShareInstagram:
 				ret = append(ret, &models.DataToShareResponse{
@@ -348,4 +349,14 @@ func (p *Proposal) InsertComplaint(complaint *models.Complaint) error {
 	}
 
 	return fmt.Errorf("cannot try insert an empty complaint")
+}
+
+func formatPhones(phones []*models.Phone) string {
+	ret := make([]string, len(phones))
+
+	for i, p := range phones {
+		ret[i] = fmt.Sprintf("(%s) %s", p.Region, p.PhoneNumber)
+	}
+
+	return strings.Join(ret, ", ")
 }
