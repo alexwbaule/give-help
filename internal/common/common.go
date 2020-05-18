@@ -22,7 +22,7 @@ func GetULID() string {
 const DegreeInKM float64 = 111
 
 //CalculeRange with a target area, calcule region with range in km
-func CalculeRange(area *models.Area) (float64, float64, float64, float64, error) {
+func CalculeRange(area *models.Location) (float64, float64, float64, float64, error) {
 	var latN float64
 	var latS float64
 	var longW float64

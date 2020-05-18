@@ -26,12 +26,33 @@ tags:
   - name: proposal
   - name: tags
   - name: terms
+  - name: banks
 
 security:
   - APIKeyHeader:
       - user
 
 paths:
+  /banks:
+    get:
+      tags:
+        - banks
+      summary: Get Banks list
+      description: Get banks list
+      operationId: GetBankList
+      security: []
+      responses:
+        200:
+          description: Get Banks list
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Bank"        
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"        
+
   /user:
     post:
       tags:
@@ -974,12 +995,21 @@ definitions:
         type: number
         format: float64
         minimum: -90
-        maximum: 90        
+        maximum: 90
+        default: -23.5486
       long:
         type: number
         format: float64
         minimum: -90
         maximum: 90
+        default: -46.6392
+      range:
+        type: number
+        format: float64
+        minimum: 0.1
+        maximum: 100
+      area_tags:
+        $ref: "#/definitions/Tags"        
 
   Reputation:
     type: object
@@ -1028,7 +1058,7 @@ definitions:
         type: string
         format: date-time
       target_area:
-        $ref: "#/definitions/Area"
+        $ref: "#/definitions/Location"
       is_active:
         type: boolean
       ranking:
@@ -1052,6 +1082,16 @@ definitions:
         type: number
         format: float64
         minimum: 0
+      bank_accounts:
+        type: array
+        items:
+          $ref: "#/definitions/BankAccount"
+      search_score:
+        type: number
+        format: float64
+        minimum: 0
+        maximum: 99999999
+        default: 0
 
   Filter:
     type: object
@@ -1062,7 +1102,7 @@ definitions:
       tags:
         $ref: "#/definitions/Tags"
       target_area:
-        $ref: "#/definitions/Area"
+        $ref: "#/definitions/Location"
       side:
         $ref: "#/definitions/Side"
       proposal_types:
@@ -1168,30 +1208,6 @@ definitions:
       - product
       - finance
 
-  Area:
-    type: object
-    required:
-    properties:
-      lat:
-        type: number
-        format: float64
-        minimum: -90
-        maximum: 90
-        default: -23.5486
-      long:
-        type: number
-        format: float64
-        minimum: -90
-        maximum: 90
-        default: -46.6392
-      range:
-        type: number
-        format: float64
-        minimum: 0.1
-        maximum: 100
-      area_tags:
-        $ref: "#/definitions/Tags"
-
   TransactionStatus:
     type: string
     enum:
@@ -1213,6 +1229,60 @@ definitions:
         minLength: 1
         maxLength: 1024
 
+  Bank:
+    type: object
+    required:
+    properties:
+      bank_id:
+        type: integer
+      bank_name:
+        type: string
+        minLength: 1
+        maxLength: 256
+      bank_fullname:
+        type: string
+        minLength: 1
+        maxLength: 1024
+
+  BankAccount:
+    type: object
+    required: 
+    properties:
+      bank_id:
+        type: integer
+      bank_name:
+        type: string
+        minLength: 1
+        maxLength: 256
+      bank_fullname:
+        type: string
+        minLength: 1
+        maxLength: 1024
+      branch_number:
+        type: string
+        minLength: 1
+        maxLength: 16      
+      branch_digit:
+        type: string
+        minLength: 1
+        maxLength: 3      
+      account_owner:
+        type: string
+        minLength: 1
+        maxLength: 1024
+      account_document:
+        type: string
+        minLength: 1
+        maxLength: 256
+      account_number:
+        type: string
+        minLength: 1
+        maxLength: 16
+      account_digit:
+        type: string
+        minLength: 1
+        maxLength: 3
+
   Tags:
     type: array
     items:
@@ -1230,6 +1300,7 @@ definitions:
       - Instagram
       - Twitter
       - URL
+      - BankAccount
 
   DataToShareResponse:
     type: object

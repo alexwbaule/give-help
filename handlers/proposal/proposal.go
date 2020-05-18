@@ -67,7 +67,7 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 	_, err = p.tags.Insert(proposal.Tags)
 
 	if err != nil {
-		log.Printf("fail to insert new proposal tags [%s]: %s", proposal.ProposalID, err)
+		log.Printf("fail to update proposal tags [%s]: %s", proposal.ProposalID, err)
 	}
 
 	return err
@@ -224,6 +224,11 @@ func (p *Proposal) GetUserDataToShare(proposalID string) ([]*models.DataToShareR
 					ContactType: models.DataToShareTwitter,
 					Contact:     user.Contact.Twitter,
 				})
+			case models.DataToShareBankAccount:
+				ret = append(ret, &models.DataToShareResponse{
+					ContactType: models.DataToShareBankAccount,
+					Contact:     formatBankAccs(prop),
+				})
 			}
 		}
 	}
@@ -359,4 +364,28 @@ func formatPhones(phones []*models.Phone) string {
 	}
 
 	return strings.Join(ret, ", ")
+}
+
+func formatBankAccs(proposal *models.Proposal) string {
+	ret := []string{}
+
+	if proposal == nil {
+		return ""
+	}
+
+	if len(proposal.BankAccounts) == 0 {
+		return ""
+	}
+
+	for _, acc := range proposal.BankAccounts {
+		BranchDg := ""
+
+		if len(acc.BranchDigit) > 0 {
+			BranchDg = fmt.Sprintf("-%s", acc.BranchDigit)
+		}
+
+		ret = append(ret, fmt.Sprintf("Nome: %s\nDocumento: %s\nBco: (%s) %s\nAg: %s%s CC: %s-%s\n", acc.AccountOwner, acc.AccountDocument, acc.BankID, acc.BankName, acc.BranchNumber, BranchDg, acc.AccountNumber, acc.AccountDigit))
+	}
+
+	return strings.Join(ret, "\n")
 }
