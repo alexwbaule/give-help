@@ -196,7 +196,7 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		currentLine++
 
 		if p.TargetArea == nil {
-			p.TargetArea = &models.Area{}
+			p.TargetArea = &models.Location{}
 		}
 
 		dts := []string{}

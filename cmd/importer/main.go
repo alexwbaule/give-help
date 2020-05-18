@@ -250,7 +250,7 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 			DataToShare: []models.DataToShare{},
 			Images:      []string{},
 			Tags:        models.Tags{},
-			TargetArea:  &models.Area{},
+			TargetArea:  &models.Location{},
 			IsActive:    true,
 		}
 
