@@ -1,0 +1,10 @@
+TODO:
+
+-testar alterações de banco (mudança de estrutura)
+-dar a carga com a lista de bancos
+-fazer testes unitários no storage para Bank Accounts (validar DTS)
+-fazer testes unitários no handler para Bank Accounts (validar DTS e Find)
+-fazer testes unitários no storage para Bank List
+-fazer testes unitários no handler para Bank List
+
+Usei esse link para a lista de bancos: https://www.bcb.gov.br/pom/spb/estatistica/port/ASTR003.pdf
