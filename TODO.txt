@@ -1,10 +1,45 @@
 TODO:
 
--testar alterações de banco (mudança de estrutura)
--dar a carga com a lista de bancos
--fazer testes unitários no storage para Bank Accounts (validar DTS)
--fazer testes unitários no handler para Bank Accounts (validar DTS e Find)
--fazer testes unitários no storage para Bank List
--fazer testes unitários no handler para Bank List
+2020/05/17
+Done:
+    Banco de dados:
+        -Criação da tabela de bancos
+        -Criação da tabela de conta corrente relacionada com a proposta (mesmo modelo de relação de user/phones)
+        -Criação dos índices para as novas tabelas
+    Camada de dados da aplicação (storage):        
+        -Load de lista de bancos
+        -Upsert de conta corrente em proposta
+        -Carga de conta corrente em proposta
+        -inclusão de controle transactional para situações onde as alterações deixaram de ser atômicas
+    Handlers:
+        -alteração da camada de serviço de proposta para considerar inclusão e alteração para contas bancárias
+    API:
+        -criação da API para lista de bancos
+        -alteração das APIs de propostas para contemplarem contas bancárias
+        -alteração das APIs para considerarem País/Estado/Cidade em TargetArea
+    ETC:
+        -levantamento da lista de bancos via bacen e confecção de script de carga (processo manual)        
 
-Usei esse link para a lista de bancos: https://www.bcb.gov.br/pom/spb/estatistica/port/ASTR003.pdf
+Backlog:
+    Testes:
+        -Storage e handlers para Bank Accounts (validar DTS)
+        -Storage, handlers e API para Bank List
+        -Testar carga de lista de bancos
+        -Automatizar todo o cenários de testar e validar se nada quebrou
+    Banco de Dados:
+        -Dar a carga com a lista de bancos e validar integridade dos dados
+        -Alterar modelo de banco de dados para País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
+        -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
+    Camada de dados da aplicação (storage):    
+        -Alterar a camada de storage para guardar e carregar País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
+        -Alterar filtros para considerarem País/Estado/Cidade na proposta (melhorar targetArea) (apenas foi alterado na API)
+        -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
+    Importers/Exporters:
+        -Ler e escrever contas bancárias das planilhas
+        -Ler e escrever País/Estado/Cidade em TargetArea
+    ETC:
+        -Verificar com o Marcel se o retorno DTS de lista de contas bancárias funciona no APP
+        -Verificar com alguém que conheça um pouco mais sobre leis e proteção aos dados as restrições para divulgar CC
+
+
+OBS.: Usei esse link para a lista de bancos: https://www.bcb.gov.br/pom/spb/estatistica/port/ASTR003.pdf
