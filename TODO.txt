@@ -18,7 +18,7 @@ Done:
         -alteração das APIs de propostas para contemplarem contas bancárias
         -alteração das APIs para considerarem País/Estado/Cidade em TargetArea
     ETC:
-        -levantamento da lista de bancos via bacen e confecção de script de carga (processo manual)        
+        -levantamento da lista de bancos via bacen e confecção de script de carga no banco (processo manual)        
 
 Backlog:
     Testes:
@@ -38,8 +38,8 @@ Backlog:
         -Ler e escrever contas bancárias das planilhas
         -Ler e escrever País/Estado/Cidade em TargetArea
     ETC:
-        -Verificar com o Marcel se o retorno DTS de lista de contas bancárias funciona no APP
-        -Verificar com alguém que conheça um pouco mais sobre leis e proteção aos dados as restrições para divulgar CC
+        -Verificar com o Marcel se o retorno DTS de lista de contas bancárias funciona no APP (cada item tem mais de uma linha, verificar como isso seria apresentado)
+        -Verificar com alguém que conheça um pouco mais sobre leis e proteção aos dados as restrições para divulgar CC, talvez tenhamos que alterar termos de uso e etc
 
 
 OBS.: Usei esse link para a lista de bancos: https://www.bcb.gov.br/pom/spb/estatistica/port/ASTR003.pdf
