@@ -45,7 +45,7 @@ func createProposal() *models.Proposal {
 		ProposalType:     models.TypeProduct,
 		Side:             models.SideLocalBusiness,
 		ProposalValidate: strfmt.DateTime(time.Time{}.AddDate(2020, 5, 8)),
-		TargetArea: &models.Area{
+		TargetArea: &models.Location{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
 			Lat:      &lat,
 			Long:     &long,
@@ -57,7 +57,17 @@ func createProposal() *models.Proposal {
 		Images:         []string{`http://my-domain.com/image1.jpg`, `http://my-domain.com/image2.jpg`, `http://my-domain.com/image3.jpg`},
 		EstimatedValue: &estimatedValue,
 		ExposeUserData: true,
-		DataToShare:    []models.DataToShare{models.DataToSharePhone, models.DataToShareEmail, models.DataToShareFacebook, models.DataToShareInstagram, models.DataToShareURL},
+		DataToShare:    []models.DataToShare{models.DataToSharePhone, models.DataToShareEmail, models.DataToShareFacebook, models.DataToShareInstagram, models.DataToShareURL, models.DataToShareBankAccount},
+		BankAccounts: []*models.BankAccount{
+			{
+				BankID:          336,
+				AccountNumber:   "196",
+				AccountDigit:    "1",
+				BranchNumber:    "00001",
+				AccountDocument: "987.413.858-02",
+				AccountOwner:    "Todos Juntos Ajudando",
+			},
+		},
 	}
 }
 

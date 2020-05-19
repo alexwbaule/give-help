@@ -181,7 +181,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	return tx.Commit()
 }
 
-const insertAccounts = `INSERT INTO BANK_ACCOUNT 
+const insertAccounts = `INSERT INTO BANK_ACCOUNTS 
 (
 	AccountNumber,
 	AccountDigit,
@@ -206,7 +206,7 @@ VALUES
 `
 
 const removeProposalAccounts = `
-DELETE FROM BANK_ACCOUNT WHERE ProposalID = $1;
+DELETE FROM BANK_ACCOUNTS WHERE ProposalID = $1;
 `
 
 func (p *Proposal) upsertAccounts(ctx context.Context, proposalID string, accs []*models.BankAccount) error {
@@ -342,8 +342,10 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 	if shareBankAcc {
 		ret.BankAccounts, err = p.loadAccounts(proposalID)
 
-		log.Printf("fail to try load proposal bank accounts - error: %s", err)
-		return &ret, p.conn.CheckError(err)
+		if err != nil {
+			log.Printf("fail to try load proposal bank accounts - error: %s", err)
+			return &ret, p.conn.CheckError(err)
+		}
 	}
 
 	return &ret, p.conn.CheckError(err)
@@ -569,8 +571,10 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 		if shareBankAcc {
 			i.BankAccounts, err = p.loadAccounts(string(i.ProposalID))
 
-			log.Printf("fail to try load proposal bank accounts - error: %s", err)
-			return ret, p.conn.CheckError(err)
+			if err != nil {
+				log.Printf("fail to try load proposal bank accounts - error: %s", err)
+				return ret, p.conn.CheckError(err)
+			}
 		}
 
 		ret = append(ret, &i)
@@ -604,7 +608,7 @@ FROM
 WHERE
 	A.ProposalID = $1
 ORDER BY 
-	CreatedAt;
+	A.CreatedAt;
 `
 
 func (p *Proposal) loadAccounts(proposalId string) ([]*models.BankAccount, error) {
