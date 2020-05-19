@@ -20,10 +20,13 @@ Done:
     ETC:
         -levantamento da lista de bancos via bacen e confecção de script de carga no banco (processo manual)        
 
+Done 2020/05/19:
+    Testes:
+        -Storage, handlers e API para Bank List
+
 Backlog:
     Testes:
-        -Storage e handlers para Bank Accounts (validar DTS)
-        -Storage, handlers e API para Bank List
+        -Storage e handlers para Bank Accounts (validar DTS)        
         -Testar carga de lista de bancos
         -Automatizar todo o cenários de testar e validar se nada quebrou
     Banco de Dados:

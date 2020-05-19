@@ -384,7 +384,18 @@ func formatBankAccs(proposal *models.Proposal) string {
 			BranchDg = fmt.Sprintf("-%s", acc.BranchDigit)
 		}
 
-		ret = append(ret, fmt.Sprintf("Nome: %s\nDocumento: %s\nBco: (%s) %s\nAg: %s%s CC: %s-%s\n", acc.AccountOwner, acc.AccountDocument, acc.BankID, acc.BankName, acc.BranchNumber, BranchDg, acc.AccountNumber, acc.AccountDigit))
+		ret = append(ret,
+			fmt.Sprintf("Nome: %s\nDocumento: %s\nBco: (%d) %s\nAg: %s%s CC: %s-%s\n",
+				acc.AccountOwner,
+				acc.AccountDocument,
+				acc.BankID,
+				acc.BankName,
+				acc.BranchNumber,
+				BranchDg,
+				acc.AccountNumber,
+				acc.AccountDigit,
+			),
+		)
 	}
 
 	return strings.Join(ret, "\n")
