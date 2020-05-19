@@ -32,7 +32,10 @@ INSERT INTO PROPOSALS (
 	Tags,
 	Title,
     Description,
-    ProposalValidate,
+	ProposalValidate,
+	City,
+	State,
+	Country,	
     Lat,
     Long,
 	Range,
@@ -53,17 +56,20 @@ VALUES
 	$5, --Tags
 	$6, --Title
     $7, --Description
-    $8, --ProposalValidate,
-    $9, --Lat,
-    $10, --Long,
-    $11, --Range,
-	$12, --AreaTags,
-	$13, --IsActive,
-	$14, --Images,
-	$15, --DataToShare,
-	$16, --ExposeUserData,
-	$17, --EstimatedValue,
-	$18  --Ranking
+	$8, --ProposalValidate,
+	$9, --City,
+	$10, --State,
+	$11, --Country,
+    $12, --Lat,
+    $13, --Long,
+    $14, --Range,
+	$15, --AreaTags,
+	$16, --IsActive,
+	$17, --Images,
+	$18, --DataToShare,
+	$19, --ExposeUserData,
+	$20, --EstimatedValue,
+	$21  --Ranking
 )
 ON CONFLICT (ProposalID) 
 DO UPDATE SET
@@ -73,17 +79,20 @@ DO UPDATE SET
 	Tags = $5,
 	Title = $6,
     Description = $7,
-    ProposalValidate = $8,
-    Lat = $9,
-    Long = $10,
-	Range = $11,
-	AreaTags = $12,
-	IsActive = $13,	
-	Images = $14,
-	DataToShare = $15,
-	ExposeUserData = $16,
-	EstimatedValue = $17,
-	Ranking = $18
+	ProposalValidate = $8,
+	City = $9,
+	State = $10,
+	Country = $11,	
+    Lat = $12,
+    Long = $13,
+	Range = $14,
+	AreaTags = $15,
+	IsActive = $16,	
+	Images = $17,
+	DataToShare = $18,
+	ExposeUserData = $19,
+	EstimatedValue = $20,
+	Ranking = $21
 ;
 `
 
@@ -113,6 +122,10 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	long := float64(0)
 	areaRange := float64(0)
 	areaTags := []string{}
+
+	if proposal.TargetArea == nil {
+		proposal.TargetArea = &models.Location{}
+	}
 
 	if proposal.TargetArea != nil {
 		lat = *proposal.TargetArea.Lat
@@ -149,6 +162,9 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		proposal.Title,
 		proposal.Description,
 		proposal.ProposalValidate,
+		proposal.TargetArea.City,
+		proposal.TargetArea.State,
+		proposal.TargetArea.Country,
 		lat,
 		long,
 		areaRange,
@@ -265,6 +281,9 @@ SELECT
 	Title,
 	Description,
 	ProposalValidate,
+	City,
+	State,
+	Country,
 	Lat,
 	Long,
 	Range,
@@ -288,7 +307,11 @@ ORDER BY
 //LoadFromProposal load an unique proposal from a proposalID
 func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 	ret := models.Proposal{
-		TargetArea:  &models.Location{},
+		TargetArea: &models.Location{
+			City:    "",
+			State:   "",
+			Country: "",
+		},
 		DataToShare: []models.DataToShare{},
 	}
 
@@ -300,6 +323,9 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 	var areaTags []string
 	var images []string
 	var dataToShare []string
+	var city *string
+	var state *string
+	var country *string
 
 	err := db.QueryRow(cmd, proposalID).Scan(
 		&ret.ProposalID,
@@ -312,6 +338,9 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 		&ret.Title,
 		&ret.Description,
 		&ret.ProposalValidate,
+		&city,
+		&state,
+		&country,
 		&ret.TargetArea.Lat,
 		&ret.TargetArea.Long,
 		&ret.TargetArea.Range,
@@ -323,6 +352,18 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 		pq.Array(&dataToShare),
 		&ret.Ranking,
 	)
+
+	if city != nil {
+		ret.TargetArea.City = string(*city)
+	}
+
+	if state != nil {
+		ret.TargetArea.State = string(*state)
+	}
+
+	if country != nil {
+		ret.TargetArea.Country = string(*country)
+	}
 
 	ret.Tags = common.NormalizeTagArray(tags)
 	ret.TargetArea.AreaTags = common.NormalizeTagArray(areaTags)
@@ -514,12 +555,21 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 	defer rows.Close()
 
 	for rows.Next() {
-		i := models.Proposal{TargetArea: &models.Location{}}
+		i := models.Proposal{
+			TargetArea: &models.Location{
+				City:    "",
+				State:   "",
+				Country: "",
+			},
+		}
 
 		var tags []string
 		var areaTags []string
 		var images []string
 		var dataToShare []string
+		var city *string
+		var state *string
+		var country *string
 
 		err = rows.Scan(
 			&i.ProposalID,
@@ -532,6 +582,9 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 			&i.Title,
 			&i.Description,
 			&i.ProposalValidate,
+			&city,
+			&state,
+			&country,
 			&i.TargetArea.Lat,
 			&i.TargetArea.Long,
 			&i.TargetArea.Range,
@@ -543,6 +596,18 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 			pq.Array(&dataToShare),
 			&i.Ranking,
 		)
+
+		if city != nil {
+			i.TargetArea.City = string(*city)
+		}
+
+		if state != nil {
+			i.TargetArea.State = string(*state)
+		}
+
+		if country != nil {
+			i.TargetArea.Country = string(*country)
+		}
 
 		if err != nil {
 			fmtArgs := make([]string, len(args))
