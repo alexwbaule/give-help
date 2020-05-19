@@ -23,18 +23,19 @@ Done:
 Done 2020/05/19:
     Testes:
         -Storage, handlers e API para Bank List
-
-Backlog:
-    Testes:
         -Storage e handlers para Bank Accounts (validar DTS)        
         -Testar carga de lista de bancos
         -Automatizar todo o cenários de testar e validar se nada quebrou
     Banco de Dados:
         -Dar a carga com a lista de bancos e validar integridade dos dados
         -Alterar modelo de banco de dados para País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
-        -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
     Camada de dados da aplicação (storage):    
         -Alterar a camada de storage para guardar e carregar País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
+
+Backlog:    
+    Banco de Dados:        
+        -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
+    Camada de dados da aplicação (storage):            
         -Alterar filtros para considerarem País/Estado/Cidade na proposta (melhorar targetArea) (apenas foi alterado na API)
         -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
     Importers/Exporters:

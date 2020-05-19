@@ -49,11 +49,14 @@ func createProposal() *models.Proposal {
 		ProposalType:     models.TypeProduct,
 		Side:             models.SideRequest,
 		ProposalValidate: strfmt.DateTime(time.Time{}.AddDate(2020, 5, 8)),
-		TargetArea: &models.Area{
+		TargetArea: &models.Location{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
 			Lat:      &lat,
 			Long:     &long,
 			Range:    5,
+			City:     "São Paulo",
+			State:    "SP",
+			Country:  "Brazil il il il il",
 		},
 		Title:          "Quero comer",
 		Description:    "Estou morrendo de fome, adoraria qualquer coisa para comer",
@@ -88,7 +91,7 @@ func createFilterArea() *models.Filter {
 	long := float64(-46.6361)
 
 	return &models.Filter{
-		TargetArea: &models.Area{
+		TargetArea: &models.Location{
 			Lat:   &lat,
 			Long:  &long,
 			Range: 15,
@@ -101,7 +104,7 @@ func createFilterAreaTags() *models.Filter {
 	long := float64(-46.6361)
 
 	return &models.Filter{
-		TargetArea: &models.Area{
+		TargetArea: &models.Location{
 			AreaTags: models.Tags{"ZL"},
 			Lat:      &lat,
 			Long:     &long,
@@ -115,7 +118,7 @@ func createFilterInvalidArea() *models.Filter {
 	long := float64(-40.6361)
 
 	return &models.Filter{
-		TargetArea: &models.Area{
+		TargetArea: &models.Location{
 			Lat:   &lat,
 			Long:  &long,
 			Range: 5,
@@ -131,7 +134,7 @@ func createFilterAll() *models.Filter {
 		Description:   "fome",
 		Side:          models.SideRequest,
 		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
-		TargetArea: &models.Area{
+		TargetArea: &models.Location{
 			Lat:   &lat,
 			Long:  &long,
 			Range: 10,
