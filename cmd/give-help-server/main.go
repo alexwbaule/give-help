@@ -131,8 +131,11 @@ func main() {
 	api.TransactionFinishTransactionHandler = apihandler.TransactionFinishTransactionHandler(rt)
 	api.TransactionCancelTransactionHandler = apihandler.TransactionCancelTransactionHandler(rt)
 
-	/* API Category */
+	/* API Tags */
 	api.TagsGetTagsHandler = apihandler.GetTagsHandler(rt)
+
+	/* API Banks */
+	api.BanksGetBankListHandler = apihandler.GetBankListHandler(rt)
 
 	/* API Terms */
 	api.TermsPutUserAcceptHandler = apihandler.TermsPutUserAcceptHandler(rt)

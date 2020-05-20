@@ -1,0 +1,51 @@
+TODO:
+
+2020/05/17
+Done:
+    Banco de dados:
+        -Criação da tabela de bancos
+        -Criação da tabela de conta corrente relacionada com a proposta (mesmo modelo de relação de user/phones)
+        -Criação dos índices para as novas tabelas
+    Camada de dados da aplicação (storage):        
+        -Load de lista de bancos
+        -Upsert de conta corrente em proposta
+        -Carga de conta corrente em proposta
+        -inclusão de controle transactional para situações onde as alterações deixaram de ser atômicas
+    Handlers:
+        -alteração da camada de serviço de proposta para considerar inclusão e alteração para contas bancárias
+    API:
+        -criação da API para lista de bancos
+        -alteração das APIs de propostas para contemplarem contas bancárias
+        -alteração das APIs para considerarem País/Estado/Cidade em TargetArea
+    ETC:
+        -levantamento da lista de bancos via bacen e confecção de script de carga no banco (processo manual)        
+
+Done 2020/05/19:
+    Testes:
+        -Storage, handlers e API para Bank List
+        -Storage e handlers para Bank Accounts (validar DTS)        
+        -Testar carga de lista de bancos
+        -Automatizar todo o cenários de testar e validar se nada quebrou
+    Banco de Dados:
+        -Dar a carga com a lista de bancos e validar integridade dos dados
+        -Alterar modelo de banco de dados para País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
+    Camada de dados da aplicação (storage):    
+        -Alterar a camada de storage para guardar e carregar País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
+        -Alterar filtros para considerarem País/Estado/Cidade na proposta (melhorar targetArea) (apenas foi alterado na API)
+    Importers/Exporters:
+        -Ler e escrever País/Estado/Cidade em TargetArea
+
+Backlog:    
+    Banco de Dados:        
+        -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
+    Camada de dados da aplicação (storage):                    
+        -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
+    Importers/Exporters:
+        -Ler e escrever contas bancárias das planilhas
+        
+    ETC:
+        -Verificar com o Marcel se o retorno DTS de lista de contas bancárias funciona no APP (cada item tem mais de uma linha, verificar como isso seria apresentado)
+        -Verificar com alguém que conheça um pouco mais sobre leis e proteção aos dados as restrições para divulgar CC, talvez tenhamos que alterar termos de uso e etc
+
+
+OBS.: Usei esse link para a lista de bancos: https://www.bcb.gov.br/pom/spb/estatistica/port/ASTR003.pdf
