@@ -122,12 +122,15 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	long := float64(0)
 	areaRange := float64(0)
 	areaTags := []string{}
-
-	if proposal.TargetArea == nil {
-		proposal.TargetArea = &models.Location{}
-	}
+	city := ""
+	state := ""
+	country := ""
 
 	if proposal.TargetArea != nil {
+		city = proposal.TargetArea.City
+		state = proposal.TargetArea.State
+		country = proposal.TargetArea.Country
+
 		lat = *proposal.TargetArea.Lat
 		long = *proposal.TargetArea.Long
 		areaRange = proposal.TargetArea.Range
@@ -162,9 +165,9 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		proposal.Title,
 		proposal.Description,
 		proposal.ProposalValidate,
-		proposal.TargetArea.City,
-		proposal.TargetArea.State,
-		proposal.TargetArea.Country,
+		city,
+		state,
+		country,
 		lat,
 		long,
 		areaRange,
