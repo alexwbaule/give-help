@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"fmt"
 
 	"log"
@@ -451,14 +452,24 @@ func (u *User) insertPhones(user *models.User) error {
 			if len(user.Contact.Phones) > 0 {
 				db := u.conn.Get()
 
-				_, err = db.Exec(cleanPhones, user.UserID)
+				ctx := context.Background()
+				tx, err := db.BeginTx(ctx, nil)
 
 				if err != nil {
+					log.Fatal(err)
+				}
+
+				_, err = db.ExecContext(ctx, cleanPhones, user.UserID)
+
+				if err != nil {
+					log.Printf("fail to try clean user phones, executiong rollback: %s", err)
+					tx.Rollback()
 					return u.conn.CheckError(err)
 				}
 
 				for _, p := range user.Contact.Phones {
-					_, err := db.Exec(
+					_, err := db.ExecContext(
+						ctx,
 						insertPhones,
 						user.UserID,
 						p.CountryCode,
@@ -469,14 +480,18 @@ func (u *User) insertPhones(user *models.User) error {
 					)
 
 					if err != nil {
+						log.Printf("fail to try insert new user phones, executiong rollback: %s", err)
+						tx.Rollback()
 						return u.conn.CheckError(err)
 					}
 				}
+
+				return tx.Commit()
 			}
 		}
 	}
 
-	return u.conn.CheckError(err)
+	return err
 }
 
 const selectPhones = `
