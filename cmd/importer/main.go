@@ -211,6 +211,9 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 		"CreatedAt":        -1,
 		"LastUpdate":       -1,
 		"ProposalValidate": -1,
+		"City":             -1,
+		"State":            -1,
+		"Country":          -1,
 		"AreaTags":         -1,
 		"Lat":              -1,
 		"Long":             -1,
@@ -300,6 +303,10 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 
 		prop.Tags = strings.Split(getData("Tags", h, row), ",")
 		prop.Images = strings.Split(getData("Images", h, row), ",")
+
+		prop.TargetArea.City = getData("City", h, row)
+		prop.TargetArea.State = getData("State", h, row)
+		prop.TargetArea.Country = getData("Country", h, row)
 
 		*prop.TargetArea.Lat = getFloat(getData("Lat", h, row))
 		*prop.TargetArea.Long = getFloat(getData("Long", h, row))

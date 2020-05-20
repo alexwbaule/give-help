@@ -177,15 +177,18 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		"CreatedAt":        "I%d",
 		"LastUpdate":       "J%d",
 		"ProposalValidate": "K%d",
-		"AreaTags":         "L%d",
-		"Lat":              "M%d",
-		"Long":             "N%d",
-		"Range":            "O%d",
-		"Images":           "P%d",
-		"EstimatedValue":   "Q%d",
-		"ExposeUserData":   "R%d",
-		"DataToShare":      "S%d",
-		"Ranking":          "T%d",
+		"City":             "L%d",
+		"State":            "M%d",
+		"Country":          "N%d",
+		"AreaTags":         "O%d",
+		"Lat":              "P%d",
+		"Long":             "Q%d",
+		"Range":            "R%d",
+		"Images":           "S%d",
+		"EstimatedValue":   "T%d",
+		"ExposeUserData":   "U%d",
+		"DataToShare":      "V%d",
+		"Ranking":          "W%d",
 	}
 
 	for k, v := range propsHeader {
@@ -230,6 +233,9 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["CreatedAt"], currentLine), p.CreatedAt)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["LastUpdate"], currentLine), p.LastUpdate)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalValidate"], currentLine), p.ProposalValidate)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["City"], currentLine), *&p.TargetArea.City)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["State"], currentLine), *&p.TargetArea.State)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Country"], currentLine), *&p.TargetArea.Country)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["AreaTags"], currentLine), strings.Join(p.TargetArea.AreaTags, ","))
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Lat"], currentLine), *p.TargetArea.Lat)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Long"], currentLine), *p.TargetArea.Long)
