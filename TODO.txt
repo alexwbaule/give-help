@@ -31,16 +31,18 @@ Done 2020/05/19:
         -Alterar modelo de banco de dados para País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
     Camada de dados da aplicação (storage):    
         -Alterar a camada de storage para guardar e carregar País/Estado/Cidade na proposta (targetArea) (apenas foi alterado na API)
+        -Alterar filtros para considerarem País/Estado/Cidade na proposta (melhorar targetArea) (apenas foi alterado na API)
+    Importers/Exporters:
+        -Ler e escrever País/Estado/Cidade em TargetArea
 
 Backlog:    
     Banco de Dados:        
         -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
-    Camada de dados da aplicação (storage):            
-        -Alterar filtros para considerarem País/Estado/Cidade na proposta (melhorar targetArea) (apenas foi alterado na API)
+    Camada de dados da aplicação (storage):                    
         -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
     Importers/Exporters:
         -Ler e escrever contas bancárias das planilhas
-        -Ler e escrever País/Estado/Cidade em TargetArea
+        
     ETC:
         -Verificar com o Marcel se o retorno DTS de lista de contas bancárias funciona no APP (cada item tem mais de uma linha, verificar como isso seria apresentado)
         -Verificar com alguém que conheça um pouco mais sobre leis e proteção aos dados as restrições para divulgar CC, talvez tenhamos que alterar termos de uso e etc
