@@ -983,14 +983,17 @@ definitions:
         type: string
         minLength: 2
         maxLength: 256
+        default: "São Paulo"
       state:
         type: string
         minLength: 2
         maxLength: 256
+        default: "São Paulo"
       country:
         type: string
         minLength: 2
         maxLength: 256
+        default: "Brasil"
       lat:
         type: number
         format: float64

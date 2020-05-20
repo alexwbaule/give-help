@@ -42,6 +42,8 @@ type Proposal struct {
 	Tags           []string // categoria
 	Description    string
 	URL            string
+	City           string
+	State          string
 	Address        string
 	PhoneNumbers   []string
 	PhoneRegion    string
@@ -73,7 +75,7 @@ var tagsSvc *tagsHandler.Tags
 func main() {
 	log.Printf("Import from tsf gdocs - start\n")
 	for i, a := range os.Args {
-		log.Printf("Arg %d: %s\n", i, a)
+		log.Printf("\tArg %d: %s\n", i, a)
 	}
 
 	app, err := app.New("give-help-service")
@@ -202,17 +204,19 @@ func parser(line string, index int) (Proposal, error) {
 		Tags:           getArray(fields[8]),
 		Description:    fields[9],
 		URL:            getURL(fields[10]),
-		Address:        fields[11],
-		PhoneNumbers:   getPhoneNumbers(fields[12]),
-		PhoneRegion:    getPhoneRegion(fields[13]),
-		PhoneCountry:   getPhoneCountry(fields[14]),
-		AllowShareData: getBool(fields[15]),
-		Images:         getArray(fields[16]),
+		City:           fields[11],
+		State:          fields[12],
+		Address:        fields[13],
+		PhoneNumbers:   getPhoneNumbers(fields[14]),
+		PhoneRegion:    getPhoneRegion(fields[15]),
+		PhoneCountry:   getPhoneCountry(fields[16]),
+		AllowShareData: getBool(fields[17]),
+		Images:         getArray(fields[18]),
 		Facebook:       getFacebook(fields[10]),
 		Instagram:      getInstagram(fields[10]),
 		Twitter:        getTwitter(fields[10]),
 		Line:           index,
-		Ranking:        getFloat(fields[17]),
+		Ranking:        getFloat(fields[19]),
 	}
 
 	t, s := getType(fields[7], ret)

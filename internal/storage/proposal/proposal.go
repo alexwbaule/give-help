@@ -414,19 +414,9 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	wheres := []string{}
 
 	if len(filter.Description) > 0 {
-		likeTarger := "%" + strings.ToLower(strings.TrimSpace(filter.Description)) + "%"
-		args = append(args, likeTarger)
-		wheres = append(wheres, fmt.Sprintf("( LOWER(Description) LIKE $%d OR LOWER(Title) LIKE $%d ) ", len(args), len(args)))
-
-		for _, s := range strings.Split(filter.Description, " ") {
-			if len(s) > 0 {
-				args = append(args, likeTarger)
-				wheres = append(wheres, fmt.Sprintf(" array_to_string(AreaTags, ',') LIKE $%d ", len(args)))
-
-				args = append(args, likeTarger)
-				wheres = append(wheres, fmt.Sprintf(" array_to_string(Tags, ',') LIKE $%d ", len(args)))
-			}
-		}
+		likeTarget := "%" + strings.ToLower(strings.TrimSpace(filter.Description)) + "%"
+		args = append(args, likeTarget)
+		wheres = append(wheres, fmt.Sprintf("( LOWER(CONCAT(Description, Title, array_to_string(AreaTags, ','), array_to_string(Tags, ','), City, State, Country)) LIKE $%d ) ", len(args)))
 	}
 
 	if len(filter.UserID) > 0 {
