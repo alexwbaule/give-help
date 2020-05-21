@@ -24,9 +24,15 @@ func CheckAPIKeyAuth(rt *runtimeApp.Runtime, tokenStr string, roles []string) (*
 		return nil, errors.New(401, "Invalid token, please log in again.")
 	}
 
+	name := swag.String(token.Claims["name"].(string))
+
+	if name == nil {
+		name = swag.String(token.Claims["email"].(string))
+	}
+
 	user = &models.LoggedUser{
 		Email:    swag.String(token.Claims["email"].(string)),
-		Name:     swag.String(token.Claims["name"].(string)),
+		Name:     name,
 		Picture:  swag.String(token.Claims["picture"].(string)),
 		Provider: &token.Firebase.SignInProvider,
 		UserID:   swag.String(token.Claims["user_id"].(string)),
