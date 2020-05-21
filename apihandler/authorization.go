@@ -7,12 +7,15 @@ import (
 	"github.com/alexwbaule/give-help/v2/handlers/authorization"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/swag"
 )
 
 // CheckAPIKeyAuth from Token
 func CheckAPIKeyAuth(rt *runtimeApp.Runtime, tokenStr string, roles []string) (*models.LoggedUser, error) {
 	var user *models.LoggedUser
+	var name string
+	var email string
+	var picture string
+	var userID string
 
 	token, isRevoked := authorization.VerifyIDTokenAndCheckRevoked(context.Background(), rt.GetFirebase(), tokenStr)
 
@@ -24,18 +27,30 @@ func CheckAPIKeyAuth(rt *runtimeApp.Runtime, tokenStr string, roles []string) (*
 		return nil, errors.New(401, "Invalid token, please log in again.")
 	}
 
-	name := swag.String(token.Claims["name"].(string))
+	if value, ok := token.Claims["email"]; ok {
+		email = value.(string)
+	}
 
-	if name == nil {
-		name = swag.String(token.Claims["email"].(string))
+	if value, ok := token.Claims["name"]; ok {
+		name = value.(string)
+	}
+
+	if value, ok := token.Claims["picture"]; ok {
+		picture = value.(string)
+	}
+
+	if value, ok := token.Claims["user_id"]; ok {
+		userID = value.(string)
+	} else {
+		return nil, errors.New(401, "Invalid token, missing UserID please log in again.")
 	}
 
 	user = &models.LoggedUser{
-		Email:    swag.String(token.Claims["email"].(string)),
-		Name:     name,
-		Picture:  swag.String(token.Claims["picture"].(string)),
+		Email:    &email,
+		Name:     &name,
+		Picture:  &picture,
 		Provider: &token.Firebase.SignInProvider,
-		UserID:   swag.String(token.Claims["user_id"].(string)),
+		UserID:   &userID,
 	}
 
 	return user, nil
