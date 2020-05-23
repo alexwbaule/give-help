@@ -137,6 +137,9 @@ func main() {
 	/* API Banks */
 	api.BanksGetBankListHandler = apihandler.GetBankListHandler(rt)
 
+	/* API Etc */
+	api.EtcGetEtcListHandler = apihandler.GetEtcListHandler(rt)
+
 	/* API Terms */
 	api.TermsPutUserAcceptHandler = apihandler.TermsPutUserAcceptHandler(rt)
 	api.TermsGetTermsHandler = apihandler.TermsGetTermsHandler(rt)
