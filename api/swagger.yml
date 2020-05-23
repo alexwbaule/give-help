@@ -27,6 +27,7 @@ tags:
   - name: tags
   - name: terms
   - name: banks
+  - name: etc
 
 security:
   - APIKeyHeader:
@@ -51,7 +52,25 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"        
+            $ref: "#/definitions/ApiError"
+
+  /etc:
+    get:
+      tags:
+        - etc
+      summary: Get etc key values
+      description: Get etc key values 
+      operationId: GetEtcList
+      security: []
+      responses:
+        200:
+          description: Get etc key Values
+          schema:
+            $ref: "#/definitions/Etc"
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"                
 
   /user:
     post:
@@ -1232,6 +1251,12 @@ definitions:
         minLength: 1
         maxLength: 1024
 
+  Etc:
+    type: object
+    required:
+    additionalProperties:
+      type: string
+
   Bank:
     type: object
     required:
@@ -1245,7 +1270,7 @@ definitions:
       bank_fullname:
         type: string
         minLength: 1
-        maxLength: 1024
+        maxLength: 1024        
 
   BankAccount:
     type: object
