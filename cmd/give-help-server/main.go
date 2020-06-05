@@ -145,6 +145,8 @@ func main() {
 	api.TermsGetTermsHandler = apihandler.TermsGetTermsHandler(rt)
 	api.TermsGetUserAcceptedHandler = apihandler.TermsGetUserAcceptedHandler(rt)
 
+	/* API Reports */
+
 	c := cors.New(cors.Options{
 		Debug:              true,
 		AllowedHeaders:     []string{"*"},

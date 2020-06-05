@@ -28,6 +28,7 @@ tags:
   - name: terms
   - name: banks
   - name: etc
+  - name: reports
 
 security:
   - APIKeyHeader:
@@ -70,7 +71,45 @@ paths:
         500:
           description: Internal Error
           schema:
-            $ref: "#/definitions/ApiError"                
+            $ref: "#/definitions/ApiError"
+
+  /reports/proposal:
+    get:
+      tags:
+        - reports
+      summary: Get proposal report
+      description: Get proposal report
+      operationId: GetProposalReport
+      security: []
+      responses:
+        200:
+          description: Get proposal report
+          schema:
+            $ref: "#/definitions/ProposalReportResponse"                      
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+  /reports/proposalcsv:
+    get:
+      tags:
+        - reports
+      summary: Get proposal report in csv
+      description: Get proposal report in csv
+      operationId: GetProposalReportcsv
+      security: []
+      responses:
+        200:
+          description: Get proposal report in csv
+          content:
+            text/csv: {}
+          schema:
+            type: string           
+        500:
+          description: Internal Error
+          schema:
+            $ref: "#/definitions/ApiError"                                        
 
   /user:
     post:
@@ -1256,6 +1295,32 @@ definitions:
     required:
     additionalProperties:
       type: string
+
+  ProposalReportResponse:
+    type: array
+    items:
+      $ref: "#/definitions/ProposalReport" 
+
+  ProposalReport:
+    type: object
+    required:    
+    properties:
+      proposal_id:
+        $ref: "#/definitions/ID"
+      user_id:
+        $ref: "#/definitions/UserID"
+      description:
+        type: string
+        minLength: 1
+        maxLength: 1024   
+      count:
+        type: integer
+      first:
+        type: string
+        format: date-time
+      last:
+        type: string
+        format: date-time
 
   Bank:
     type: object
