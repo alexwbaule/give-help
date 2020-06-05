@@ -748,3 +748,113 @@ func (p *Proposal) InsertComplaint(complaint *models.Complaint) error {
 
 	return p.conn.CheckError(err)
 }
+
+const insertView = `
+INSERT INTO PROPOSAL_VIEWS
+(
+	ProposalID,
+	UserID,
+	Description
+)
+VALUES
+(
+	$1,
+	$2,
+	$3
+);
+`
+
+func (p *Proposal) InsertView(proposalId string, userID string, description string) {
+	db := p.conn.Get()
+
+	result, err := db.Exec(insertView, proposalId, userID, description)
+
+	if err != nil {
+		log.Printf("fail to try insert a proposal view: [%s] $s", proposalId, err)
+	}
+
+	if aff, _ := result.RowsAffected(); aff == 0 {
+		log.Printf("fail to try insert a proposal view: [%s] no rows affected", proposalId)
+	}
+}
+
+const bulkInsertView = `
+INSERT INTO PROPOSAL_VIEWS
+(
+	ProposalID,
+	Description
+)
+VALUES
+%s
+;
+`
+
+func (p *Proposal) BulkInsertView(proposalIds []string, description string) {
+	db := p.conn.Get()
+
+	args := make([]string, len(proposalIds))
+
+	for p, id := range proposalIds {
+		args[p] = fmt.Sprintf(`('%s', '%s')`, id, description)
+	}
+
+	result, err := db.Exec(fmt.Sprintf(insertView, strings.Join(args, ",")))
+
+	if err != nil {
+		log.Printf("fail to try bulk insert a proposal view: %s", err)
+	}
+
+	if aff, _ := result.RowsAffected(); aff == 0 {
+		log.Printf("fail to try insert a proposal view: no rows affected")
+	}
+}
+
+const selectViews = `
+SELECT
+	ProposalID,
+	UserID,
+	Description,
+	Count(*) as Count,
+    Min(CreatedAt) as Fisrt,
+    Max(CreatedAt) as Last    
+FROM
+	PROPOSAL_VIEWS
+GROUP BY
+	ProposalID,
+	UserID,
+	Description
+ORDER BY
+	ProposalID, 
+	UserID;
+`
+
+func (p *Proposal) LoadViews() ([]*models.ProposalReport, error) {
+	ret := []*models.ProposalReport{}
+
+	db := p.conn.Get()
+
+	rows, err := db.Query(selectViews)
+
+	if err == nil {
+		defer rows.Close()
+
+		for rows.Next() {
+			view := &models.ProposalReport{}
+
+			if err = rows.Scan(
+				&view.ProposalID,
+				&view.UserID,
+				&view.Description,
+				&view.Count,
+				&view.First,
+				&view.Last,
+			); err == nil {
+				ret = append(ret, view)
+			} else {
+				return ret, p.conn.CheckError(err)
+			}
+		}
+	}
+
+	return ret, p.conn.CheckError(err)
+}
