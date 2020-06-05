@@ -1,11 +1,14 @@
 package apihandler
 
 import (
+	"time"
+
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/generated/restapi/operations/terms"
 	handler "github.com/alexwbaule/give-help/v2/handlers/terms"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/rafaelfino/metrics"
 )
 
 //PutUserAcceptHandler
@@ -18,6 +21,9 @@ type putUserAcceptHandler struct {
 }
 
 func (ctx *putUserAcceptHandler) Handle(params terms.PutUserAcceptParams, principal *models.LoggedUser) middleware.Responder {
+	start := time.Now()
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsPutUserAcceptHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
+
 	c := handler.New(ctx.rt.GetDatabase())
 
 	err := c.Accept(params.TermID, *principal.UserID)
@@ -39,6 +45,9 @@ type getTermsHandler struct {
 }
 
 func (ctx *getTermsHandler) Handle(params terms.GetTermsParams) middleware.Responder {
+	start := time.Now()
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsGetTermsHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
+
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadTerms()
 
@@ -59,6 +68,9 @@ type getUserAcceptedHandler struct {
 }
 
 func (ctx *getUserAcceptedHandler) Handle(params terms.GetUserAcceptedParams, principal *models.LoggedUser) middleware.Responder {
+	start := time.Now()
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsGetUserAcceptedHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
+
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadUserAcceptedTerms(*principal.UserID)
 

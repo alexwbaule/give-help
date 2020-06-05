@@ -27,3 +27,4 @@ database:
 
 metrics:
   splunk: 52da7db5-50b4-48f0-bce0-317fee5b2e8a
+  Interval: 10m
