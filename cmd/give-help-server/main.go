@@ -146,6 +146,8 @@ func main() {
 	api.TermsGetUserAcceptedHandler = apihandler.TermsGetUserAcceptedHandler(rt)
 
 	/* API Reports */
+	api.ReportsGetProposalReportHandler = apihandler.ReportsGetProposalReportHandler(rt)
+	api.ReportsGetProposalReportcsvHandler = apihandler.ReportsGetProposalReportcsvHandler(rt)
 
 	c := cors.New(cors.Options{
 		Debug:              true,

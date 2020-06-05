@@ -11,7 +11,7 @@ import (
 	"github.com/rafaelfino/metrics"
 )
 
-func GetProposalReportHandler(rt *runtimeApp.Runtime) reports.GetProposalReportHandler {
+func ReportsGetProposalReportHandler(rt *runtimeApp.Runtime) reports.GetProposalReportHandler {
 	return &getProposalReportHandler{rt: rt}
 }
 
@@ -33,7 +33,7 @@ func (ctx *getProposalReportHandler) Handle(params reports.GetProposalReportPara
 	return reports.NewGetProposalReportOK().WithPayload(ret)
 }
 
-func GetProposalReportcsvHandler(rt *runtimeApp.Runtime) reports.GetProposalReportcsvHandler {
+func ReportsGetProposalReportcsvHandler(rt *runtimeApp.Runtime) reports.GetProposalReportcsvHandler {
 	return &getProposalReportcsvHandler{rt: rt}
 }
 
