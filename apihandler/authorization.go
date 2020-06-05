@@ -2,15 +2,20 @@ package apihandler
 
 import (
 	"context"
+	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/handlers/authorization"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 	"github.com/go-openapi/errors"
+	"github.com/rafaelfino/metrics"
 )
 
 // CheckAPIKeyAuth from Token
 func CheckAPIKeyAuth(rt *runtimeApp.Runtime, tokenStr string, roles []string) (*models.LoggedUser, error) {
+	start := time.Now()
+	defer rt.GetMetricProcessor().Send(metrics.NewMetric("CheckAPIKeyAuth.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
+
 	var user *models.LoggedUser
 	var name string
 	var email string

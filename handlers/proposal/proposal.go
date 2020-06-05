@@ -8,16 +8,19 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	cache "github.com/alexwbaule/give-help/v2/internal/cache/proposal"
 	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/proposal"
 	tagsStorage "github.com/alexwbaule/give-help/v2/internal/storage/tags"
 	userStorage "github.com/alexwbaule/give-help/v2/internal/storage/user"
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/go-openapi/strfmt"
 )
 
 //Proposal Object struct
 type Proposal struct {
+	cache   *cache.Proposal
 	storage *storage.Proposal
 	user    *userStorage.User
 	tags    *tagsStorage.Tags
@@ -25,10 +28,17 @@ type Proposal struct {
 
 //New creates a new instance
 func New(conn *connection.Connection) *Proposal {
+	es, err := cache.New(elasticsearch.Config{})
+
+	if err != nil {
+		panic(err)
+	}
+
 	return &Proposal{
 		storage: storage.New(conn),
 		user:    userStorage.New(conn),
 		tags:    tagsStorage.New(conn),
+		cache:   es,
 	}
 }
 
@@ -42,12 +52,20 @@ func (p *Proposal) Insert(proposal *models.Proposal) (models.ID, error) {
 
 	if err != nil {
 		log.Printf("fail to insert new proposal [%s]: %s", proposal.ProposalID, err)
+		return proposal.ProposalID, err
 	}
 
 	_, err = p.tags.Insert(proposal.Tags)
 
 	if err != nil {
 		log.Printf("fail to insert new proposal tags [%s]: %s", proposal.ProposalID, err)
+	}
+
+	err = p.cache.Upsert(proposal)
+
+	if err != nil {
+		log.Printf("fail to insert new proposal on cache [%s]: %s", proposal.ProposalID, err)
+		return proposal.ProposalID, err
 	}
 
 	return proposal.ProposalID, err
@@ -62,12 +80,20 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 
 	if err != nil {
 		log.Printf("fail to update proposal [%s]: %s", proposal.ProposalID, err)
+		return err
 	}
 
 	_, err = p.tags.Insert(proposal.Tags)
 
 	if err != nil {
 		log.Printf("fail to update proposal tags [%s]: %s", proposal.ProposalID, err)
+	}
+
+	err = p.cache.Upsert(proposal)
+
+	if err != nil {
+		log.Printf("fail to update new proposal on cache [%s]: %s", proposal.ProposalID, err)
+		return err
 	}
 
 	return err
@@ -110,6 +136,7 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 	}
 
 	result, err := p.storage.Find(filter)
+	//result, err := p.cache.Find(filter)
 
 	if err != nil {
 		log.Printf("fail to load data from filter: %s", err)
