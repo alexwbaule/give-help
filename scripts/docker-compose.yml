@@ -14,4 +14,14 @@ services:
     image: adminer
     restart: always
     ports:
+      - 8088:8088
+
+  firebase:
+    image: firebase
+    restart: always
+    ports:
+      - 5000:5000
+      - 5001:5001
       - 8080:8080
+      - 8085:8085
+      - 9000:9000  
