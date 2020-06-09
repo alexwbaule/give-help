@@ -49,6 +49,17 @@ func main() {
 	cfg.SetDefault("service.TLSWriteTimeout", "15m")
 	cfg.SetDefault("service.WriteTimeout", "15m")
 
+	cfg.SetDefault("firebase.AccountKey", `etc/serviceAccountKey.json`)
+
+	cfg.SetDefault("database.Host", "localhost")
+	cfg.SetDefault("database.User", "postgres")
+	cfg.SetDefault("database.Pass", "example")
+	cfg.SetDefault("database.DBName", "postgres")
+
+	cfg.SetDefault("es.Addresses", "localhost:9200")
+
+	cfg.SetDefault("metrics.Interval", "10m")
+
 	rt, err := runtimeApp.NewRuntime(app)
 	if err != nil {
 		log.Fatal(err.Error())
