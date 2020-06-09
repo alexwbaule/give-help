@@ -26,7 +26,8 @@ func New(cfg *Config) (*Connection, error) {
 		log.Printf("error creating the elastic search client: %s", err)
 		return nil, err
 	} else {
-		log.Println(es.Info())
+		info, _ := es.Info()
+		log.Printf("Elastic cache connected: %s\n", info)
 	}
 
 	return &Connection{

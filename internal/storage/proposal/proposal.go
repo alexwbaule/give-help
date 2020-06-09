@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"log"
 
@@ -767,7 +768,7 @@ VALUES
 func (p *Proposal) InsertView(proposalId string, userID string, description string) {
 	db := p.conn.Get()
 
-	result, err := db.Exec(insertView, proposalId, userID, description)
+	result, err := db.Exec(insertView, strings.TrimSpace(proposalId), strings.TrimSpace(userID), strings.TrimSpace(description))
 
 	if err != nil {
 		log.Printf("fail to try insert a proposal view: [%s] $s", proposalId, err)
@@ -792,16 +793,22 @@ VALUES
 func (p *Proposal) BulkInsertView(proposalIds []string, description string) {
 	db := p.conn.Get()
 
+	if len(proposalIds) == 0 {
+		return
+	}
+
 	args := make([]string, len(proposalIds))
 
 	for p, id := range proposalIds {
-		args[p] = fmt.Sprintf(`('%s', '%s')`, id, description)
+		args[p] = fmt.Sprintf(`('%s', '%s')`, strings.TrimSpace(id), strings.TrimSpace(description))
 	}
 
-	result, err := db.Exec(fmt.Sprintf(insertView, strings.Join(args, ",")))
+	insert := fmt.Sprintf(bulkInsertView, strings.Join(args, ","))
+
+	result, err := db.Exec(insert)
 
 	if err != nil {
-		log.Printf("fail to try bulk insert a proposal view: %s", err)
+		log.Printf("fail to try bulk insert a proposal view: %s, sql: %s\n", err)
 	}
 
 	if aff, _ := result.RowsAffected(); aff == 0 {
@@ -811,9 +818,9 @@ func (p *Proposal) BulkInsertView(proposalIds []string, description string) {
 
 const selectViews = `
 SELECT
-	ProposalID,
-	UserID,
-	Description,
+	TRIM(ProposalID),
+	TRIM(UserID),
+	TRIM(Description),
 	Count(*) as Count,
     Min(CreatedAt) as Fisrt,
     Max(CreatedAt) as Last    
@@ -824,8 +831,10 @@ GROUP BY
 	UserID,
 	Description
 ORDER BY
+	Count DESC,
 	ProposalID, 
-	UserID;
+	UserID
+	;
 `
 
 func (p *Proposal) LoadViews() ([]*models.ProposalReport, error) {
@@ -850,6 +859,120 @@ func (p *Proposal) LoadViews() ([]*models.ProposalReport, error) {
 				&view.Last,
 			); err == nil {
 				ret = append(ret, view)
+			} else {
+				return ret, p.conn.CheckError(err)
+			}
+		}
+	}
+
+	return ret, p.conn.CheckError(err)
+}
+
+const selectViewsCSV = `
+SELECT
+	V.ProposalID,
+	V.UserID,
+    U.Name,
+	V.Description as ViewDescription,
+	Count(*) as Count,
+    Min(V.CreatedAt) as FisrtView,
+	Max(V.CreatedAt) as LastView,
+	P.Description as ProposalDescription,
+	P.Title,
+	P.Side,
+	P.ProposalType,
+	array_to_string(p.Tags, ',') as Tags,
+	P.Ranking
+FROM
+	PROPOSAL_VIEWS V LEFT JOIN PROPOSALS P
+		ON V.ProposalID = P.ProposalID
+    LEFT JOIN USERS U
+    	ON P.UserID = U.UserID
+GROUP BY
+	V.ProposalID,
+	V.UserID,
+    U.Name,
+	ViewDescription,
+    P.Description,
+	P.Title,
+	P.Side,
+	P.ProposalType,
+	p.Tags,
+	P.Ranking    
+ORDER BY
+	Count DESC,
+    U.Name
+`
+
+func (p *Proposal) LoadViewsCSV() (string, error) {
+	ret := fmt.Sprintf("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\n",
+		"proposalID",
+		"userID",
+		"name",
+		"viewDescription",
+		"count",
+		"first",
+		"last",
+		"proposalDescription",
+		"title",
+		"side",
+		"Type",
+		"tags",
+		"ranking",
+	)
+
+	db := p.conn.Get()
+
+	rows, err := db.Query(selectViewsCSV)
+
+	if err == nil {
+		defer rows.Close()
+
+		var proposalID string
+		var userID string
+		var viewDesc string
+		var name string
+		var count int64
+		var first time.Time
+		var last time.Time
+		var propDesc string
+		var title string
+		var side string
+		var propType string
+		var tags string
+		var ranking float64
+
+		for rows.Next() {
+			if err = rows.Scan(
+				&proposalID,
+				&userID,
+				&name,
+				&viewDesc,
+				&count,
+				&first,
+				&last,
+				&propDesc,
+				&title,
+				&side,
+				&propType,
+				&tags,
+				&ranking,
+			); err == nil {
+				ret += fmt.Sprintf("%s;%s;%s;%s;%d;%s;%s;%s;%s;%s;%s;%s;%f;\n",
+					strings.TrimSpace(proposalID),
+					strings.TrimSpace(userID),
+					strings.TrimSpace(name),
+					strings.TrimSpace(viewDesc),
+					count,
+					first,
+					last,
+					strings.TrimSpace(propDesc),
+					strings.TrimSpace(title),
+					strings.TrimSpace(side),
+					strings.TrimSpace(propType),
+					strings.TrimSpace(tags),
+					ranking,
+				)
 			} else {
 				return ret, p.conn.CheckError(err)
 			}

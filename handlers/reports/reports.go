@@ -1,7 +1,6 @@
 package reports
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
@@ -32,17 +31,11 @@ func (r *Reports) LoadViews() ([]*models.ProposalReport, error) {
 }
 
 func (r *Reports) LoadViewsCSV() (string, error) {
-	data, err := r.storage.LoadViews()
+	data, err := r.storage.LoadViewsCSV()
 
 	if err != nil {
 		log.Printf("fail to load proposal views: %s", err)
 	}
 
-	ret := ""
-
-	for _, i := range data {
-		ret += fmt.Sprintf("%s;%s;%s;%d;%s;%s;\n", i.ProposalID, i.UserID, i.Description, i.Count, i.First, i.Last)
-	}
-
-	return ret, err
+	return data, err
 }
