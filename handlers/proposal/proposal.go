@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	cacheConnection "github.com/alexwbaule/give-help/v2/internal/cache/connection"
 	cache "github.com/alexwbaule/give-help/v2/internal/cache/proposal"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	dbConnection "github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/proposal"
 	tagsStorage "github.com/alexwbaule/give-help/v2/internal/storage/tags"
 	userStorage "github.com/alexwbaule/give-help/v2/internal/storage/user"
-	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/go-openapi/strfmt"
 )
 
@@ -27,18 +27,12 @@ type Proposal struct {
 }
 
 //New creates a new instance
-func New(conn *connection.Connection) *Proposal {
-	es, err := cache.New(elasticsearch.Config{})
-
-	if err != nil {
-		panic(err)
-	}
-
+func New(dbConn *dbConnection.Connection, cacheConn *cacheConnection.Connection) *Proposal {
 	return &Proposal{
-		storage: storage.New(conn),
-		user:    userStorage.New(conn),
-		tags:    tagsStorage.New(conn),
-		cache:   es,
+		storage: storage.New(dbConn),
+		user:    userStorage.New(dbConn),
+		tags:    tagsStorage.New(dbConn),
+		cache:   cache.New(cacheConn),
 	}
 }
 

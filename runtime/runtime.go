@@ -6,22 +6,31 @@ import (
 	"time"
 
 	firebase "firebase.google.com/go"
+	cacheConn "github.com/alexwbaule/give-help/v2/internal/cache/connection"
 	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/fireadmin"
-	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	dbConn "github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	app "github.com/alexwbaule/go-app"
-	"github.com/elastic/go-elasticsearch"
 	"github.com/rafaelfino/metrics"
 )
 
 // NewRuntime creates a new application level runtime that encapsulates the shared services for this application
 func NewRuntime(app app.Application) (*Runtime, error) {
-	c := connection.New(&common.DbConfig{
+	db := dbConn.New(&common.DbConfig{
 		DBName: app.Config().GetString("database.DBName"),
 		Host:   app.Config().GetString("database.Host"),
 		Pass:   app.Config().GetString("database.Pass"),
 		User:   app.Config().GetString("database.User"),
 	})
+
+	es, err := cacheConn.New(&cacheConn.Config{
+		Addresses: app.Config().GetStringSlice("es.Addresses"),
+	})
+
+	if err != nil {
+		log.Printf("fail to connect on cache: %s\n", err)
+		return nil, err
+	}
 
 	metricsInterval := app.Config().GetString("metrics.Interval")
 
@@ -31,24 +40,31 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 		interval = time.Minute * 10
 	}
 
+	firebaseAccountKeyPath := app.Config().GetString("firebase.AccountKey")
+
+	if len(firebaseAccountKeyPath) == 0 {
+		firebaseAccountKeyPath = `etc/serviceAccountKey.json`
+	}
+
 	rt := &Runtime{
 		app:             app,
-		fbase:           fireadmin.InitializeAppWithServiceAccount(app.Config().GetString("firebase.AccountKey")),
-		database:        c,
+		fbase:           fireadmin.InitializeAppWithServiceAccount(firebaseAccountKeyPath),
+		database:        db,
+		cache:           es,
 		metricProcessor: metrics.NewMetricProcessor(interval, LogExport),
 	}
 
-	return rt, nil
+	return rt, err
 }
 
 func LogExport(data *metrics.MetricData) error {
 	raw, err := json.MarshalIndent(data, "", "\t")
 
 	if err != nil {
-		log.Printf("fail to marshall metrics: %s\n", err)
+		log.Printf("fail to marshal metrics: %s\n", err)
+	} else {
+		log.Printf("Metrics: %s\n", string(raw))
 	}
-
-	log.Printf("Metrics: %s\n", string(raw))
 
 	return nil
 }
@@ -57,18 +73,20 @@ func LogExport(data *metrics.MetricData) error {
 type Runtime struct {
 	app             app.Application
 	fbase           *firebase.App
-	database        *connection.Connection
+	database        *dbConn.Connection
 	metricProcessor *metrics.Processor
+	cache           *cacheConn.Connection
 }
 
-func (rt *Runtime) GetElasticSearchConfig() *elasticsearch.Config {
+func (rt *Runtime) GetCache() *cacheConn.Connection {
+	return rt.cache
 }
 
 func (rt *Runtime) GetFirebase() *firebase.App {
 	return rt.fbase
 }
 
-func (rt *Runtime) GetDatabase() *connection.Connection {
+func (rt *Runtime) GetDatabase() *dbConn.Connection {
 	return rt.database
 }
 

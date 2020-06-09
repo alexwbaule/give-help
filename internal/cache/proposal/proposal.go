@@ -9,7 +9,7 @@ import (
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/internal/cache/connection"
-	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
 
 const proposalIndexName = "proposals"
@@ -20,7 +20,7 @@ type Proposal struct {
 }
 
 //New creates a new instance
-func New(conn *connection.Connection) (*Proposal, error) {
+func New(conn *connection.Connection) *Proposal {
 	return &Proposal{conn: conn}
 }
 
@@ -46,7 +46,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 
 	if res.IsError() {
 		err = fmt.Errorf("error indexing document ID=%s [%s]", proposal.ProposalID, res.Status())
-		log.Printff("fail to try insert proposal on cache: %s", err)
+		log.Printf("fail to try insert proposal on cache: %s", err)
 	} else {
 		var r map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
