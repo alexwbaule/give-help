@@ -10,6 +10,7 @@ import (
 	"github.com/alexwbaule/give-help/v2/internal/fireadmin"
 	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	app "github.com/alexwbaule/go-app"
+	"github.com/elastic/go-elasticsearch"
 	"github.com/rafaelfino/metrics"
 )
 
@@ -32,7 +33,7 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 
 	rt := &Runtime{
 		app:             app,
-		fbase:           fireadmin.InitializeAppWithServiceAccount(),
+		fbase:           fireadmin.InitializeAppWithServiceAccount(app.Config().GetString("firebase.AccountKey")),
 		database:        c,
 		metricProcessor: metrics.NewMetricProcessor(interval, LogExport),
 	}
@@ -58,6 +59,9 @@ type Runtime struct {
 	fbase           *firebase.App
 	database        *connection.Connection
 	metricProcessor *metrics.Processor
+}
+
+func (rt *Runtime) GetElasticSearchConfig() *elasticsearch.Config {
 }
 
 func (rt *Runtime) GetFirebase() *firebase.App {
