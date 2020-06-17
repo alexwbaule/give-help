@@ -21,7 +21,11 @@ type Proposal struct {
 
 //New creates a new instance
 func New(conn *connection.Connection) *Proposal {
-	return &Proposal{conn: conn}
+	ret := &Proposal{
+		conn: conn,
+	}
+
+	return ret
 }
 
 const upsertProposal string = `
@@ -771,11 +775,11 @@ func (p *Proposal) InsertView(proposalId string, userID string, description stri
 	result, err := db.Exec(insertView, strings.TrimSpace(proposalId), strings.TrimSpace(userID), strings.TrimSpace(description))
 
 	if err != nil {
-		log.Printf("fail to try insert a proposal view: [%s] $s", proposalId, err)
+		log.Printf("fail to try insert a proposal view: %s, proposal-id: %s, description: %s\n", err, proposalId, description)
 	}
 
 	if aff, _ := result.RowsAffected(); aff == 0 {
-		log.Printf("fail to try insert a proposal view: [%s] no rows affected", proposalId)
+		log.Printf("fail to try insert a proposal view: no rows affected")
 	}
 }
 
@@ -791,8 +795,6 @@ VALUES
 `
 
 func (p *Proposal) BulkInsertView(proposalIds []string, description string) {
-	db := p.conn.Get()
-
 	if len(proposalIds) == 0 {
 		return
 	}
@@ -803,12 +805,14 @@ func (p *Proposal) BulkInsertView(proposalIds []string, description string) {
 		args[p] = fmt.Sprintf(`('%s', '%s')`, strings.TrimSpace(id), strings.TrimSpace(description))
 	}
 
+	db := p.conn.Get()
+
 	insert := fmt.Sprintf(bulkInsertView, strings.Join(args, ","))
 
 	result, err := db.Exec(insert)
 
 	if err != nil {
-		log.Printf("fail to try bulk insert a proposal view: %s, sql: %s\n", err)
+		log.Printf("fail to try insert a proposal view: %s, sql: %s\n", err, insert)
 	}
 
 	if aff, _ := result.RowsAffected(); aff == 0 {
