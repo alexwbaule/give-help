@@ -42,10 +42,21 @@ Done 2020/06/07
         -Instrumentação de métricas de serviço (tempo de resposta)        
         -Criação dos serviços de métricas de negócios (views)
         -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
+    
+Done 2020/07/14
+    Banco de dados:
+        -Criação das views para métricas de negócios
+    Camada de serviços:
+        -Adequação para os novos métodos de métricas de negócio
 
 Backlog:    
+    Testes:
+        -Validar novo motor de buscar e retrocompatibilidade
+        -Validar relatórios de analitcs gerado pelo back-end
     Banco de Dados:        
         -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
+    Camada de serviços:
+        -Integrar exporter de métricas na estrutura que vamos subir para processar os dados
     Camada de dados da aplicação (storage):                    
         -Implementação da DSL do ES na camade de busca
         -Implementação da DSL do ES para insert e reindex

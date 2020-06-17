@@ -105,7 +105,7 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
 	}
 
-	p.storage.InsertView(proposalID, "", "Load Proposal")
+	go p.storage.InsertView(proposalID, "", "Load Proposal")
 
 	return ret, err
 }
@@ -157,7 +157,7 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		ids[i] = string(p.ProposalID)
 	}
 
-	p.storage.BulkInsertView(ids, "Load Proposal from Filter")
+	go p.storage.BulkInsertView(ids, "Load Proposal from Filter")
 
 	tags := make([]string, len(tagMap))
 	sides := make([]models.Side, len(sideMap))
@@ -262,7 +262,7 @@ func (p *Proposal) GetUserDataToShare(proposalID string) ([]*models.DataToShareR
 	}
 
 	//TODO: Store user requested DTS on View
-	p.storage.InsertView(proposalID, "", "DTS Request")
+	go p.storage.InsertView(proposalID, "", "DTS Request")
 
 	return ret, err
 }
