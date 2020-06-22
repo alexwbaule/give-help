@@ -21,10 +21,11 @@ type getBanks struct {
 
 func (ctx *getBanks) Handle(params banks.GetBankListParams) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetBankListHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadBanks()
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetBankListHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return banks.NewGetBankListInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})

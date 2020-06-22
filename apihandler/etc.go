@@ -21,10 +21,11 @@ type getEtcListHandler struct {
 
 func (ctx *getEtcListHandler) Handle(params etc.GetEtcListParams) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetEtcListHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.Load()
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetEtcListHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return etc.NewGetEtcListInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})

@@ -21,10 +21,11 @@ type getProposalReportHandler struct {
 
 func (ctx *getProposalReportHandler) Handle(params reports.GetProposalReportParams) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalReport.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadViews()
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalReport.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return reports.NewGetProposalReportInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -43,10 +44,11 @@ type getProposalReportcsvHandler struct {
 
 func (ctx *getProposalReportcsvHandler) Handle(params reports.GetProposalReportcsvParams) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalReportCSV.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadViewsCSV()
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalReportCSV.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return reports.NewGetProposalReportcsvInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
