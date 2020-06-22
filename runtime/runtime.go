@@ -58,6 +58,10 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 }
 
 func LogExport(data *metrics.MetricData) error {
+	if len(data.Metrics) == 0 && len(data.Series) == 0 {
+		return nil
+	}
+
 	raw, err := json.MarshalIndent(data, "", "\t")
 
 	if err != nil {
