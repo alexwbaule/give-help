@@ -6,13 +6,25 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	"github.com/alexwbaule/give-help/v2/internal/cache/connection"
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/go-openapi/strfmt"
 
 	"testing"
 )
 
 func createConn() *Proposal {
-	return New()
+	config := &common.CacheConfig{
+		Addresses: []string{"http://localhost:9200"},
+	}
+
+	conn, err := connection.New(config)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return New(conn)
 }
 
 func getUserID() string {

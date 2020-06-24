@@ -22,11 +22,12 @@ type putUserAcceptHandler struct {
 
 func (ctx *putUserAcceptHandler) Handle(params terms.PutUserAcceptParams, principal *models.LoggedUser) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsPutUserAcceptHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 
 	err := c.Accept(params.TermID, *principal.UserID)
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsPutUserAcceptHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return terms.NewPutUserAcceptInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -46,10 +47,11 @@ type getTermsHandler struct {
 
 func (ctx *getTermsHandler) Handle(params terms.GetTermsParams) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsGetTermsHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadTerms()
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsGetTermsHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return terms.NewGetTermsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -69,10 +71,11 @@ type getUserAcceptedHandler struct {
 
 func (ctx *getUserAcceptedHandler) Handle(params terms.GetUserAcceptedParams, principal *models.LoggedUser) middleware.Responder {
 	start := time.Now()
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsGetUserAcceptedHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	c := handler.New(ctx.rt.GetDatabase())
 	ret, err := c.LoadUserAcceptedTerms(*principal.UserID)
+
+	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("TermsGetUserAcceptedHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return terms.NewGetUserAcceptedInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})

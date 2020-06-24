@@ -3,21 +3,18 @@ package connection
 import (
 	"log"
 
+	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
 //Connection Object struct
 type Connection struct {
-	config *Config
+	config *common.CacheConfig
 	Client *elasticsearch.Client
 }
 
-type Config struct {
-	Addresses []string
-}
-
 //New creates a new instance
-func New(cfg *Config) (*Connection, error) {
+func New(cfg *common.CacheConfig) (*Connection, error) {
 	es, err := elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: cfg.Addresses,
 	})

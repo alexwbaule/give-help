@@ -58,7 +58,8 @@ func main() {
 
 	cfg.SetDefault("es.Addresses", "localhost:9200")
 
-	cfg.SetDefault("metrics.Interval", "15s")
+	//Não se esqueça de deixar esse valor padrão em mais do que alguns minutos, não precisamos de tanta resolução de métricas
+	cfg.SetDefault("metrics.Interval", "10m")
 
 	rt, err := runtimeApp.NewRuntime(app)
 	if err != nil {

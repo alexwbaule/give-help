@@ -23,7 +23,7 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 		User:   app.Config().GetString("database.User"),
 	})
 
-	es, err := cacheConn.New(&cacheConn.Config{
+	es, err := cacheConn.New(&common.CacheConfig{
 		Addresses: app.Config().GetStringSlice("es.Addresses"),
 	})
 

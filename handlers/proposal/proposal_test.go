@@ -6,20 +6,29 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	cacheConnection "github.com/alexwbaule/give-help/v2/internal/cache/connection"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	dbConnection "github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
 )
 
 func createHandler() *Proposal {
-	c := connection.New(&common.DbConfig{
+	dbConn := dbConnection.New(&common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
 	})
 
-	return New(c)
+	cacheConn, err := cacheConnection.New(&common.CacheConfig{
+		Addresses: []string{"http://localhost:9200"},
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	return New(dbConn, cacheConn)
 }
 
 func getUserID() string {
@@ -363,6 +372,11 @@ func testComplaint(t *testing.T) {
 	}
 }
 
+func testReindex(t *testing.T) {
+	conn := createHandler()
+	conn.Reindex()
+}
+
 func Test(t *testing.T) {
 	testInsert(t)
 	testLoadFromID(t)
@@ -377,4 +391,10 @@ func Test(t *testing.T) {
 	testFind(t)
 	testFindLocalBusiness(t)
 	testFindOmini(t)
+	testReindex(t)
+}
+
+func TestX(t *testing.T) {
+	testLoadFromID(t)
+	//testFindOmini(t)
 }
