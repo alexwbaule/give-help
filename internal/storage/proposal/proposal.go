@@ -407,6 +407,13 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 	return p.load(cmd, userID)
 }
 
+//LoadAll load all proposals
+func (p *Proposal) LoadAll() ([]*models.Proposal, error) {
+	cmd := fmt.Sprintf(selectProposal, "IsActive = true", "")
+
+	return p.load(cmd)
+}
+
 //Find find all proposals that match with filter
 func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter == nil {

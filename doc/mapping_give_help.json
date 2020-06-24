@@ -1,0 +1,77 @@
+ {
+    "proposal_id": {
+        "type": "keyword"
+    },
+    "created_at": {
+        "type": "date"
+    },
+    "last_update": {
+        "type": "date"
+    },
+    "user_id": {
+        "type": "keyword"
+    },
+    "side": {
+        "type": "keyword"
+    },
+    "proposal_type": {
+        "type": "keyword"
+    },
+    "tags": {
+        "type": "text",
+        "fields": {
+            "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+            }
+        }
+    },
+    "title": {
+        "type": "text"
+    },
+    "description": {
+        "type": "keyword"
+    },
+    "proposal_validate": {
+        "type": "date"
+    },
+    "city": {
+        "type": "text",
+        "fields": {
+            "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+            }
+        }
+    },
+    "state": {
+        "type": "keyword"
+    },
+    "country": {
+        "type": "keyword"
+    }, 
+    "location": {
+        "type": "geo_point"
+    },
+    "range": {
+        "type": "float"
+    },
+    "is_active": {
+        "type": "boolean"
+    },
+    "exposed_user_data": {
+        "type": "boolean"
+    },
+    "data_to_share": {
+        "type": "keyword"
+    },  
+    "images": {
+        "type": "keyword"
+    },
+    "estimated_value": {
+        "type": "float"
+    },
+    "ranking": {
+        "type": "float"
+    }
+ }

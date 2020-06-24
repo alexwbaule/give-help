@@ -47,8 +47,8 @@ func round(x float64) float64 {
 	return math.Round(x*10000) / 10000
 }
 
-type Config struct {
-	Db *DbConfig
+type CacheConfig struct {
+	Addresses []string
 }
 
 //Config base connection config struct

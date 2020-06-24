@@ -42,6 +42,9 @@ func (p *Proposal) Insert(proposal *models.Proposal) (models.ID, error) {
 		proposal.ProposalID = models.ID(common.GetULID())
 	}
 
+	proposal.CreatedAt = strfmt.DateTime(time.Now())
+	proposal.LastUpdate = strfmt.DateTime(time.Now())
+
 	err := p.storage.Upsert(proposal)
 
 	if err != nil {
@@ -70,6 +73,8 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
+	proposal.LastUpdate = strfmt.DateTime(time.Now())
+
 	err := p.storage.Upsert(proposal)
 
 	if err != nil {
@@ -91,6 +96,19 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 	}
 
 	return err
+}
+
+func (p *Proposal) Reindex() {
+	log.Printf("[Reindex] loading all proposals...")
+	proposals, err := p.storage.LoadAll()
+
+	if err != nil {
+		log.Printf("[Reindex] fail to load all proposals to reindex: %s", err)
+	}
+
+	log.Printf("[Reindex] %d proposals loades, start cache reindex...", len(proposals))
+	p.cache.Reindex(proposals)
+	log.Printf("[Reindex] cache reindex finish")
 }
 
 //LoadFromID load data
@@ -131,8 +149,8 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		filter = &models.Filter{}
 	}
 
-	result, err := p.storage.Find(filter)
-	//result, err := p.cache.Find(filter)
+	//result, err := p.storage.Find(filter)
+	result, err := p.cache.Find(filter)
 
 	if err != nil {
 		log.Printf("fail to load data from filter: %s", err)
