@@ -124,7 +124,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	}
 
 	lat := float64(0)
-	long := float64(0)
+	lon := float64(0)
 	areaRange := float64(0)
 	areaTags := []string{}
 	city := ""
@@ -137,8 +137,8 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		country = proposal.TargetArea.Country
 
 		lat = *proposal.TargetArea.Lat
-		long = *proposal.TargetArea.Long
-		areaRange = proposal.TargetArea.Range
+		lon = *proposal.TargetArea.Lon
+		areaRange = proposal.TargetArea.Distance
 
 		areaTags = common.NormalizeTagArray(proposal.TargetArea.AreaTags)
 	}
@@ -147,8 +147,8 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		lat = -23.5486
 	}
 
-	if long == 0 {
-		long = -46.6392
+	if lon == 0 {
+		lon = -46.6392
 	}
 
 	if proposal.DataToShare == nil {
@@ -174,7 +174,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		state,
 		country,
 		lat,
-		long,
+		lon,
 		areaRange,
 		pq.Array(common.NormalizeTagArray(areaTags)),
 		proposal.IsActive,
@@ -350,8 +350,8 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 		&state,
 		&country,
 		&ret.TargetArea.Lat,
-		&ret.TargetArea.Long,
-		&ret.TargetArea.Range,
+		&ret.TargetArea.Lon,
+		&ret.TargetArea.Distance,
 		pq.Array(&areaTags),
 		&ret.IsActive,
 		pq.Array(&images),
@@ -470,9 +470,9 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 			wheres = append(wheres, fmt.Sprintf("array_to_string(AreaTags, ',') LIKE $%d", len(args)))
 		}
 
-		rang := filter.TargetArea.Range
+		rang := filter.TargetArea.Distance
 
-		if filter.TargetArea.Lat != nil && filter.TargetArea.Long != nil {
+		if filter.TargetArea.Lat != nil && filter.TargetArea.Lon != nil {
 			if rang < 1 {
 				rang = 1
 			}
@@ -591,8 +591,8 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 			&state,
 			&country,
 			&i.TargetArea.Lat,
-			&i.TargetArea.Long,
-			&i.TargetArea.Range,
+			&i.TargetArea.Lon,
+			&i.TargetArea.Distance,
 			pq.Array(&areaTags),
 			&i.IsActive,
 			pq.Array(&images),

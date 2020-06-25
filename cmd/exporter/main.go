@@ -141,7 +141,7 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["ZipCode"], currentLine), *u.Location.ZipCode)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Country"], currentLine), u.Location.Country)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["Lat"], currentLine), *u.Location.Lat)
-		f.SetCellValue("Users", fmt.Sprintf(userHeader["Long"], currentLine), *u.Location.Long)
+		f.SetCellValue("Users", fmt.Sprintf(userHeader["Lon"], currentLine), *u.Location.Lon)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["RegisterFrom"], currentLine), u.RegisterFrom)
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["PCountry"], currentLine), getPhoneCountryCode(u))
 		f.SetCellValue("Users", fmt.Sprintf(userHeader["PRegion"], currentLine), getPhoneRegion(u))
@@ -218,8 +218,8 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 			p.TargetArea.Lat = &defaultZero
 		}
 
-		if p.TargetArea.Long == nil {
-			p.TargetArea.Long = &defaultZero
+		if p.TargetArea.Lon == nil {
+			p.TargetArea.Lon = &defaultZero
 		}
 
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ProposalID"], currentLine), p.ProposalID)
@@ -238,8 +238,8 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Country"], currentLine), *&p.TargetArea.Country)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["AreaTags"], currentLine), strings.Join(p.TargetArea.AreaTags, ","))
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Lat"], currentLine), *p.TargetArea.Lat)
-		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Long"], currentLine), *p.TargetArea.Long)
-		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Range"], currentLine), p.TargetArea.Range)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Lon"], currentLine), *p.TargetArea.Lon)
+		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Distance"], currentLine), p.TargetArea.Distance)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["Images"], currentLine), strings.Join(p.Images, ","))
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["EstimatedValue"], currentLine), *p.EstimatedValue)
 		f.SetCellValue("Proposals", fmt.Sprintf(propsHeader["ExposeUserData"], currentLine), p.ExposeUserData)

@@ -204,12 +204,12 @@ func upsert(t *testing.T) {
 		t.Errorf("fail to load proposal, [TargetArea.Lat] expected: %f received: %f", *data.TargetArea.Lat, *loaded.TargetArea.Lat)
 	}
 
-	if *loaded.TargetArea.Long != *data.TargetArea.Long {
-		t.Errorf("fail to load proposal, [TargetArea.Long] expected: %f received: %f", *data.TargetArea.Long, *loaded.TargetArea.Long)
+	if *loaded.TargetArea.Lon != *data.TargetArea.Lon {
+		t.Errorf("fail to load proposal, [TargetArea.Lon] expected: %f received: %f", *data.TargetArea.Lon, *loaded.TargetArea.Lon)
 	}
 
-	if loaded.TargetArea.Range != data.TargetArea.Range {
-		t.Errorf("fail to load proposal, [TargetArea.Range] expected: %f received: %f", data.TargetArea.Range, loaded.TargetArea.Range)
+	if loaded.TargetArea.Distance != data.TargetArea.Distance {
+		t.Errorf("fail to load proposal, [TargetArea.Distance] expected: %f received: %f", data.TargetArea.Distance, loaded.TargetArea.Distance)
 	}
 
 	if len(loaded.TargetArea.AreaTags) != len(data.TargetArea.AreaTags) {
