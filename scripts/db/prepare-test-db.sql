@@ -28,7 +28,7 @@ INSERT INTO "users" (
     "zipcode",
     "country",
     "lat",
-    "long",
+    "Lon",
     "lastupdate",
     "registerfrom"
   )
@@ -148,7 +148,7 @@ INSERT INTO "proposals" (
     "description",
     "proposalvalidate",
     "lat",
-    "long",
+    "lon",
     "range",
     "isactive",
     "lastupdate",

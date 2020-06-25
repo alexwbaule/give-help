@@ -87,7 +87,7 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		"ZipCode":        "P%d",
 		"Country":        "Q%d",
 		"Lat":            "R%d",
-		"Long":           "S%d",
+		"Lon":            "S%d",
 		"RegisterFrom":   "T%d",
 		"PCountry":       "U%d",
 		"PRegion":        "V%d",
@@ -112,8 +112,8 @@ func exportUsers(rt *runtimeApp.Runtime, f *excelize.File) {
 		if u.Location == nil {
 			defaultZero := float64(0)
 			u.Location = &models.Location{
-				Lat:  &defaultZero,
-				Long: &defaultZero,
+				Lat: &defaultZero,
+				Lon: &defaultZero,
 			}
 		}
 
@@ -182,7 +182,7 @@ func exportProps(rt *runtimeApp.Runtime, f *excelize.File) {
 		"Country":          "N%d",
 		"AreaTags":         "O%d",
 		"Lat":              "P%d",
-		"Long":             "Q%d",
+		"Lon":              "Q%d",
 		"Range":            "R%d",
 		"Images":           "S%d",
 		"EstimatedValue":   "T%d",
