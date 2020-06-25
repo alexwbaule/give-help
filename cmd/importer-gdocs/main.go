@@ -35,7 +35,7 @@ type Proposal struct {
 	Name           string
 	Email          string
 	Lat            float64
-	Long           float64
+	Lon            float64
 	SheetType      string
 	Type           string // volunteer|taker|job|local_business
 	Side           string
@@ -210,7 +210,7 @@ func parser(line string, index int) (Proposal, error) {
 		Name:           fields[3],
 		Email:          strings.ToLower(fields[4]),
 		Lat:            getFloat(fields[5]),
-		Long:           getFloat(fields[6]),
+		Lon:            getFloat(fields[6]),
 		SheetType:      fields[7],
 		Tags:           getArray(fields[8]),
 		Description:    fields[9],

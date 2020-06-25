@@ -43,7 +43,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	res, err := req.Do(context.Background(), p.conn.Client)
 
 	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
+		log.Fatalf("error to es execute command: %s", err)
 	}
 
 	defer res.Body.Close()

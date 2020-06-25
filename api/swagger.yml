@@ -1058,13 +1058,13 @@ definitions:
         minimum: -90
         maximum: 90
         default: -23.5486
-      long:
+      lon:
         type: number
         format: float64
         minimum: -90
         maximum: 90
         default: -46.6392
-      range:
+      distance:
         type: number
         format: float64
         minimum: 0.1

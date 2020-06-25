@@ -188,8 +188,8 @@ func (u *User) Upsert(user *models.User) error {
 			lat = *user.Location.Lat
 		}
 
-		if user.Location.Long != nil {
-			long = *user.Location.Long
+		if user.Location.Lon != nil {
+			long = *user.Location.Lon
 		}
 	}
 
@@ -335,7 +335,7 @@ func (u *User) LoadAll() ([]*models.User, error) {
 			&user.Location.ZipCode,
 			&user.Location.Country,
 			&user.Location.Lat,
-			&user.Location.Long,
+			&user.Location.Lon,
 			&user.RegisterFrom,
 		)
 
@@ -399,7 +399,7 @@ func (u *User) Load(userID string) (*models.User, error) {
 		&user.Location.ZipCode,
 		&user.Location.Country,
 		&user.Location.Lat,
-		&user.Location.Long,
+		&user.Location.Lon,
 		&user.RegisterFrom,
 	)
 
