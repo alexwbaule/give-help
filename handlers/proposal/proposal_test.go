@@ -44,7 +44,7 @@ func createProposal() *models.Proposal {
 	userID := getUserID()
 
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 	estimatedValue := float64(99.3)
 
 	return &models.Proposal{
@@ -57,8 +57,8 @@ func createProposal() *models.Proposal {
 		TargetArea: &models.Location{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
 			Lat:      &lat,
-			Long:     &long,
-			Range:    5,
+			Lon:      &lon,
+			Distance: 5,
 			City:     "Porto Alegre",
 			State:    "RS",
 			Country:  "Brasil",

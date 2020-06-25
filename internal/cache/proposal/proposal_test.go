@@ -41,7 +41,7 @@ func createProposal() *models.Proposal {
 
 	estimatedValue := float64(72.6)
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 
 	return &models.Proposal{
 		ProposalID:       models.ID(proposalID),
@@ -53,8 +53,8 @@ func createProposal() *models.Proposal {
 		TargetArea: &models.Location{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
 			Lat:      &lat,
-			Long:     &long,
-			Range:    5,
+			Lon:      &lon,
+			Distance: 5,
 			City:     "São Paulo",
 			State:    "SP",
 			Country:  "Brazil il il il il",
@@ -89,56 +89,56 @@ func createFilterType() *models.Filter {
 
 func createFilterArea() *models.Filter {
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 
 	return &models.Filter{
 		TargetArea: &models.Location{
-			Lat:   &lat,
-			Long:  &long,
-			Range: 15,
+			Lat:      &lat,
+			Lon:      &lon,
+			Distance: 15,
 		},
 	}
 }
 
 func createFilterAreaTags() *models.Filter {
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 
 	return &models.Filter{
 		TargetArea: &models.Location{
 			AreaTags: models.Tags{"ZL"},
 			Lat:      &lat,
-			Long:     &long,
-			Range:    15,
+			Lon:      &lon,
+			Distance: 15,
 		},
 	}
 }
 
 func createFilterInvalidArea() *models.Filter {
 	lat := float64(-20.5475)
-	long := float64(-40.6361)
+	lon := float64(-40.6361)
 
 	return &models.Filter{
 		TargetArea: &models.Location{
-			Lat:   &lat,
-			Long:  &long,
-			Range: 5,
+			Lat:      &lat,
+			Lon:      &lon,
+			Distance: 5,
 		},
 	}
 }
 
 func createFilterAll() *models.Filter {
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 
 	return &models.Filter{
 		Description:   "fome",
 		Side:          models.SideRequest,
 		ProposalTypes: []models.Type{models.TypeProduct, models.TypeService},
 		TargetArea: &models.Location{
-			Lat:   &lat,
-			Long:  &long,
-			Range: 10,
+			Lat:      &lat,
+			Lon:      &lon,
+			Distance: 10,
 		},
 	}
 }

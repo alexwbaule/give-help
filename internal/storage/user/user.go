@@ -54,7 +54,7 @@ INSERT INTO USERS
 
 	--point
 	Lat,
-	Long,
+	Lon,
 
 	--from
 	RegisterFrom
@@ -126,7 +126,7 @@ DO
 
 		--point
 		Lat = $21,
-		Long = $22,
+		Lon = $22,
 		RegisterFrom = $23;
 `
 
@@ -171,7 +171,7 @@ func (u *User) Upsert(user *models.User) error {
 	country := ""
 
 	lat := 0.0
-	long := 0.0
+	lon := 0.0
 
 	if user.Location != nil {
 		address = user.Location.Address
@@ -189,7 +189,7 @@ func (u *User) Upsert(user *models.User) error {
 		}
 
 		if user.Location.Lon != nil {
-			long = *user.Location.Lon
+			lon = *user.Location.Lon
 		}
 	}
 
@@ -198,8 +198,8 @@ func (u *User) Upsert(user *models.User) error {
 		lat = -23.5486
 	}
 
-	if long == 0 {
-		long = -46.6392
+	if lon == 0 {
+		lon = -46.6392
 	}
 
 	db := u.conn.Get()
@@ -227,7 +227,7 @@ func (u *User) Upsert(user *models.User) error {
 		zipCode,
 		country,
 		lat,
-		long,
+		lon,
 		user.RegisterFrom,
 	)
 
@@ -275,7 +275,7 @@ SELECT
 
 	--point
 	Lat,
-	Long,
+	Lon,
 
 	--from
 	coalesce(RegisterFrom, '-')

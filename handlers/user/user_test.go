@@ -28,7 +28,7 @@ func createUser() *models.User {
 	userID := getUserID()
 
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 	zipCode := int64(99888777)
 	rating := float64(3.2)
 
@@ -73,7 +73,7 @@ func createUser() *models.User {
 			State:   "São Paulo",
 			ZipCode: &zipCode,
 			Lat:     &lat,
-			Long:    &long,
+			Lon:     &lon,
 		},
 	}
 }
