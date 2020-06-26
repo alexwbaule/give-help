@@ -44,6 +44,10 @@ func (p *Proposal) Insert(proposal *models.Proposal) (models.ID, error) {
 
 	proposal.CreatedAt = strfmt.DateTime(time.Now())
 	proposal.LastUpdate = strfmt.DateTime(time.Now())
+	if proposal.EstimatedValue == nil {
+		newPrice := float64(0)
+		proposal.EstimatedValue = &newPrice
+	}
 
 	err := p.storage.Upsert(proposal)
 
@@ -74,6 +78,10 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 	}
 
 	proposal.LastUpdate = strfmt.DateTime(time.Now())
+	if proposal.EstimatedValue == nil {
+		newPrice := float64(0)
+		proposal.EstimatedValue = &newPrice
+	}
 
 	err := p.storage.Upsert(proposal)
 

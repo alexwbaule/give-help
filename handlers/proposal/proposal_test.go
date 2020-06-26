@@ -395,6 +395,5 @@ func Test(t *testing.T) {
 }
 
 func TestX(t *testing.T) {
-	testLoadFromID(t)
-	//testFindOmini(t)
+	testReindex(t)
 }

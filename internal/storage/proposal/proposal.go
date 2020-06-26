@@ -418,10 +418,8 @@ func (p *Proposal) LoadAll() ([]*models.Proposal, error) {
 func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter == nil {
 		filter = &models.Filter{
-			PageSize:        50,
-			PageNumber:      0,
-			IncludeExpired:  false,
-			IncludeInactive: false,
+			PageSize:   50,
+			PageNumber: 0,
 		}
 	}
 
@@ -495,14 +493,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	}
 
 	andFilters := []string{} // "ProposalValidate >= %s ", "IsActive = true" }
-
-	if !filter.IncludeExpired {
-		andFilters = append(andFilters, "ProposalValidate >= CURRENT_TIMESTAMP")
-	}
-
-	if !filter.IncludeInactive {
-		andFilters = append(andFilters, "IsActive = true")
-	}
 
 	if filter.PageSize <= 0 {
 		filter.PageSize = 50
