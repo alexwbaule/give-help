@@ -1182,11 +1182,7 @@ definitions:
       min_value:
         type: number
         format: float64
-        minimum: 0
-      include_expired:
-        type: boolean
-      include_inactive:
-        type: boolean
+        minimum: 0      
       page_number:
         type: integer
         minimum: 0

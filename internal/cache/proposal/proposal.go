@@ -65,8 +65,8 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 
 //Find find all proposals that match with filter
 func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
+	//args
 	args := []interface{}{}
-
 	if len(filter.Description) > 0 {
 		args = append(args, map[string]interface{}{
 			"multi_match": map[string]interface{}{
@@ -85,30 +85,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		})
 	}
 
-	if len(filter.UserID) > 0 {
-		args = append(args, map[string]interface{}{
-			"match": map[string]interface{}{
-				"user_id": filter.UserID,
-			},
-		})
-	}
-
-	if len(filter.Side) > 0 {
-		args = append(args, map[string]interface{}{
-			"match": map[string]interface{}{
-				"side": filter.Side,
-			},
-		})
-	}
-
-	for _, t := range filter.ProposalTypes {
-		args = append(args, map[string]interface{}{
-			"match": map[string]interface{}{
-				"proposal_type": t,
-			},
-		})
-	}
-
 	for _, t := range filter.Tags {
 		args = append(args, map[string]interface{}{
 			"match": map[string]interface{}{
@@ -117,12 +93,71 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 		})
 	}
 
+	//filters
+	filters := []interface{}{}
+	if len(filter.UserID) > 0 {
+		filters = append(args, map[string]interface{}{
+			"match": map[string]interface{}{
+				"user_id": filter.UserID,
+			},
+		})
+	}
+
+	if len(filter.Side) > 0 {
+		filters = append(args, map[string]interface{}{
+			"match": map[string]interface{}{
+				"side": filter.Side,
+			},
+		})
+	}
+
+	for _, t := range filter.ProposalTypes {
+		filters = append(args, map[string]interface{}{
+			"match": map[string]interface{}{
+				"proposal_type": t,
+			},
+		})
+	}
+
+	if filter.MaxValue != nil && *filter.MaxValue > 0 {
+		filters = append(args, map[string]interface{}{
+			"range": map[string]interface{}{
+				"estimated_value": map[string]interface{}{
+					"gte": filter.MinValue,
+					"lte": filter.MaxValue,
+				},
+			},
+		})
+	}
+
+	if filter.MinValue != nil && *filter.MinValue > 0 {
+		filters = append(args, map[string]interface{}{
+			"range": map[string]interface{}{
+				"estimated_value": map[string]interface{}{
+					"gte": filter.MinValue,
+				},
+			},
+		})
+	}
+
+	//Area
+	if filter.MinValue != nil && *filter.MinValue > 0 {
+
+	}
+
+	//Create Query
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
-			"bool": map[string]interface{}{
-				"should": args,
-			},
+			"bool": map[string]interface{}{},
 		},
+	}
+
+	if len(args) > 0 {
+		query["query"].(map[string]interface{})["bool"].(map[string]interface{})["should"] = args
+	}
+
+	if len(filters) > 0 {
+		query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"] = filters
 	}
 
 	/* to debug ES query
