@@ -62,12 +62,14 @@ func (p *Proposal) Insert(proposal *models.Proposal) (models.ID, error) {
 		log.Printf("fail to insert new proposal tags [%s]: %s", proposal.ProposalID, err)
 	}
 
-	err = p.cache.Upsert(proposal)
+	/*
+		err = p.cache.Upsert(proposal)
 
-	if err != nil {
-		log.Printf("fail to insert new proposal on cache [%s]: %s", proposal.ProposalID, err)
-		return proposal.ProposalID, err
-	}
+		if err != nil {
+			log.Printf("fail to insert new proposal on cache [%s]: %s", proposal.ProposalID, err)
+			return proposal.ProposalID, err
+		}
+	*/
 
 	return proposal.ProposalID, err
 }
@@ -96,12 +98,14 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 		log.Printf("fail to update proposal tags [%s]: %s", proposal.ProposalID, err)
 	}
 
-	err = p.cache.Upsert(proposal)
+	/*
+		err = p.cache.Upsert(proposal)
 
-	if err != nil {
-		log.Printf("fail to update new proposal on cache [%s]: %s", proposal.ProposalID, err)
-		return err
-	}
+		if err != nil {
+			log.Printf("fail to update new proposal on cache [%s]: %s", proposal.ProposalID, err)
+			return err
+		}
+	*/
 
 	return err
 }
@@ -157,8 +161,8 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 		filter = &models.Filter{}
 	}
 
-	//result, err := p.storage.Find(filter)
-	result, err := p.cache.Find(filter)
+	result, err := p.storage.Find(filter)
+	//result, err := p.cache.Find(filter)
 
 	if err != nil {
 		log.Printf("fail to load data from filter: %s", err)

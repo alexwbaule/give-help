@@ -1,0 +1,130 @@
+{
+    "proposals": {
+        "aliases": {},
+        "mappings": {
+            "properties": {
+                "created_at": {
+                    "type": "date"
+                },
+                "data_to_share": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "description": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "expose_user_data": {
+                    "type": "boolean"
+                },
+                "images": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "last_update": {
+                    "type": "date"
+                },
+                "proposal_id": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "proposal_type": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "proposal_validate": {
+                    "type": "date"
+                },
+                "ranking": {
+                    "type": "long"
+                },
+                "side": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "tags": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "target_area": {
+                    "properties": {
+                        "lat": {
+                            "type": "float"
+                        },
+                        "lon": {
+                            "type": "float"
+                        }
+                    }
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "user_id": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        },
+        "settings": {
+            "index": {
+                "creation_date": "1593196419527",
+                "number_of_shards": "1",
+                "number_of_replicas": "1",
+                "uuid": "_vIhZ3feQuWR2oJsyxh9gw",
+                "version": {
+                    "created": "7070199"
+                },
+                "provided_name": "proposals"
+            }
+        }
+    }
+}
