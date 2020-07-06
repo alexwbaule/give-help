@@ -8,7 +8,6 @@ import (
 	handler "github.com/alexwbaule/give-help/v2/handlers/proposal"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/rafaelfino/metrics"
 )
 
 func AddProposalHandler(rt *runtimeApp.Runtime) proposal.AddProposalHandler {
@@ -20,12 +19,9 @@ type addProposal struct {
 }
 
 func (ctx *addProposal) Handle(params proposal.AddProposalParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	pid, err := p.Insert(params.Body)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("AddProposalHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewAddProposalInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -43,12 +39,9 @@ type addProposalImages struct {
 }
 
 func (ctx *addProposalImages) Handle(params proposal.AddProposalImagesParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.AddImages(params.ProposalID, params.Body)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("AddProposalImagesHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewAddProposalImagesInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -66,12 +59,9 @@ type changeProposalImages struct {
 }
 
 func (ctx *changeProposalImages) Handle(params proposal.ChangeProposalImagesParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.ChangeImages(params.ProposalID, params.Body)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("ChangeProposalImagesHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewChangeProposalImagesInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -89,12 +79,9 @@ type addProposalTag struct {
 }
 
 func (ctx *addProposalTag) Handle(params proposal.AddProposalTagsParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.AddTags(params.ProposalID, params.Body)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("AddProposalTagsHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewAddProposalTagsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -112,12 +99,9 @@ type changeProposalState struct {
 }
 
 func (ctx *changeProposalState) Handle(params proposal.ChangeProposalStateParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.ChangeValidStatus(params.ProposalID, params.ProposalState)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("ChangeProposalStateHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewChangeProposalStateInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -135,12 +119,9 @@ type changeProposalText struct {
 }
 
 func (ctx *changeProposalText) Handle(params proposal.ChangeProposalTextParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.ChangeText(params.ProposalID, *params.Body.Title, *params.Body.Description)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("ChangeProposalTextHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewChangeProposalStateInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -158,12 +139,9 @@ type changeProposalValidDate struct {
 }
 
 func (ctx *changeProposalValidDate) Handle(params proposal.ChangeProposalValidateParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.ChangeValidate(params.ProposalID, time.Time(*params.Body.Date))
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("ChangeProposalValidateHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewChangeProposalValidateInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -181,18 +159,13 @@ type searchProposalsHandler struct {
 }
 
 func (ctx *searchProposalsHandler) Handle(params proposal.SearchProposalsParams) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	result, err := p.LoadFromFilter(params.Body)
 
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("SearchProposalsHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
-
 	if err != nil {
 		return proposal.NewSearchProposalsInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
 	}
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("SearchProposalsHandler.Result", metrics.CounterType, nil, float64(len(result.Result))))
 
 	return proposal.NewSearchProposalsOK().WithPayload(result)
 }
@@ -206,12 +179,9 @@ type getProposalByID struct {
 }
 
 func (ctx *getProposalByID) Handle(params proposal.GetProposalByIDParams) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	oneProposal, err := p.LoadFromID(params.ProposalID)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalByIDHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewGetProposalByIDInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -229,12 +199,9 @@ type getProposalByUser struct {
 }
 
 func (ctx *getProposalByUser) Handle(params proposal.GetProposalByUserIDParams, principal *models.LoggedUser) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	proposals, err := p.LoadFromUser(*principal.UserID)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalByUserIDHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewGetProposalByUserIDInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -252,13 +219,9 @@ type getProposalShareData struct {
 }
 
 func (ctx *getProposalShareData) Handle(params proposal.GetProposalShareDataIDParams) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	shareData, err := p.GetUserDataToShare(params.ProposalID)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalShareDataIDHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("GetProposalShareDataIDHandler.Request", metrics.CounterType, map[string]string{"proposal-id": params.ProposalID}, 1))
 
 	if err != nil {
 		return proposal.NewGetProposalShareDataIDInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
@@ -276,12 +239,9 @@ type addProposalComplaintHandler struct {
 }
 
 func (ctx *addProposalComplaintHandler) Handle(params proposal.AddProposalComplaintParams) middleware.Responder {
-	start := time.Now()
 
 	p := handler.New(ctx.rt.GetDatabase(), ctx.rt.GetCache())
 	err := p.InsertComplaint(params.Body)
-
-	defer ctx.rt.GetMetricProcessor().Send(metrics.NewMetric("AddProposalComplaintHandler.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if err != nil {
 		return proposal.NewAddProposalComplaintInternalServerError().WithPayload(&models.APIError{Message: "An unexpected error occurred"})
