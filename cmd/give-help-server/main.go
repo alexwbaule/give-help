@@ -37,6 +37,7 @@ import (
 	"github.com/go-openapi/runtime/flagext"
 	flags "github.com/jessevdk/go-flags"
 	"github.com/rs/cors"
+	metrics "git.corp.c6bank.com/c6libs/go-c6-metrics"
 )
 
 func main() {
@@ -169,6 +170,15 @@ func main() {
 		MaxAge:             1000,
 		OptionsPassthrough: false,
 	})
+
+	handler := alice.New(
+
+		metrics.NewMetricsHandler(api.Context(),
+			metrics.HandlerConfig{Resources: rt.Metrics},
+			log),
+		c,
+	).Then(api.Serve(nil))
+
 
 	handler := c.Handler(api.Serve(nil))
 	server.SetHandler(handler)

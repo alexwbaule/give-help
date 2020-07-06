@@ -2,18 +2,15 @@ package apihandler
 
 import (
 	"context"
-	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
 	"github.com/alexwbaule/give-help/v2/handlers/authorization"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
 	"github.com/go-openapi/errors"
-	"github.com/rafaelfino/metrics"
 )
 
 // CheckAPIKeyAuth from Token
 func CheckAPIKeyAuth(rt *runtimeApp.Runtime, tokenStr string, roles []string) (*models.LoggedUser, error) {
-	start := time.Now()
 
 	var user *models.LoggedUser
 	var name string
@@ -22,8 +19,6 @@ func CheckAPIKeyAuth(rt *runtimeApp.Runtime, tokenStr string, roles []string) (*
 	var userID string
 
 	token, isRevoked := authorization.VerifyIDTokenAndCheckRevoked(context.Background(), rt.GetFirebase(), tokenStr)
-
-	defer rt.GetMetricProcessor().Send(metrics.NewMetric("CheckAPIKeyAuth.ElapsedTime", metrics.CounterType, nil, float64(time.Since(start).Milliseconds())))
 
 	if isRevoked {
 		return nil, errors.New(401, "Revoked token, please log in again.")
