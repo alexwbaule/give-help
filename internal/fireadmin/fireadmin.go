@@ -8,8 +8,8 @@ import (
 	"google.golang.org/api/option"
 )
 
-func InitializeAppWithServiceAccount() *firebase.App {
-	opt := option.WithCredentialsFile("etc/serviceAccountKey.json")
+func InitializeAppWithServiceAccount(serviceAccountKeyPath string) *firebase.App {
+	opt := option.WithCredentialsFile(serviceAccountKeyPath)
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)

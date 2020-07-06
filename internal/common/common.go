@@ -25,30 +25,30 @@ const DegreeInKM float64 = 111
 func CalculeRange(area *models.Location) (float64, float64, float64, float64, error) {
 	var latN float64
 	var latS float64
-	var longW float64
-	var longE float64
+	var lonW float64
+	var lonE float64
 
 	var err error
 
-	if area == nil || area.Lat == nil || area.Long == nil {
+	if area == nil || area.Lat == nil || area.Lon == nil {
 		err = fmt.Errorf("cannot calculate nil model.Area")
-		return latN, latS, longW, longE, err
+		return latN, latS, lonW, lonE, err
 	}
 
-	latN = round(*area.Lat + area.Range/DegreeInKM)
-	latS = round(*area.Lat - area.Range/DegreeInKM)
-	longW = round(*area.Long - math.Cos(*area.Lat)*area.Range/DegreeInKM)
-	longE = round(*area.Long + math.Cos(*area.Lat)*area.Range/DegreeInKM)
+	latN = round(*area.Lat + area.Distance/DegreeInKM)
+	latS = round(*area.Lat - area.Distance/DegreeInKM)
+	lonW = round(*area.Lon - math.Cos(*area.Lat)*area.Distance/DegreeInKM)
+	lonE = round(*area.Lon + math.Cos(*area.Lat)*area.Distance/DegreeInKM)
 
-	return latN, latS, longW, longE, err
+	return latN, latS, lonW, lonE, err
 }
 
 func round(x float64) float64 {
 	return math.Round(x*10000) / 10000
 }
 
-type Config struct {
-	Db *DbConfig
+type CacheConfig struct {
+	Addresses []string
 }
 
 //Config base connection config struct

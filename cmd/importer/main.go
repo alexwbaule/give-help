@@ -93,7 +93,7 @@ func importUsers(f *excelize.File, rt *runtimeApp.Runtime) (map[string]*models.U
 		"ZipCode":        -1,
 		"Country":        -1,
 		"Lat":            -1,
-		"Long":           -1,
+		"Lon":            -1,
 		"RegisterFrom":   -1,
 		"PCountry":       -1,
 		"PRegion":        -1,
@@ -158,7 +158,7 @@ func importUsers(f *excelize.File, rt *runtimeApp.Runtime) (map[string]*models.U
 		*user.Location.ZipCode = getInt(getData("ZipCode", h, row))
 		user.Location.Country = getData("Country", h, row)
 		*user.Location.Lat = getFloat(getData("Lat", h, row))
-		*user.Location.Long = getFloat(getData("Long", h, row))
+		*user.Location.Lon = getFloat(getData("Lon", h, row))
 		user.RegisterFrom = getData("RegisterFrom", h, row)
 		user.AllowShareData = getBool(getData("AllowShareData", h, row))
 
@@ -216,7 +216,7 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 		"Country":          -1,
 		"AreaTags":         -1,
 		"Lat":              -1,
-		"Long":             -1,
+		"Lon":              -1,
 		"Range":            -1,
 		"Images":           -1,
 		"EstimatedValue":   -1,
@@ -309,8 +309,8 @@ func importProps(users map[string]*models.User, f *excelize.File, rt *runtimeApp
 		prop.TargetArea.Country = getData("Country", h, row)
 
 		*prop.TargetArea.Lat = getFloat(getData("Lat", h, row))
-		*prop.TargetArea.Long = getFloat(getData("Long", h, row))
-		prop.TargetArea.Range = getFloat(getData("Range", h, row))
+		*prop.TargetArea.Lon = getFloat(getData("Lon", h, row))
+		prop.TargetArea.Distance = getFloat(getData("Distance", h, row))
 		prop.TargetArea.AreaTags = strings.Split(getData("AreaTags", h, row), ",")
 
 		*prop.EstimatedValue = getFloat(getData("EstimatedValue", h, row))

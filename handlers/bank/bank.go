@@ -10,7 +10,7 @@ import (
 
 //Banks Object struct
 type Bank struct {
-	storage *storage.Bank
+	storage *storage.Banks
 }
 
 //New creates a new instance
@@ -22,7 +22,7 @@ func New(conn *connection.Connection) *Bank {
 
 //Load load banks
 func (b *Bank) LoadBanks() ([]*models.Bank, error) {
-	ret, err := b.storage.LoadBanks()
+	ret, err := b.storage.Load()
 
 	if err != nil {
 		log.Printf("fail to try load banks: %s", err)

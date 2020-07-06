@@ -35,15 +35,43 @@ Done 2020/05/19:
     Importers/Exporters:
         -Ler e escrever País/Estado/Cidade em TargetArea
 
+Done 2020/06/07
+    Banco de dados:
+        -Modelagem da estrutura de views para métricas de negócios
+    Camada de aplicação:
+        -Instrumentação de métricas de serviço (tempo de resposta)        
+        -Criação dos serviços de métricas de negócios (views)
+        -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
+    
+Done 2020/07/14
+    Banco de dados:
+        -Criação das views para métricas de negócios
+    Camada de serviços:
+        -Adequação para os novos métodos de métricas de negócio
+
 Backlog:    
+    Testes:
+        -Validar novo motor de buscar e retrocompatibilidade
+        -Validar relatórios de analitcs gerado pelo back-end
     Banco de Dados:        
         -Viabilizar a infra do ElasticSearch para as buscas mais flexíveis e com mais performance
+    Camada de serviços:
+        -Integrar exporter de métricas na estrutura que vamos subir para processar os dados
     Camada de dados da aplicação (storage):                    
-        -Alterar o mecanismo de filtros e passar a usar o ElasticSearch
+        -Implementação da DSL do ES na camade de busca
+        -Implementação da DSL do ES para insert e reindex
+        -Pensar em um modelo de push para os clientes (integração com firebase)
     Importers/Exporters:
         -Ler e escrever contas bancárias das planilhas
-        
+        -Viabilizar uma maneira de operação dos dados (usuários, propostas e etc)
+    Infra:
+        -Subir estrutura para coleta/processamento/Visualização de métricas (graphite/grafana)
+        -Validar modelos de backup (Serviço e Dados)
+        -Validar modelo de DR, atualmente temos uma única instância de serviço
+        -Analisar um modelo de alerta em caso de falhas
     ETC:
+        -Validar se faz sentido migrarmos para serviços lambda
+        -Métricas da aplicação para facilitar a parte de Ops
         -Verificar com o Marcel se o retorno DTS de lista de contas bancárias funciona no APP (cada item tem mais de uma linha, verificar como isso seria apresentado)
         -Verificar com alguém que conheça um pouco mais sobre leis e proteção aos dados as restrições para divulgar CC, talvez tenhamos que alterar termos de uso e etc
 

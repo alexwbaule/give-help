@@ -35,7 +35,7 @@ type Proposal struct {
 	Name           string
 	Email          string
 	Lat            float64
-	Long           float64
+	Lon            float64
 	SheetType      string
 	Type           string // volunteer|taker|job|local_business
 	Side           string
@@ -86,6 +86,17 @@ func main() {
 	cfg.SetDefault("service.TLSWriteTimeout", "15m")
 	cfg.SetDefault("service.WriteTimeout", "15m")
 
+	cfg.SetDefault("firebase.AccountKey", `etc/serviceAccountKey.json`)
+
+	cfg.SetDefault("database.Host", "127.0.0.1")
+	cfg.SetDefault("database.User", "postgres")
+	cfg.SetDefault("database.Pass", "example")
+	cfg.SetDefault("database.DBName", "postgres")
+
+	cfg.SetDefault("es.Addresses", "127.0.0.1:9200")
+
+	cfg.SetDefault("metrics.Interval", "10m")
+
 	rt, err = runtimeApp.NewRuntime(app)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -110,7 +121,7 @@ func main() {
 	initFirebase()
 
 	userSvc = userHandler.New(rt.GetDatabase())
-	proposalSvc = proposalHandler.New(rt.GetDatabase())
+	proposalSvc = proposalHandler.New(rt.GetDatabase(), rt.GetCache())
 	tagsSvc = tagsHandler.New(rt.GetDatabase())
 
 	for i, p := range props {
@@ -199,7 +210,7 @@ func parser(line string, index int) (Proposal, error) {
 		Name:           fields[3],
 		Email:          strings.ToLower(fields[4]),
 		Lat:            getFloat(fields[5]),
-		Long:           getFloat(fields[6]),
+		Lon:            getFloat(fields[6]),
 		SheetType:      fields[7],
 		Tags:           getArray(fields[8]),
 		Description:    fields[9],

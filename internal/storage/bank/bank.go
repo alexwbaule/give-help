@@ -10,27 +10,27 @@ import (
 )
 
 //Banks Object struct
-type Bank struct {
+type Banks struct {
 	conn *connection.Connection
 }
 
 //New creates a new instance
-func New(conn *connection.Connection) *Bank {
-	return &Bank{conn: conn}
+func New(conn *connection.Connection) *Banks {
+	return &Banks{conn: conn}
 }
 
 const selectBanks = `
 SELECT
-	BankID,
-	BankName,
-	BankFullName
+BankID,
+BankName,
+BankFullName
 FROM
 	Banks
 ORDER BY
 	BankID
 `
 
-func (b *Bank) LoadBanks() ([]*models.Bank, error) {
+func (b *Banks) Load() ([]*models.Bank, error) {
 	ret := []*models.Bank{}
 
 	db := b.conn.Get()
@@ -87,7 +87,7 @@ DELETE FROM BANK_ACCOUNT WHERE ProposalID = $1;
 `
 
 //Insert insert categories on database
-func (b *Bank) UpsertAccounts(proposalID string, accs []*models.BankAccount) error {
+func (b *Banks) UpsertAccounts(proposalID string, accs []*models.BankAccount) error {
 	db := b.conn.Get()
 
 	ctx := context.Background()
@@ -162,7 +162,7 @@ ORDER BY
 `
 
 //LoadAccounts load bank account from a proposal
-func (b *Bank) LoadAccounts(proposalId string) ([]*models.BankAccount, error) {
+func (b *Banks) LoadAccounts(proposalId string) ([]*models.BankAccount, error) {
 	ret := []*models.BankAccount{}
 
 	db := b.conn.Get()
