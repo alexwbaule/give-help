@@ -6,20 +6,29 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	cacheConnection "github.com/alexwbaule/give-help/v2/internal/cache/connection"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	dbConnection "github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
 )
 
 func createHandler() *Proposal {
-	c := connection.New(&common.DbConfig{
+	dbConn := dbConnection.New(&common.DbConfig{
 		Host:   "localhost",
 		User:   "postgres",
 		Pass:   "example",
 		DBName: "postgres",
 	})
 
-	return New(c)
+	cacheConn, err := cacheConnection.New(&common.CacheConfig{
+		Addresses: []string{"http://localhost:9200"},
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	return New(dbConn, cacheConn)
 }
 
 func getUserID() string {
@@ -35,7 +44,7 @@ func createProposal() *models.Proposal {
 	userID := getUserID()
 
 	lat := float64(-23.5475)
-	long := float64(-46.6361)
+	lon := float64(-46.6361)
 	estimatedValue := float64(99.3)
 
 	return &models.Proposal{
@@ -48,8 +57,8 @@ func createProposal() *models.Proposal {
 		TargetArea: &models.Location{
 			AreaTags: models.Tags([]string{"ZL", "Penha", "Zona Leste"}),
 			Lat:      &lat,
-			Long:     &long,
-			Range:    5,
+			Lon:      &lon,
+			Distance: 5,
 			City:     "Porto Alegre",
 			State:    "RS",
 			Country:  "Brasil",
@@ -363,6 +372,11 @@ func testComplaint(t *testing.T) {
 	}
 }
 
+func testReindex(t *testing.T) {
+	conn := createHandler()
+	conn.Reindex()
+}
+
 func Test(t *testing.T) {
 	testInsert(t)
 	testLoadFromID(t)
@@ -377,4 +391,9 @@ func Test(t *testing.T) {
 	testFind(t)
 	testFindLocalBusiness(t)
 	testFindOmini(t)
+	testReindex(t)
+}
+
+func TestX(t *testing.T) {
+	testReindex(t)
 }

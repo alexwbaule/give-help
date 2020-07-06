@@ -49,6 +49,18 @@ func main() {
 	cfg.SetDefault("service.TLSWriteTimeout", "15m")
 	cfg.SetDefault("service.WriteTimeout", "15m")
 
+	cfg.SetDefault("firebase.AccountKey", `etc/serviceAccountKey.json`)
+
+	cfg.SetDefault("database.Host", "localhost")
+	cfg.SetDefault("database.User", "postgres")
+	cfg.SetDefault("database.Pass", "example")
+	cfg.SetDefault("database.DBName", "postgres")
+
+	cfg.SetDefault("es.Addresses", "localhost:9200")
+
+	//Não se esqueça de deixar esse valor padrão em mais do que alguns minutos, não precisamos de tanta resolução de métricas
+	cfg.SetDefault("metrics.Interval", "10m")
+
 	rt, err := runtimeApp.NewRuntime(app)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -144,6 +156,10 @@ func main() {
 	api.TermsPutUserAcceptHandler = apihandler.TermsPutUserAcceptHandler(rt)
 	api.TermsGetTermsHandler = apihandler.TermsGetTermsHandler(rt)
 	api.TermsGetUserAcceptedHandler = apihandler.TermsGetUserAcceptedHandler(rt)
+
+	/* API Reports */
+	api.ReportsGetProposalReportHandler = apihandler.ReportsGetProposalReportHandler(rt)
+	api.ReportsGetProposalReportcsvHandler = apihandler.ReportsGetProposalReportcsvHandler(rt)
 
 	c := cors.New(cors.Options{
 		Debug:              true,

@@ -8,8 +8,10 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	cacheConnection "github.com/alexwbaule/give-help/v2/internal/cache/connection"
+	cache "github.com/alexwbaule/give-help/v2/internal/cache/proposal"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
+	dbConnection "github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	storage "github.com/alexwbaule/give-help/v2/internal/storage/proposal"
 	tagsStorage "github.com/alexwbaule/give-help/v2/internal/storage/tags"
 	userStorage "github.com/alexwbaule/give-help/v2/internal/storage/user"
@@ -18,17 +20,19 @@ import (
 
 //Proposal Object struct
 type Proposal struct {
+	cache   *cache.Proposal
 	storage *storage.Proposal
 	user    *userStorage.User
 	tags    *tagsStorage.Tags
 }
 
 //New creates a new instance
-func New(conn *connection.Connection) *Proposal {
+func New(dbConn *dbConnection.Connection, cacheConn *cacheConnection.Connection) *Proposal {
 	return &Proposal{
-		storage: storage.New(conn),
-		user:    userStorage.New(conn),
-		tags:    tagsStorage.New(conn),
+		storage: storage.New(dbConn),
+		user:    userStorage.New(dbConn),
+		tags:    tagsStorage.New(dbConn),
+		cache:   cache.New(cacheConn),
 	}
 }
 
@@ -38,10 +42,18 @@ func (p *Proposal) Insert(proposal *models.Proposal) (models.ID, error) {
 		proposal.ProposalID = models.ID(common.GetULID())
 	}
 
+	proposal.CreatedAt = strfmt.DateTime(time.Now())
+	proposal.LastUpdate = strfmt.DateTime(time.Now())
+	if proposal.EstimatedValue == nil {
+		newPrice := float64(0)
+		proposal.EstimatedValue = &newPrice
+	}
+
 	err := p.storage.Upsert(proposal)
 
 	if err != nil {
 		log.Printf("fail to insert new proposal [%s]: %s", proposal.ProposalID, err)
+		return proposal.ProposalID, err
 	}
 
 	_, err = p.tags.Insert(proposal.Tags)
@@ -49,6 +61,15 @@ func (p *Proposal) Insert(proposal *models.Proposal) (models.ID, error) {
 	if err != nil {
 		log.Printf("fail to insert new proposal tags [%s]: %s", proposal.ProposalID, err)
 	}
+
+	/*
+		err = p.cache.Upsert(proposal)
+
+		if err != nil {
+			log.Printf("fail to insert new proposal on cache [%s]: %s", proposal.ProposalID, err)
+			return proposal.ProposalID, err
+		}
+	*/
 
 	return proposal.ProposalID, err
 }
@@ -58,10 +79,17 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 		return fmt.Errorf("proposalID is empty")
 	}
 
+	proposal.LastUpdate = strfmt.DateTime(time.Now())
+	if proposal.EstimatedValue == nil {
+		newPrice := float64(0)
+		proposal.EstimatedValue = &newPrice
+	}
+
 	err := p.storage.Upsert(proposal)
 
 	if err != nil {
 		log.Printf("fail to update proposal [%s]: %s", proposal.ProposalID, err)
+		return err
 	}
 
 	_, err = p.tags.Insert(proposal.Tags)
@@ -70,7 +98,29 @@ func (p *Proposal) update(proposal *models.Proposal) error {
 		log.Printf("fail to update proposal tags [%s]: %s", proposal.ProposalID, err)
 	}
 
+	/*
+		err = p.cache.Upsert(proposal)
+
+		if err != nil {
+			log.Printf("fail to update new proposal on cache [%s]: %s", proposal.ProposalID, err)
+			return err
+		}
+	*/
+
 	return err
+}
+
+func (p *Proposal) Reindex() {
+	log.Printf("[Reindex] loading all proposals...")
+	proposals, err := p.storage.LoadAll()
+
+	if err != nil {
+		log.Printf("[Reindex] fail to load all proposals to reindex: %s", err)
+	}
+
+	log.Printf("[Reindex] %d proposals loades, start cache reindex...", len(proposals))
+	p.cache.Reindex(proposals)
+	log.Printf("[Reindex] cache reindex finish")
 }
 
 //LoadFromID load data
@@ -84,6 +134,8 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 	if err != nil {
 		log.Printf("fail to load proposal [%s]: %s", proposalID, err)
 	}
+
+	go p.storage.InsertView(proposalID, "", "Load Proposal")
 
 	return ret, err
 }
@@ -110,6 +162,7 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 	}
 
 	result, err := p.storage.Find(filter)
+	//result, err := p.cache.Find(filter)
 
 	if err != nil {
 		log.Printf("fail to load data from filter: %s", err)
@@ -123,13 +176,18 @@ func (p *Proposal) LoadFromFilter(filter *models.Filter) (*models.ProposalsRespo
 	sideMap := map[models.Side]interface{}{}
 	typeMap := map[models.Type]interface{}{}
 
-	for _, p := range result {
+	ids := make([]string, len(result))
+
+	for i, p := range result {
 		for _, t := range p.Tags {
 			tagMap[t] = nil
 		}
 		sideMap[p.Side] = nil
 		typeMap[p.ProposalType] = nil
+		ids[i] = string(p.ProposalID)
 	}
+
+	go p.storage.BulkInsertView(ids, "Load Proposal from Filter")
 
 	tags := make([]string, len(tagMap))
 	sides := make([]models.Side, len(sideMap))
@@ -232,6 +290,9 @@ func (p *Proposal) GetUserDataToShare(proposalID string) ([]*models.DataToShareR
 			}
 		}
 	}
+
+	//TODO: Store user requested DTS on View
+	go p.storage.InsertView(proposalID, "", "DTS Request")
 
 	return ret, err
 }

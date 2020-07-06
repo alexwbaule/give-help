@@ -1,0 +1,36 @@
+{
+    "proposal_id": "01E8WGQAHXVXHVMCVPJ1E1KPF4",
+    "created_at": "2015-01-01T12:10:30Z",
+    "last_update": "2015-01-01T12:10:30Z",
+    "user_id": "01E8WGRG649HJ61DNNR6W5FJNT",
+    "side": "request",
+    "proposal_type": "job",
+    "tags": [
+        "teste_1", 
+        "teste_2",
+        "teste_3"
+    ],
+    "title": "title test",
+    "description": "description test",
+    "proposal_validate": "2015-01-01T12:10:30Z",
+    "city": "São Paulo",
+    "state": "SP",
+    "country": "Brasil",
+    "location": { 
+        "lat": 41.12,
+        "lon": -71.34
+    },
+    "range": 100,
+    "is_active": true,
+    "exposed_user_data": true,
+    "data_to_share": [
+        "field_a",
+        "field_b"
+    ],
+    "images": [
+        "/images/image_1.jpg",
+        "/images/image_2.jpg"
+    ],
+    "estimated_value": 1500,
+    "ranking": 3.3
+}

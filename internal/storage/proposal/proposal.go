@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"log"
 
@@ -20,7 +21,11 @@ type Proposal struct {
 
 //New creates a new instance
 func New(conn *connection.Connection) *Proposal {
-	return &Proposal{conn: conn}
+	ret := &Proposal{
+		conn: conn,
+	}
+
+	return ret
 }
 
 const upsertProposal string = `
@@ -37,8 +42,8 @@ INSERT INTO PROPOSALS (
 	State,
 	Country,	
     Lat,
-    Long,
-	Range,
+    Lon,
+	Distance,
 	AreaTags,
 	IsActive,	
 	Images,
@@ -61,7 +66,7 @@ VALUES
 	$10, --State,
 	$11, --Country,
     $12, --Lat,
-    $13, --Long,
+    $13, --Lon,
     $14, --Range,
 	$15, --AreaTags,
 	$16, --IsActive,
@@ -84,8 +89,8 @@ DO UPDATE SET
 	State = $10,
 	Country = $11,	
     Lat = $12,
-    Long = $13,
-	Range = $14,
+    Lon = $13,
+	Distance = $14,
 	AreaTags = $15,
 	IsActive = $16,	
 	Images = $17,
@@ -119,7 +124,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 	}
 
 	lat := float64(0)
-	long := float64(0)
+	lon := float64(0)
 	areaRange := float64(0)
 	areaTags := []string{}
 	city := ""
@@ -132,8 +137,8 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		country = proposal.TargetArea.Country
 
 		lat = *proposal.TargetArea.Lat
-		long = *proposal.TargetArea.Long
-		areaRange = proposal.TargetArea.Range
+		lon = *proposal.TargetArea.Lon
+		areaRange = proposal.TargetArea.Distance
 
 		areaTags = common.NormalizeTagArray(proposal.TargetArea.AreaTags)
 	}
@@ -142,8 +147,8 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		lat = -23.5486
 	}
 
-	if long == 0 {
-		long = -46.6392
+	if lon == 0 {
+		lon = -46.6392
 	}
 
 	if proposal.DataToShare == nil {
@@ -169,7 +174,7 @@ func (p *Proposal) Upsert(proposal *models.Proposal) error {
 		state,
 		country,
 		lat,
-		long,
+		lon,
 		areaRange,
 		pq.Array(common.NormalizeTagArray(areaTags)),
 		proposal.IsActive,
@@ -288,8 +293,8 @@ SELECT
 	State,
 	Country,
 	Lat,
-	Long,
-	Range,
+	Lon,
+	Distance,
 	AreaTags,
 	IsActive,
 	Images,
@@ -345,8 +350,8 @@ func (p *Proposal) LoadFromID(proposalID string) (*models.Proposal, error) {
 		&state,
 		&country,
 		&ret.TargetArea.Lat,
-		&ret.TargetArea.Long,
-		&ret.TargetArea.Range,
+		&ret.TargetArea.Lon,
+		&ret.TargetArea.Distance,
 		pq.Array(&areaTags),
 		&ret.IsActive,
 		pq.Array(&images),
@@ -402,14 +407,19 @@ func (p *Proposal) LoadFromUser(userID string) ([]*models.Proposal, error) {
 	return p.load(cmd, userID)
 }
 
+//LoadAll load all proposals
+func (p *Proposal) LoadAll() ([]*models.Proposal, error) {
+	cmd := fmt.Sprintf(selectProposal, "IsActive = true", "")
+
+	return p.load(cmd)
+}
+
 //Find find all proposals that match with filter
 func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	if filter == nil {
 		filter = &models.Filter{
-			PageSize:        50,
-			PageNumber:      0,
-			IncludeExpired:  false,
-			IncludeInactive: false,
+			PageSize:   50,
+			PageNumber: 0,
 		}
 	}
 
@@ -458,9 +468,9 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 			wheres = append(wheres, fmt.Sprintf("array_to_string(AreaTags, ',') LIKE $%d", len(args)))
 		}
 
-		rang := filter.TargetArea.Range
+		rang := filter.TargetArea.Distance
 
-		if filter.TargetArea.Lat != nil && filter.TargetArea.Long != nil {
+		if filter.TargetArea.Lat != nil && filter.TargetArea.Lon != nil {
 			if rang < 1 {
 				rang = 1
 			}
@@ -470,7 +480,7 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 				wheres = append(
 					wheres,
 					fmt.Sprintf(
-						`( (Lat BETWEEN $%d AND $%d) AND (Long BETWEEN $%d AND $%d ) )`,
+						`( (Lat BETWEEN $%d AND $%d) AND (Lon BETWEEN $%d AND $%d ) )`,
 						len(args)-3,
 						len(args)-2,
 						len(args)-1,
@@ -483,14 +493,6 @@ func (p *Proposal) Find(filter *models.Filter) ([]*models.Proposal, error) {
 	}
 
 	andFilters := []string{} // "ProposalValidate >= %s ", "IsActive = true" }
-
-	if !filter.IncludeExpired {
-		andFilters = append(andFilters, "ProposalValidate >= CURRENT_TIMESTAMP")
-	}
-
-	if !filter.IncludeInactive {
-		andFilters = append(andFilters, "IsActive = true")
-	}
 
 	if filter.PageSize <= 0 {
 		filter.PageSize = 50
@@ -579,8 +581,8 @@ func (p *Proposal) load(cmd string, args ...interface{}) ([]*models.Proposal, er
 			&state,
 			&country,
 			&i.TargetArea.Lat,
-			&i.TargetArea.Long,
-			&i.TargetArea.Range,
+			&i.TargetArea.Lon,
+			&i.TargetArea.Distance,
 			pq.Array(&areaTags),
 			&i.IsActive,
 			pq.Array(&images),
@@ -747,4 +749,236 @@ func (p *Proposal) InsertComplaint(complaint *models.Complaint) error {
 	}
 
 	return p.conn.CheckError(err)
+}
+
+const insertView = `
+INSERT INTO PROPOSAL_VIEWS
+(
+	ProposalID,
+	UserID,
+	Description
+)
+VALUES
+(
+	$1,
+	$2,
+	$3
+);
+`
+
+func (p *Proposal) InsertView(proposalId string, userID string, description string) {
+	db := p.conn.Get()
+
+	result, err := db.Exec(insertView, strings.TrimSpace(proposalId), strings.TrimSpace(userID), strings.TrimSpace(description))
+
+	if err != nil {
+		log.Printf("fail to try insert a proposal view: %s, proposal-id: %s, description: %s\n", err, proposalId, description)
+	}
+
+	if aff, _ := result.RowsAffected(); aff == 0 {
+		log.Printf("fail to try insert a proposal view: no rows affected")
+	}
+}
+
+const bulkInsertView = `
+INSERT INTO PROPOSAL_VIEWS
+(
+	ProposalID,
+	Description
+)
+VALUES
+%s
+;
+`
+
+func (p *Proposal) BulkInsertView(proposalIds []string, description string) {
+	if len(proposalIds) == 0 {
+		return
+	}
+
+	args := make([]string, len(proposalIds))
+
+	for p, id := range proposalIds {
+		args[p] = fmt.Sprintf(`('%s', '%s')`, strings.TrimSpace(id), strings.TrimSpace(description))
+	}
+
+	db := p.conn.Get()
+
+	insert := fmt.Sprintf(bulkInsertView, strings.Join(args, ","))
+
+	result, err := db.Exec(insert)
+
+	if err != nil {
+		log.Printf("fail to try insert a proposal view: %s, sql: %s\n", err, insert)
+	}
+
+	if aff, _ := result.RowsAffected(); aff == 0 {
+		log.Printf("fail to try insert a proposal view: no rows affected")
+	}
+}
+
+const selectViews = `
+SELECT
+	TRIM(ProposalID),
+	TRIM(UserID),
+	TRIM(Description),
+	Count(*) as Count,
+    Min(CreatedAt) as Fisrt,
+    Max(CreatedAt) as Last    
+FROM
+	PROPOSAL_VIEWS
+GROUP BY
+	ProposalID,
+	UserID,
+	Description
+ORDER BY
+	Count DESC,
+	ProposalID, 
+	UserID
+	;
+`
+
+func (p *Proposal) LoadViews() ([]*models.ProposalReport, error) {
+	ret := []*models.ProposalReport{}
+
+	db := p.conn.Get()
+
+	rows, err := db.Query(selectViews)
+
+	if err == nil {
+		defer rows.Close()
+
+		for rows.Next() {
+			view := &models.ProposalReport{}
+
+			if err = rows.Scan(
+				&view.ProposalID,
+				&view.UserID,
+				&view.Description,
+				&view.Count,
+				&view.First,
+				&view.Last,
+			); err == nil {
+				ret = append(ret, view)
+			} else {
+				return ret, p.conn.CheckError(err)
+			}
+		}
+	}
+
+	return ret, p.conn.CheckError(err)
+}
+
+const selectViewsCSV = `
+SELECT
+	V.ProposalID,
+	V.UserID,
+    U.Name,
+	V.Description as ViewDescription,
+	Count(*) as Count,
+    Min(V.CreatedAt) as FisrtView,
+	Max(V.CreatedAt) as LastView,
+	P.Description as ProposalDescription,
+	P.Title,
+	P.Side,
+	P.ProposalType,
+	array_to_string(p.Tags, ',') as Tags,
+	P.Ranking
+FROM
+	PROPOSAL_VIEWS V LEFT JOIN PROPOSALS P
+		ON V.ProposalID = P.ProposalID
+    LEFT JOIN USERS U
+    	ON P.UserID = U.UserID
+GROUP BY
+	V.ProposalID,
+	V.UserID,
+    U.Name,
+	ViewDescription,
+    P.Description,
+	P.Title,
+	P.Side,
+	P.ProposalType,
+	p.Tags,
+	P.Ranking    
+ORDER BY
+	Count DESC,
+    U.Name
+`
+
+func (p *Proposal) LoadViewsCSV() (string, error) {
+	ret := fmt.Sprintf("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;\n",
+		"proposalID",
+		"userID",
+		"name",
+		"viewDescription",
+		"count",
+		"first",
+		"last",
+		"proposalDescription",
+		"title",
+		"side",
+		"Type",
+		"tags",
+		"ranking",
+	)
+
+	db := p.conn.Get()
+
+	rows, err := db.Query(selectViewsCSV)
+
+	if err == nil {
+		defer rows.Close()
+
+		var proposalID string
+		var userID string
+		var viewDesc string
+		var name string
+		var count int64
+		var first time.Time
+		var last time.Time
+		var propDesc string
+		var title string
+		var side string
+		var propType string
+		var tags string
+		var ranking float64
+
+		for rows.Next() {
+			if err = rows.Scan(
+				&proposalID,
+				&userID,
+				&name,
+				&viewDesc,
+				&count,
+				&first,
+				&last,
+				&propDesc,
+				&title,
+				&side,
+				&propType,
+				&tags,
+				&ranking,
+			); err == nil {
+				ret += fmt.Sprintf("%s;%s;%s;%s;%d;%s;%s;%s;%s;%s;%s;%s;%f;\n",
+					strings.TrimSpace(proposalID),
+					strings.TrimSpace(userID),
+					strings.TrimSpace(name),
+					strings.TrimSpace(viewDesc),
+					count,
+					first,
+					last,
+					strings.TrimSpace(propDesc),
+					strings.TrimSpace(title),
+					strings.TrimSpace(side),
+					strings.TrimSpace(propType),
+					strings.TrimSpace(tags),
+					ranking,
+				)
+			} else {
+				return ret, p.conn.CheckError(err)
+			}
+		}
+	}
+
+	return ret, p.conn.CheckError(err)
 }

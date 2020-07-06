@@ -6,22 +6,23 @@ import (
 	"time"
 
 	"github.com/alexwbaule/give-help/v2/generated/models"
+	"github.com/alexwbaule/give-help/v2/internal/cache/connection"
 	"github.com/alexwbaule/give-help/v2/internal/common"
-	"github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	"github.com/go-openapi/strfmt"
 
 	"testing"
 )
 
 func createConn() *Proposal {
-	dbConfig := &common.DbConfig{
-		Host:   "localhost",
-		User:   "postgres",
-		Pass:   "example",
-		DBName: "postgres",
+	config := &common.CacheConfig{
+		Addresses: []string{"http://localhost:9200"},
 	}
 
-	conn := connection.New(dbConfig)
+	conn, err := connection.New(config)
+
+	if err != nil {
+		panic(err)
+	}
 
 	return New(conn)
 }
@@ -209,7 +210,7 @@ func upsert(t *testing.T) {
 	}
 
 	if loaded.TargetArea.Distance != data.TargetArea.Distance {
-		t.Errorf("fail to load proposal, [TargetArea.Distance] expected: %f received: %f", data.TargetArea.Distance, loaded.TargetArea.Distance)
+		t.Errorf("fail to load proposal, [TargetArea.Distance] expected: %f received: %f", data.TargetArea.Range, loaded.TargetArea.Distance)
 	}
 
 	if len(loaded.TargetArea.AreaTags) != len(data.TargetArea.AreaTags) {
@@ -305,24 +306,7 @@ func filter(t *testing.T) {
 	}
 }
 
-func complaint(t *testing.T) {
-	storage := createConn()
-
-	complaint := &models.Complaint{
-		Comment:    "Não curti esse comentário",
-		Complainer: "Testador de sistemas",
-		ProposalID: models.ID(getProposalID()),
-	}
-
-	err := storage.InsertComplaint(complaint)
-
-	if err != nil {
-		t.Errorf("fail to try insert a complaint: %s", err.Error())
-	}
-}
-
 func Test(t *testing.T) {
 	upsert(t)
 	filter(t)
-	complaint(t)
 }
