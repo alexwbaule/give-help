@@ -42,6 +42,7 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 		database: db,
 		cache:    es,
 		Metrics:  metrics.NewResource(metrics.Config{}),
+		logger:   &Logger{},
 	}
 
 	return rt, err
@@ -54,6 +55,7 @@ type Runtime struct {
 	database *dbConn.Connection
 	Metrics  *metrics.Resources
 	cache    *cacheConn.Connection
+	logger   *Logger
 }
 
 func (rt *Runtime) GetCache() *cacheConn.Connection {
@@ -68,10 +70,24 @@ func (rt *Runtime) GetDatabase() *dbConn.Connection {
 	return rt.database
 }
 
+func (rt *Runtime) GetLogger() *Logger {
+	return rt.logger
+}
+
 func (rt *Runtime) CloseDatabase() {
 	rt.database.Close()
 }
 
-func (rt *Runtime) GetMetricProcessor() *metrics.Processor {
-	return rt.metricProcessor
+type Logger struct {
+}
+
+func (l *Logger) Infof(msg string, args ...interface{}) {
+	log.Printf(msg, args...)
+}
+
+func (l *Logger) Errorf(msg string, args ...interface{}) {
+	log.Printf("[ERROR] "+msg, args...)
+}
+func (l *Logger) Panicf(msg string, args ...interface{}) {
+	log.Panicf("[PANIC] "+msg, args...)
 }

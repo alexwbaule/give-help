@@ -31,13 +31,14 @@ import (
 	"github.com/alexwbaule/give-help/v2/generated/restapi"
 	"github.com/alexwbaule/give-help/v2/generated/restapi/operations"
 	runtimeApp "github.com/alexwbaule/give-help/v2/runtime"
+	"github.com/justinas/alice"
 
+	metrics "git.corp.c6bank.com/c6libs/go-c6-metrics"
 	app "github.com/alexwbaule/go-app"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/flagext"
 	flags "github.com/jessevdk/go-flags"
 	"github.com/rs/cors"
-	metrics "git.corp.c6bank.com/c6libs/go-c6-metrics"
 )
 
 func main() {
@@ -171,16 +172,16 @@ func main() {
 		OptionsPassthrough: false,
 	})
 
-	handler := alice.New(
+	metricsHandler := metrics.NewMetricsHandler(api.Context(),
+		metrics.HandlerConfig{Resources: rt.Metrics},
+		rt.GetLogger(),
+	)
 
-		metrics.NewMetricsHandler(api.Context(),
-			metrics.HandlerConfig{Resources: rt.Metrics},
-			log),
-		c,
+	handler := alice.New(
+		metricsHandler,
 	).Then(api.Serve(nil))
 
-
-	handler := c.Handler(api.Serve(nil))
+	handler = c.Handler(api.Serve(nil))
 	server.SetHandler(handler)
 
 	if err := server.Serve(); err != nil {
