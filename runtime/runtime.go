@@ -1,17 +1,15 @@
 package runtime
 
 import (
-	"encoding/json"
 	"log"
-	"time"
 
 	firebase "firebase.google.com/go"
+	metrics "git.corp.c6bank.com/c6libs/go-c6-metrics"
 	cacheConn "github.com/alexwbaule/give-help/v2/internal/cache/connection"
 	"github.com/alexwbaule/give-help/v2/internal/common"
 	"github.com/alexwbaule/give-help/v2/internal/fireadmin"
 	dbConn "github.com/alexwbaule/give-help/v2/internal/storage/connection"
 	app "github.com/alexwbaule/go-app"
-	"github.com/rafaelfino/metrics"
 )
 
 // NewRuntime creates a new application level runtime that encapsulates the shared services for this application
@@ -32,14 +30,6 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 		return nil, err
 	}
 
-	metricsInterval := app.Config().GetString("metrics.Interval")
-
-	interval, err := time.ParseDuration(metricsInterval)
-
-	if err != nil {
-		interval = time.Minute * 10
-	}
-
 	firebaseAccountKeyPath := app.Config().GetString("firebase.AccountKey")
 
 	if len(firebaseAccountKeyPath) == 0 {
@@ -47,39 +37,23 @@ func NewRuntime(app app.Application) (*Runtime, error) {
 	}
 
 	rt := &Runtime{
-		app:             app,
-		fbase:           fireadmin.InitializeAppWithServiceAccount(firebaseAccountKeyPath),
-		database:        db,
-		cache:           es,
-		metricProcessor: metrics.NewMetricProcessor(interval, LogExport),
+		app:      app,
+		fbase:    fireadmin.InitializeAppWithServiceAccount(firebaseAccountKeyPath),
+		database: db,
+		cache:    es,
+		Metrics:  metrics.NewResource(metrics.Config{}),
 	}
 
 	return rt, err
 }
 
-func LogExport(data *metrics.MetricData) error {
-	if len(data.Metrics) == 0 && len(data.Series) == 0 {
-		return nil
-	}
-
-	raw, err := json.MarshalIndent(data, "", "\t")
-
-	if err != nil {
-		log.Printf("fail to marshal metrics: %s\n", err)
-	} else {
-		log.Printf("Metrics: %s\n", string(raw))
-	}
-
-	return nil
-}
-
 // Runtime encapsulates the shared services for this application
 type Runtime struct {
-	app             app.Application
-	fbase           *firebase.App
-	database        *dbConn.Connection
-	metricProcessor *metrics.Processor
-	cache           *cacheConn.Connection
+	app      app.Application
+	fbase    *firebase.App
+	database *dbConn.Connection
+	Metrics  *metrics.Resources
+	cache    *cacheConn.Connection
 }
 
 func (rt *Runtime) GetCache() *cacheConn.Connection {
